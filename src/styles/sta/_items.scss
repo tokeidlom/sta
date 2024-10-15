@@ -1,0 +1,126 @@
+/* Item List Starts Here */
+
+        .section {
+          .row {
+            .image {
+              width: 26px;
+
+              img {
+                width: 24px;
+                height: 24px;
+                object-fit: cover;
+                object-position: 50% 0;
+              }
+
+              .rollable:hover {
+                content: url("/icons/svg/d20-grey.svg");
+                box-shadow: none;
+                cursor: pointer;
+              }
+
+              .chat:hover {
+                content: url("/systems/sta/assets/icons/chat-bubble.svg");
+                box-shadow: none;
+                cursor: pointer;
+              }
+
+              .click-to-nav {
+                cursor: pointer;
+              }
+            }
+
+            .control {
+              color: $buttonColor;
+              width: 40px;
+              padding-right: 2px;
+            }
+            
+            .delete {
+              color: $buttonColor2;
+              
+              &:hover {
+                color: $buttonHover;
+                text-shadow: none;
+              }
+            }
+
+            .add,
+            .edit {
+              &:hover {
+                color: $buttonHover2;
+                text-shadow: none;
+              }
+            }
+
+            .one-column-with-roll {
+              width: calc(100% - 58px);
+            }
+
+            .one-column-no-roll {
+              width: calc(100% - 32px);
+            }
+            
+            .two-column-with-roll-primary {
+              width: calc((100% - 58px)*0.75);
+            }
+
+            .two-column-with-roll-secondary {
+              width: calc((100% - 58px)*0.25);
+            }
+
+            .column-x2 {
+              width: 90%;
+              padding-left: 10%;
+            }
+            
+            .small input {
+              height: 17px;
+              color:$inputColor;
+            }
+
+            .small.disabled input {
+              box-shadow: none;
+              cursor: default;
+              color: grey;
+            }
+
+            .list-entry.strike-through {
+              text-decoration: line-through;
+            }
+          }
+        }
+
+        .value-used {
+          height: 17px;
+        }
+
+        .row.equipable {
+          .control {
+            width: 56px;
+          }
+        }
+
+        /*  Actor - Talent Tooltips */
+        .entry.row.talent-tooltip-container,
+        .entry.row.focus-tooltip-container,
+        .entry.row.injury-tooltip-container{
+          overflow-y: hidden;
+          border:.5px dashed $separatorBorders;
+          height: 200px;
+          -webkit-transition: height 0.5s linear, border-width 0.5s linear;
+            -moz-transition: height 0.5s linear, border-width 0.5s linear;
+              -ms-transition: height 0.5s linear, border-width 0.5s linear;
+                -o-transition: height 0.5s linear, border-width 0.5s linear;
+                  transition: height 0.5s linear, border-width 0.5s linear;
+          &.hide {
+            border: 0px dashed $separatorBorders;
+            height: 0px;
+            -webkit-transition: height 0.5s linear, border-width 0.5s linear;
+              -moz-transition: height 0.5s linear, border-width 0.5s linear;
+                -ms-transition: height 0.5s linear, border-width 0.5s linear;
+                  -o-transition: height 0.5s linear, border-width 0.5s linear;
+                    transition: height 0.5s linear, border-width 0.5s linear;
+          }
+        }
+
+/* Item List Ends Here */
