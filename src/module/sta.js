@@ -53,17 +53,16 @@ import {
 import { 
   STATracker 
 } from './apps/tracker.js';
-import * as macros from './macro.js';
 import { 
   STAItem
 } from './items/item.js';
 import {
   register_dsn_ufp_themes
-} from './dice/dice-so-nice.js';
-import {Collapsible} from './chat/Collapsible.js';
+} from './apps/dice-so-nice.js';
+//import {Collapsible} from './chat/Collapsible.js';
 import {
   STARoller
-} from './dice/STARoller.js';
+} from './apps/STARoller.js';
 
 /* -------------------------------------------- */
 /*  Foundry VTT Initialization                  */
@@ -113,8 +112,6 @@ Hooks.once('init', function() {
     entities: {
       STAActor,
     },
-    macros: macros,
-    attributeTest: macros.attributeTest,
     defaultImage: 'systems/sta/assets/icons/voyagercombadgeicon.svg'
   };
 
