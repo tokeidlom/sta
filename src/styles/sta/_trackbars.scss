@@ -1,0 +1,101 @@
+/* Trackbar Starts Here */
+  .track {
+    display: flex;
+    flex-direction: row;
+    
+    .bar:not(.extendedtask) {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+    }
+  }
+
+  .track .bar .box {
+    height: 14px;
+    border: 1px solid $trackbarBorders;
+    border-radius: 14px;
+    border-collapse: collapse;
+    padding: 0px;
+    display: block;
+    font-size: 8pt;
+    text-align: center;
+    font-weight: bold;
+
+    &:hover {
+      box-shadow: 0 0 8px $buttonHover;
+      cursor: pointer;
+    }
+
+    &.stress {
+      background-color: map-get($trackColors, "stress");
+      color: $inlaidText;
+
+      &.selected {
+        background-color: map-get($trackColors, "stressSelected");
+        color: $chatText;
+      }
+    }
+
+    &.determination {
+      background-color: map-get($trackColors, "determination");
+      color: $chatText;
+
+      &.selected {
+        background-color: map-get($trackColors, "determinationSelected");
+        color: $inlaidText;
+      }
+    }
+
+    &.rep {
+      background-color: map-get($trackColors, "rep");
+      color: $chatText;
+
+      &.selected {
+        background-color: map-get($trackColors, "repSelected");
+        color: $inlaidText;
+      }
+    }
+
+    &.shields {
+      background-color: map-get($trackColors, "shields");
+      color: $inlaidText;
+
+      &.selected {
+        background-color: map-get($trackColors, "shieldsSelected");
+        color: $chatText;
+      }
+    }
+
+    &.power {
+      background-color: map-get($trackColors, "power");
+      color: $chatText;
+
+      &.selected {
+        background-color: map-get($trackColors, "powerSelected");
+        color: $inlaidText;
+      }
+    }
+
+    &.crew {
+      background-color: map-get($trackColors, "crew");
+      color: $chatText;
+
+      &.selected {
+        background-color: map-get($trackColors, "crewSelected");
+        color: $inlaidText;
+      }
+    }
+
+    &.extendedtask {
+      height: 28px;
+      font-size: 16pt;
+      background-color: map-get($trackColors, "extendedtask");
+      color: $chatText;
+
+      &.selected {
+        background-color: map-get($trackColors, "extendedtaskSelected");
+        color: $inlaidText;
+      }
+    }
+  }
+/* Trackbar Ends Here */

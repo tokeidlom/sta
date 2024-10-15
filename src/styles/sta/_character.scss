@@ -1,0 +1,75 @@
+/* Character Style Starts Here */
+
+/* Page Styling */
+.split-section {
+  display: flex;
+  width: 100%;
+}
+
+.top-left-column {
+  flex: 0 0 205px;
+  padding-right: 5px;
+  align-self: flex-start;
+}
+
+.top-right-column {
+  flex: 0 0 625px;
+  padding-left: 5px;
+  align-self: flex-start;
+}
+
+.bottom-left-column {
+  flex: 0 0 150px;
+  padding-right: 5px;
+  align-self: flex-start;
+}
+
+.bottom-right-column {
+  flex: 0 0 690px;
+  padding-left: 5px;
+  align-self: flex-start;
+}
+
+.row {
+  display: flex;
+  width: 100%;
+}
+
+.row-right {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  .numeric-entry {
+    width: 30px;
+	text-align: right;
+  }
+}
+
+.title {
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+/* Image Styling */
+.image-field {
+  width: 200px;
+  height: 200px;
+  overflow: hidden;
+}
+
+.profile-img {
+  width: auto;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+/* Name Field Styling */
+.name-field .text-entry {
+  font-size: 2rem;
+  height: 3rem;
+}
+
+
+
+/* Character Style Ends Here */

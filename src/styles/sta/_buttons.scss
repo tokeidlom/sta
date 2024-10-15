@@ -1,0 +1,53 @@
+/* Button Starts Here */
+
+.check-button {
+font-weight: unset;
+font-size: 14px;
+color: #0077af;
+text-align: center;
+background-color: transparent;
+border: solid #0077af;
+border-width: 0 20px;
+width: unset;
+margin: 8px 16px 4px;
+}
+
+  .btn {
+    background-color: $buttonColor;
+    color: $inlaidText;
+    border-radius: 20px;
+    font-weight: bold;
+  
+    &:hover {
+      box-shadow: none;
+      background-color: $buttonHover;
+      cursor: pointer;
+    }
+  }
+
+  .btn2 {
+    background-color: $buttonColor2;
+    color: $inlaidText;
+    border-radius: 20px;
+    font-weight: bold;
+  
+    &:hover {
+      box-shadow: none;
+      background-color: $buttonHover2;
+      cursor: pointer;
+    }
+  }
+  .btn3 {
+    background-color: $buttonColor;
+    color: $inlaidText;
+    border-radius: 20px;
+    font-weight: bold;
+  
+    &:hover {
+      box-shadow: none;
+      background-color: $buttonHover;
+      cursor: pointer;
+    }
+  }
+
+/* Button Ends Here */

@@ -50,16 +50,15 @@ import {
 import {
   STASmallCraftContainerSheet
 } from './items/smallcraftcontainer-sheet.js';
-import { 
-  STATracker 
-} from './apps/tracker.js';
+// import { 
+//   STATracker 
+// } from './apps/tracker.js';
 import { 
   STAItem
 } from './items/item.js';
 import {
   register_dsn_ufp_themes
 } from './apps/dice-so-nice.js';
-//import {Collapsible} from './chat/Collapsible.js';
 import {
   STARoller
 } from './apps/STARoller.js';
