@@ -45,6 +45,9 @@ import {
   STATalentSheet
 } from './items/talent-sheet.js';
 import {
+  STATraitSheet
+} from './items/trait-sheet.js';
+import {
   STAGenericSheet
 } from './items/generic-sheet.js';
 import {
@@ -180,6 +183,9 @@ Hooks.once('init', function() {
   });
   Items.registerSheet('sta', STATalentSheet, {
     types: ['talent'],
+  });
+  Items.registerSheet('sta', STATraitSheet, {
+    types: ['trait'],
   });
   Items.registerSheet('sta', STAGenericSheet, {
     types: ['value'],
