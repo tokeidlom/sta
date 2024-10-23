@@ -1,70 +1,26 @@
 // Import Modules
-import {
-  STAActor
-} from './actors/actor.js';
-import {
-  STACharacterSheet
-} from './actors/sheets/character-sheet.js';
-import {
-  STACharacterSheet2e
-} from './actors/sheets/character-sheet2e.js';
-import {
-  STAStarshipSheet
-} from './actors/sheets/starship-sheet.js';
-import {
-  STAStarshipSheet2e
-} from './actors/sheets/starship-sheet2e.js';
-import {
-  STASmallCraftSheet
-} from './actors/sheets/smallcraft-sheet.js';
-import {
-  STASmallCraftSheet2e
-} from './actors/sheets/smallcraft-sheet2e.js';
-import {
-  STAExtendedTaskSheet
-} from './actors/sheets/extended-task-sheet.js';
-import {
-  STAItemSheet
-} from './items/item-sheet.js';
-import {
-  STACharacterWeaponSheet
-} from './items/character-weapon-sheet.js';
-import {
-  STACharacterWeaponSheet2e
-} from './items/character-weapon-sheet2e.js';
-import {
-  STAStarshipWeaponSheet
-} from './items/starship-weapon-sheet.js';
-import {
-  STAStarshipWeaponSheet2e
-} from './items/starship-weapon-sheet2e.js';
-import {
-  STAArmorSheet
-} from './items/armor-sheet.js';
-import {
-  STATalentSheet
-} from './items/talent-sheet.js';
-import {
-  STATraitSheet
-} from './items/trait-sheet.js';
-import {
-  STAGenericSheet
-} from './items/generic-sheet.js';
-import {
-  STASmallCraftContainerSheet
-} from './items/smallcraftcontainer-sheet.js';
-// import { 
-//   STATracker 
-// } from './apps/tracker.js';
-import { 
-  STAItem
-} from './items/item.js';
-import {
-  register_dsn_ufp_themes
-} from './apps/dice-so-nice.js';
-import {
-  STARoller
-} from './apps/STARoller.js';
+import {STAActor} from './actors/actor.js';
+import {STACharacterSheet} from './actors/sheets/character-sheet.js';
+import {STACharacterSheet2e} from './actors/sheets/character-sheet2e.js';
+import {STAStarshipSheet} from './actors/sheets/starship-sheet.js';
+import {STAStarshipSheet2e} from './actors/sheets/starship-sheet2e.js';
+import {STASmallCraftSheet} from './actors/sheets/smallcraft-sheet.js';
+import {STASmallCraftSheet2e} from './actors/sheets/smallcraft-sheet2e.js';
+import {STAExtendedTaskSheet} from './actors/sheets/extended-task-sheet.js';
+import {STAItemSheet} from './items/item-sheet.js';
+import {STACharacterWeaponSheet} from './items/character-weapon-sheet.js';
+import {STACharacterWeaponSheet2e} from './items/character-weapon-sheet2e.js';
+import {STAStarshipWeaponSheet} from './items/starship-weapon-sheet.js';
+import {STAStarshipWeaponSheet2e} from './items/starship-weapon-sheet2e.js';
+import {STAArmorSheet} from './items/armor-sheet.js';
+import {STATalentSheet} from './items/talent-sheet.js';
+import {STATraitSheet} from './items/trait-sheet.js';
+import {STAGenericSheet} from './items/generic-sheet.js';
+import {STASmallCraftContainerSheet} from './items/smallcraftcontainer-sheet.js';
+// import {STATracker} from './apps/tracker.js';
+import {STAItem} from './items/item.js';
+import {register_dsn_ufp_themes} from './apps/dice-so-nice.js';
+//import {STARoller} from './apps/STARoller.js';
 
 /* -------------------------------------------- */
 /*  Foundry VTT Initialization                  */
@@ -83,9 +39,9 @@ Hooks.once('init', function() {
    ********.:::::::::::.********     
   ********.:::::::::::::.********    
   *******.::::::'***\::::.*******    
-  ******.::::'*********\`::.******    
-   ****.:::'*************\`:.****
-     *.::'*****************\`.*
+  ******.::::'*********\'::.******    
+   ****.:::'*************\':.****
+     *.::'*****************\'.*
      .:'  ***************    .
     .`);
 
@@ -122,16 +78,6 @@ Hooks.once('init', function() {
     formula: '@disciplines.security.value',
     decimals: 0
   };
-
-  // Set up custom challenge dice
-  // CONFIG.sta.CHALLENGE_RESULTS = {
-  //     1: { label: `<img src='systems/sta/assets/icons/ChallengeDie_Success1.svg'/>`, success: 1, effect: 0 },
-  //     2: { label: `<img src='systems/sta/assets/icons/ChallengeDie_Success2.svg'/>`, success: 2, effect: 0 },
-  //     3: { label: `<img src='systems/sta/assets/icons/ChallengeDie_Success0.svg'/>`, success: 0, effect: 0 },
-  //     4: { label: `<img src='systems/sta/assets/icons/ChallengeDie_Success0.svg'/>`, success: 0, effect: 0 },
-  //     5: { label: `<img src='systems/sta/assets/icons/ChallengeDie_Effect.svg'/>`, success: 1, effect: 1 },
-  //     6: { label: `<img src='systems/sta/assets/icons/ChallengeDie_Effect.svg'/>`, success: 1, effect: 1 },
-  //   };
 
   // Define custom Entity classes
   CONFIG.Actor.entityClass = STAActor;

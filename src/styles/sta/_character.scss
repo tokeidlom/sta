@@ -1,6 +1,10 @@
 /* Character Style Starts Here */
 
 /* Page Styling */
+.character-sheet {
+  background: $background;
+}
+
 .split-section {
   display: flex;
   width: 100%;

@@ -12,7 +12,7 @@
 
   .track .bar .box {
     height: 14px;
-    border: 1px solid $trackbarBorders;
+    border: 1px solid $textgrey;
     border-radius: 14px;
     border-collapse: collapse;
     padding: 0px;
@@ -22,79 +22,79 @@
     font-weight: bold;
 
     &:hover {
-      box-shadow: 0 0 8px $buttonHover;
+      box-shadow: 0 0 8px $taskbuttonColor;
       cursor: pointer;
     }
 
     &.stress {
-      background-color: map-get($trackColors, "stress");
-      color: $inlaidText;
+      background-color: $trackColors;
+      color: $textgrey;
 
       &.selected {
-        background-color: map-get($trackColors, "stressSelected");
-        color: $chatText;
+        background-color: $trackColorsselected;
+        color: $textgrey;
       }
     }
 
     &.determination {
-      background-color: map-get($trackColors, "determination");
-      color: $chatText;
+      background-color: $trackColors;
+      color: $textgrey;
 
       &.selected {
-        background-color: map-get($trackColors, "determinationSelected");
-        color: $inlaidText;
+        background-color: $trackColorsselected;
+        color: $textgrey;
       }
     }
 
     &.rep {
-      background-color: map-get($trackColors, "rep");
-      color: $chatText;
+      background-color: $trackColors;
+      color: $textgrey;
 
       &.selected {
-        background-color: map-get($trackColors, "repSelected");
-        color: $inlaidText;
+        background-color: $trackColorsselected;
+        color: $textgrey;
       }
     }
 
     &.shields {
-      background-color: map-get($trackColors, "shields");
-      color: $inlaidText;
+      background-color: $trackColors;
+      color: $textgrey;
 
       &.selected {
-        background-color: map-get($trackColors, "shieldsSelected");
-        color: $chatText;
+        background-color: $trackColorsselected;
+        color: $textgrey;
       }
     }
 
     &.power {
-      background-color: map-get($trackColors, "power");
-      color: $chatText;
+      background-color: $trackColors;
+      color: $textgrey;
 
       &.selected {
-        background-color: map-get($trackColors, "powerSelected");
-        color: $inlaidText;
+        background-color: $trackColorsselected;
+        color: $textgrey;
       }
     }
 
     &.crew {
-      background-color: map-get($trackColors, "crew");
-      color: $chatText;
+      background-color: $trackColors;
+      color: $textgrey;
 
       &.selected {
-        background-color: map-get($trackColors, "crewSelected");
-        color: $inlaidText;
+        background-color: $trackColorsselected;
+        color: $textgrey;
       }
     }
 
     &.extendedtask {
       height: 28px;
       font-size: 16pt;
-      background-color: map-get($trackColors, "extendedtask");
-      color: $chatText;
+      background-color: $trackColors;
+      color: $textgrey;
 
       &.selected {
-        background-color: map-get($trackColors, "extendedtaskSelected");
-        color: $inlaidText;
+        background-color: $trackColorsselected;
+        color: $textgrey;
       }
     }
   }

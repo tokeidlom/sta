@@ -30,16 +30,16 @@
             }
 
             .control {
-              color: $buttonColor;
+              color: $textgrey;
               width: 40px;
               padding-right: 2px;
             }
             
             .delete {
-              color: $buttonColor2;
+              color: $textgrey;
               
               &:hover {
-                color: $buttonHover;
+                color: $deletebuttonHover;
                 text-shadow: none;
               }
             }
@@ -47,7 +47,7 @@
             .add,
             .edit {
               &:hover {
-                color: $buttonHover2;
+                color: $editbuttonHover;
                 text-shadow: none;
               }
             }
@@ -75,7 +75,7 @@
             
             .small input {
               height: 17px;
-              color:$inputColor;
+              color:$textgrey;
             }
 
             .small.disabled input {
@@ -105,7 +105,7 @@
         .entry.row.focus-tooltip-container,
         .entry.row.injury-tooltip-container{
           overflow-y: hidden;
-          border:.5px dashed $separatorBorders;
+          border:.5px dashed $textgrey;
           height: 200px;
           -webkit-transition: height 0.5s linear, border-width 0.5s linear;
             -moz-transition: height 0.5s linear, border-width 0.5s linear;
@@ -113,7 +113,7 @@
                 -o-transition: height 0.5s linear, border-width 0.5s linear;
                   transition: height 0.5s linear, border-width 0.5s linear;
           &.hide {
-            border: 0px dashed $separatorBorders;
+            border: 0px dashed $textgrey;
             height: 0px;
             -webkit-transition: height 0.5s linear, border-width 0.5s linear;
               -moz-transition: height 0.5s linear, border-width 0.5s linear;
