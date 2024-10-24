@@ -51,9 +51,6 @@ export class STAStarshipSheet2e extends ActorSheet {
     if (sheetData.system.shields.value > sheetData.system.shields.max) {
       sheetData.system.shields.value = sheetData.system.shields.max;
     }
-    if (sheetData.system.power.value > sheetData.system.power.max) {
-      sheetData.system.power.value = sheetData.system.power.max;
-    }
     if (sheetData.system.crew.value > sheetData.system.crew.max) {
       sheetData.system.crew.value = sheetData.system.crew.max;
     }
@@ -70,9 +67,6 @@ export class STAStarshipSheet2e extends ActorSheet {
     // Checks if shields is below 0, if so - set it to 0.
     if (sheetData.system.shields.value < 0) {
       sheetData.system.shields.value = 0;
-    }
-    if (sheetData.system.power.value < 0) {
-      sheetData.system.power.value = 0;
     }
     if (sheetData.system.crew.value < 0) {
       sheetData.system.crew.value = 0;
@@ -99,7 +93,6 @@ export class STAStarshipSheet2e extends ActorSheet {
     // We use i alot in for loops. Best to assign it now for use later in multiple places.
     let i;
     let shieldsTrackMax = 0;
-    let powerTrackMax = 0;
     let crewTrackMax = 0;
 
     // This creates a dynamic Shields tracker. It polls for the value of the structure system and security department. 
@@ -133,30 +126,6 @@ export class STAStarshipSheet2e extends ActorSheet {
       }
     }
     shieldsTrackUpdate();
-
-    // This creates a dynamic Power tracker. It polls for the value of the engines system. 
-    // With the value, creates a new div for each and places it under a child called "bar-power-renderer".
-    function powerTrackUpdate() {
-//      powerTrackMax = parseInt(html.find('#engines')[0].value);
-      powerTrackMax = 0;
-//      if (html.find('[data-talent-name*="Secondary Reactors"]').length > 0) {
-//        powerTrackMax += 5;
-//      }
-      // This checks that the max-power hidden field is equal to the calculated Max Power value, if not it makes it so.
-      if (html.find('#max-power')[0].value != powerTrackMax) {
-        html.find('#max-power')[0].value = powerTrackMax;
-      }
-      html.find('#bar-power-renderer').empty();
-      for (i = 1; i <= powerTrackMax; i++) {
-        const div = document.createElement('DIV');
-        div.className = 'box';
-        div.id = 'power-' + i;
-        div.innerHTML = i;
-        div.style = 'width: calc(100% / ' + html.find('#max-power')[0].value + ');';
-        html.find('#bar-power-renderer')[0].appendChild(div);
-      }
-    }
-    powerTrackUpdate();
 
     // This creates a dynamic Crew Support tracker. It polls for the value of the ships's scale. 
     // With the value, creates a new div for each and places it under a child called "bar-crew-renderer".
@@ -196,7 +165,7 @@ export class STAStarshipSheet2e extends ActorSheet {
 
     // Fires the function staRenderTracks as soon as the parameters exist to do so.
     staActor.staRenderTracks(html, null, null, null, 
-      shieldsTrackMax, powerTrackMax, crewTrackMax);
+      shieldsTrackMax, crewTrackMax);
 
     // This allows for each item-edit image to link open an item sheet. This uses Simple Worldbuilding System Code.
     html.find('.control .edit').click((ev) => {
@@ -313,38 +282,6 @@ export class STAStarshipSheet2e extends ActorSheet {
         total = html.find('#total-shields')[0].value;
         if (total != newTotal) {
           html.find('#total-shields')[0].value = newTotal;
-          this.submit();
-        }
-      }
-    });
-
-    // Reads if a power track box has been clicked, and if it has will either: set the value to the clicked box, or reduce the value by one.
-    // This check is dependent on various requirements, see comments in code.
-    html.find('[id^="power"]').click((ev) => {
-      let total = '';
-      const newTotalObject = $(ev.currentTarget)[0];
-      const newTotal = newTotalObject.id.substring('power-'.length);
-      // data-selected stores whether the track box is currently activated or not. This checks that the box is activated
-      if (newTotalObject.getAttribute('data-selected') === 'true') {
-        // Now we check that the "next" track box is not activated. 
-        // If there isn't one, or it isn't activated, we only want to decrease the value by 1 rather than setting the value.
-        const nextCheck = 'power-' + (parseInt(newTotal) + 1);
-        if (!html.find('#'+nextCheck)[0] || html.find('#'+nextCheck)[0].getAttribute('data-selected') != 'true') {
-          html.find('#total-power')[0].value = html.find('#total-power')[0].value - 1;
-          this.submit();
-        // If it isn't caught by the if, the next box is likely activated. If something happened, its safer to set the value anyway.
-        } else {
-          total = html.find('#total-power')[0].value;
-          if (total != newTotal) {
-            html.find('#total-power')[0].value = newTotal;
-            this.submit();
-          }
-        }
-      // If the clicked box wasn't activated, we need to activate it now.
-      } else {
-        total = html.find('#total-power')[0].value;
-        if (total != newTotal) {
-          html.find('#total-power')[0].value = newTotal;
           this.submit();
         }
       }
