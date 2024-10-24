@@ -5,6 +5,22 @@
   background: $background;
 }
 
+.text-entry {
+  border-color: $borderblue;
+}
+
+.title {
+  margin-top: 5px;
+  font-weight: bold;
+  background-color: $borderblue;
+  margin-right: 2px;
+}
+
+.tracktitle {
+  margin-top: 5px;
+  font-weight: bold;
+}
+
 .split-section {
   display: flex;
   width: 100%;
@@ -136,19 +152,6 @@
   width: 20%;
 }
 
-.stressmod {
-  display: flex;
-  margin-top: 40px;
-}
-
-.stressmod .title {
-  margin-right: 5px;
-}
-
-.stressmod .text-entry {
-  width: 30px;
-}
-
 .items-column-left {
   display: flex;
   flex-direction: column;
@@ -174,11 +177,6 @@
   }
 }
 
-.title {
-  margin-top: 5px;
-  font-weight: bold;
-}
-
 .attribute-block {
   margin-bottom: 10px;
 }
@@ -189,13 +187,25 @@
 
 .rollrepnotdis {
   display: flex;
-  align-items: center; /* Vertically centers the text and checkbox */
-  justify-content: flex-start; /* Ensures the text stays on the left and checkbox stays on the right */
+  align-items: center;
+  justify-content: flex-start;
   margin-bottom: 40px;
 }
 
 .rollrepnotdis .checkbox {
-  margin-left: 10px; /* Adds some space between the text and the checkbox */
+  margin-left: 10px;
+}
+
+.stressmod {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 40px;
+}
+
+.stressmod .text-entry {
+  width: 30px;
+  margin-left: 10px;
 }
 
 /* Image Styling */

@@ -1,15 +1,113 @@
-<form class="{{cssClass}}" autocomplete="off">
-    <div class="main-content">
-        <div class="header">
-            <div class="lcars-column">
-                <div class="lcars-header-block1"></div>
-                <div class="lcars-header-block2"></div>
-            </div>
-            <div class="header-fields">
-                <div class="row">
-                    <div class="column title" style="width:50%">
-                        {{localize 'sta.actor.starship.name'}}
+<form class="character-sheet" autocomplete="off">
+  <div class="split-section">
+    <div class="top-left-column">
+      <div class="image-field">
+        <img class="profile-img" src="{{img}}" data-edit="img" title="{{name}}" />
+      </div>
+    </div>
+
+    <div class="top-right-column">
+      <div class="name-field">
+        <div class="title">{{localize 'sta.actor.starship.name'}}</div>
+        <input name="name" class="text-entry" type="text" value="{{name}}" placeholder="{{localize 'sta.actor.starship.name'}}" />
+      </div>
+
+
+                        <div class="tracktitle">
+                            {{localize 'sta.actor.starship.shields'}}
+                        </div>
+                        <div class="track">
+                            <input type="hidden" id="total-shields" name="system.shields.value" value="{{system.shields.value}}" data-dtype="Number" />
+                            <input type="hidden" id="max-shields" name="system.shields.max" value="{{system.shields.max}}" data-dtype="Number" />
+                            <div id="bar-shields-renderer" class=" bar"></div>
+                        </div>
+
+                        <div class="tracktitle">
+                            {{localize 'sta.actor.starship.crew'}}
+                        </div>
+                        <div class="track">
+                            <input type="hidden" id="total-crew" name="system.crew.value" value="{{system.crew.value}}" data-dtype="Number" />
+                            <input type="hidden" id="max-crew" name="system.crew.max" value="{{system.crew.max}}" data-dtype="Number" />
+                            <div class="bar">
+                                <div id="bar-crew-renderer" class="bar"></div>
+                            </div>
+                        </div>
+
+    </div>
+  </div>
+  <div class="split-section">
+    <div class="bottom-left-column">
+      <div class="attribute-block">
+                        <div class="title">
+                            {{localize 'sta.actor.starship.system.title'}}
+                        </div>
+                        <div class="stat header row">
+                            <div class="selector-space"></div>
+                            <div class="text secondary-title">{{localize 'sta.actor.starship.system.name'}}</div>
+                            <div class="field secondary-title">{{localize 'sta.actor.attdis.mod'}}</div>
+                            <div class="field secondary-title">{{localize 'sta.actor.starship.system.breaches'}}</div>
+                        </div>
+                        {{#each system.systems as |system key|}}
+                        <div class="stat row">
+                            <input class="selector system" id="{{key}}.selector" type="checkbox" name="system.systems.{{key}}.selected" data-dtype="Boolean" {{checked system.selected}}>
+                            <div class="text list-entry"> {{localize system.label}} </div>
+                            <input class="field numeric-entry" id="{{key}}" name="system.systems.{{key}}.value" type="number" value="{{system.value}}" />
+                            <input class="field numeric-entry breaches" id="{{key}}.breaches" name="system.systems.{{key}}.breaches" type="number" value="{{system.breaches}}" />
+                        </div>
+                        {{/each}}
+</div>
+      <div class="discipline-block">
+                        <div class="title">
+                            {{localize 'sta.actor.starship.department.title'}}
+                        </div>
+                        <div class="stat header row">
+                            <div class="field secondary-title">{{localize 'sta.actor.attdis.mod'}}</div>
+                            <div class="text secondary-title">{{localize 'sta.actor.starship.department.name'}}</div>
+                            <div class="selector-space"></div>
+                        </div>
+                        {{#each system.departmentorder2e as |key|}}
+                        {{#with (lookup ../system.departments key)}}
+                        <div class="stat row">
+                            <input class="field numeric-entry" id="{{key}}" name="system.departments.{{key}}.value" type="text" value="{{value}}" placeholder="Name" />
+                            <div class="text list-entry"> {{localize label}} </div>
+                            <input class="selector department" id="{{key}}.selector" type="checkbox" name="system.departments.{{key}}.selected" data-dtype="Boolean" {{checked selected}}>
+                        </div>
+                        {{/with}}
+                        {{/each}}
+</div>
+
+                        <div class="check-button btn attribute">{{localize 'sta.actor.attdis.task'}}</div>
+
+      <div class="stressmod">
+
+                    <div class="column title" style="width:20%">
+                        <div> {{localize 'sta.actor.starship.shieldcrewmod'}} </div>
                     </div>
+
+                    <div class="column" style="width:10%">
+                        <input class="text-entry" name="system.shieldmod" id="shieldmod" type="number" value="{{system.shieldmod}}" placeholder="0" />
+                    </div>
+                    <div class="column" style="width:10%">
+                        <input class="text-entry" name="system.crwmod" id="crwmod" type="number" value="{{system.crwmod}}" placeholder="0" />
+                    </div>
+
+</div>
+</div>
+
+    <div class="bottom-right-column">
+      <nav class="sheet-tabs tabs" data-group="primary">
+        <a class="item" data-tab="tab1">{{localize 'sta.actor.character.character'}}</a>
+        <a class="item" data-tab="tab2">{{localize 'sta.actor.character.traits'}}</a>
+        <a class="item" data-tab="tab3">{{localize 'sta.actor.note.title'}}</a>
+      </nav>
+
+      <section class="sheet-body">
+        <div class="tab tab1" data-group="primary" data-tab="tab1">
+          <!-- Content for Tab 1 -->
+          <div class="row">
+
+
+
                     <div class="column title" style="width:25%">
                         {{localize 'sta.actor.starship.designation'}}
                     </div>
@@ -18,9 +116,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="column" style="width:50%">
-                        <input name="name" class="text-entry" type="text" value="{{name}}" placeholder="{{localize 'sta.actor.starship.name'}}" />
-                    </div>
+
                     <div class="column" style="width:25%">
                         <input name="system.designation" class="text-entry" type="text" value="{{system.designation}}" placeholder="{{localize 'sta.actor.starship.designation'}}" />
                     </div>
@@ -54,52 +150,14 @@
                     <div class="column title" style="width:80%">
                         <div> {{localize 'sta.actor.starship.traits'}} </div>
                     </div>
-                    <div class="column title" style="width:20%">
-                        <div> {{localize 'sta.actor.starship.shieldcrewmod'}} </div>
-                    </div>
+
                 </div>
                 <div class="row">
                     <div class="column" style="width:80%">
                         <input name="system.traits" class="text-entry" type="text" value="{{system.traits}}" placeholder="{{localize 'sta.actor.starship.traits'}}" />
                     </div>
-                    <div class="column" style="width:10%">
-                        <input class="text-entry" name="system.shieldmod" id="shieldmod" type="number" value="{{system.shieldmod}}" placeholder="0" />
-                    </div>
-                    <div class="column" style="width:10%">
-                        <input class="text-entry" name="system.crwmod" id="crwmod" type="number" value="{{system.crwmod}}" placeholder="0" />
-                    </div>
-                </div>
-                </div>
-            </div>
-        </div>
-        <div class="main">
-            <div class="row">
-                <div class="lcars-column">
-                    <div class="lcars-attribute-title-block"></div>
-                    <div class="lcars-attribute-general-block1"></div>
-                    <div class="lcars-attribute-general-block2"></div>
-                    <div class="lcars-attribute-general-block3"></div>
-                </div>
-                <div class="column left-column">
-                    <div class="section system">
-                        <div class="title">
-                            {{localize 'sta.actor.starship.system.title'}}
-                        </div>
-                        <div class="stat header row">
-                            <div class="selector-space"></div>
-                            <div class="text secondary-title">{{localize 'sta.actor.starship.system.name'}}</div>
-                            <div class="field secondary-title">{{localize 'sta.actor.attdis.mod'}}</div>
-                            <div class="field secondary-title">{{localize 'sta.actor.starship.system.breaches'}}</div>
-                        </div>
-                        {{#each system.systems as |system key|}}
-                        <div class="stat row">
-                            <input class="selector system" id="{{key}}.selector" type="checkbox" name="system.systems.{{key}}.selected" data-dtype="Boolean" {{checked system.selected}}>
-                            <div class="text list-entry"> {{localize system.label}} </div>
-                            <input class="field numeric-entry" id="{{key}}" name="system.systems.{{key}}.value" type="number" value="{{system.value}}" />
-                            <input class="field numeric-entry breaches" id="{{key}}.breaches" name="system.systems.{{key}}.breaches" type="number" value="{{system.breaches}}" />
-                        </div>
-                        {{/each}}
-                    </div>
+
+
                     <div class="section reservepower">
                         <div class="title">
                             {{localize 'sta.actor.starship.reservepower'}}:
@@ -119,55 +177,7 @@
                         </div>
                         <input class="checkbox" type="checkbox" name="system.shaken" data-dtype="Boolean" {{checked system.shaken}}>
                     </div>
-                </div>
-                <div class="column center-column">
-                    <div class="section sheilds">
-                        <div class="title">
-                            {{localize 'sta.actor.starship.shields'}}
-                        </div>
-                        <div class="track">
-                            <input type="hidden" id="total-shields" name="system.shields.value" value="{{system.shields.value}}" data-dtype="Number" />
-                            <input type="hidden" id="max-shields" name="system.shields.max" value="{{system.shields.max}}" data-dtype="Number" />
-                            <div id="bar-shields-renderer" class=" bar"></div>
-                        </div>
-                    </div>
-                    <div class="section img">
-                        <img class="profile-img" src="{{img}}" data-edit="img" title="{{name}}" />
-                        <div class="check-button btn attribute">{{localize 'sta.actor.attdis.task'}}</div>
-                    </div>
-                    <div class="section crew">
-                        <div class="title">
-                            {{localize 'sta.actor.starship.crew'}}
-                        </div>
-                        <div class="track">
-                            <input type="hidden" id="total-crew" name="system.crew.value" value="{{system.crew.value}}" data-dtype="Number" />
-                            <input type="hidden" id="max-crew" name="system.crew.max" value="{{system.crew.max}}" data-dtype="Number" />
-                            <div class="bar">
-                                <div id="bar-crew-renderer" class="bar"></div>
-                            </div>
-                        </div>
-                    </div> 
-                </div>
-                <div class="column right-column">
-                    <div class="section department">
-                        <div class="title">
-                            {{localize 'sta.actor.starship.department.title'}}
-                        </div>
-                        <div class="stat header row">
-                            <div class="field secondary-title">{{localize 'sta.actor.attdis.mod'}}</div>
-                            <div class="text secondary-title">{{localize 'sta.actor.starship.department.name'}}</div>
-                            <div class="selector-space"></div>
-                        </div>
-                        {{#each system.departmentorder2e as |key|}}
-                        {{#with (lookup ../system.departments key)}}
-                        <div class="stat row">
-                            <input class="field numeric-entry" id="{{key}}" name="system.departments.{{key}}.value" type="text" value="{{value}}" placeholder="Name" />
-                            <div class="text list-entry"> {{localize label}} </div>
-                            <input class="selector department" id="{{key}}.selector" type="checkbox" name="system.departments.{{key}}.selected" data-dtype="Boolean" {{checked selected}}>
-                        </div>
-                        {{/with}}
-                        {{/each}}
-                    </div>
+
                     <div class="section scale2e">
                         <div class="title">
                             {{localize 'sta.actor.starship.scale'}}:
@@ -182,13 +192,13 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="lcars-column">
-                    <div class="lcars-item1-top-block"></div>
-                    <div class="lcars-item1-connect-block"></div>
-                    <div class="lcars-item1-general-block"></div>
-                </div>
-                <div class="column left-column">
+
+
+        <div class="tab tab2" data-group="primary" data-tab="tab2">
+          <!-- Content for Tab 2 -->
+
+
+
                     <div class="section talents">
                         <div class="title">
                             {{localize 'sta.item.talent.title'}}
