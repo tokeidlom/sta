@@ -1,51 +1,53 @@
 /* Button Starts Here */
 
 .check-button {
-font-weight: unset;
-font-size: 14px;
-color: $taskbuttonColor;
-text-align: center;
-background-color: transparent;
-border: solid $taskbuttonColor;
-border-width: 0 20px;
-width: unset;
-margin: 8px 16px 4px;
+  font-weight: unset;
+  font-size: 14px;
+  color: $textgrey;
+  text-align: center;
+  background-color: transparent;
 }
 
   .btn {
-    background-color: transparent;
-    color: $taskbuttonColor;
+    border: solid $taskbuttonColor;
+    border-width: 0 20px;
+    width: unset;
+    margin: 8px 16px 4px;
     border-radius: 20px;
     font-weight: bold;
   
     &:hover {
       box-shadow: none;
-      background-color: $taskbuttonHover;
+      background-color: $taskbuttonColor;
       cursor: pointer;
     }
   }
 
   .btn2 {
-    background-color: transparent;
-    color: $challengebuttonColor;
+    border: solid $challengebuttonColor;
+    border-width: 0 20px;
+    width: unset;
+    margin: 8px 16px 4px;
     border-radius: 20px;
     font-weight: bold;
   
     &:hover {
       box-shadow: none;
-      background-color: $challengebuttonHover;
+      background-color: $challengebuttonColor;
       cursor: pointer;
     }
   }
   .btn3 {
-    background-color: transparent;
-    color: $acclaimbuttonColor;
+    border: solid $acclaimbuttonColor;
+    border-width: 0 20px;
+    width: unset;
+    margin: 8px 16px 4px;
     border-radius: 20px;
     font-weight: bold;
   
     &:hover {
       box-shadow: none;
-      background-color: $acclaimbuttonHover;
+      background-color: $acclaimbuttonColor;
       cursor: pointer;
     }
   }

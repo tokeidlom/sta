@@ -4,6 +4,7 @@
           .row {
             .image {
               width: 26px;
+			  margin-right: 5px;
 
               img {
                 width: 24px;
@@ -61,11 +62,11 @@
             }
             
             .two-column-with-roll-primary {
-              width: calc((100% - 58px)*0.75);
+              width: calc((100% - 58px)*0.85);
             }
 
             .two-column-with-roll-secondary {
-              width: calc((100% - 58px)*0.25);
+              width: calc((100% - 58px)*0.15);
             }
 
             .column-x2 {
@@ -96,7 +97,7 @@
 
         .row.equipable {
           .control {
-            width: 56px;
+            width: 506px;
           }
         }
 
