@@ -81,6 +81,9 @@ import {
   Collapsible
 } from './apps/Collapsible.mjs';
 import {
+  RerollHandler
+} from './apps/reroll.mjs';
+import {
   STARoll
 } from './apps/roll.js';
 
@@ -439,8 +442,10 @@ Hooks.once('init', function() {
   });
 
   preloadHandlebarsTemplates();
+
   Hooks.on('renderChatMessageHTML', (msg, html, data) => {
     Collapsible.attachHeaderListener(html);
+    RerollHandler.attachListeners(html);
   });
 
   Hooks.once('renderSidebar', function() {
