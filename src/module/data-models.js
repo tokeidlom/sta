@@ -31,54 +31,15 @@ function createSystemSchema(labelKey, initialValue = 7, selected = false) {
 }
 
 // ============================================================================
-// BASE CLASSES FOR TEMPLATE INHERITANCE
-// ============================================================================
-
-class CommonActorData extends foundry.abstract.TypeDataModel {
-  static defineSchema() {
-    const fields = foundry.data.fields;
-    return {
-      notes: new fields.StringField({ initial: "" })
-    };
-  }
-}
-
-class CommonItemData extends foundry.abstract.TypeDataModel {
-  static defineSchema() {
-    const fields = foundry.data.fields;
-    return {
-      description: new fields.StringField({ initial: "" })
-    };
-  }
-}
-
-// ============================================================================
 // ACTOR DATA MODELS
 // ============================================================================
 
-export class CharacterData extends CommonActorData {
+export class CharacterData extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
-    const parentSchema = super.defineSchema();
-    
     return {
-      ...parentSchema,
       assignment: new fields.StringField({ initial: "" }),
-      
-      attributes: new fields.SchemaField({
-        control: createAttributeSchema("sta.actor.character.attribute.control", 7, true),
-        daring: createAttributeSchema("sta.actor.character.attribute.daring"),
-        fitness: createAttributeSchema("sta.actor.character.attribute.fitness"),
-        insight: createAttributeSchema("sta.actor.character.attribute.insight"),
-        presence: createAttributeSchema("sta.actor.character.attribute.presence"),
-        reason: createAttributeSchema("sta.actor.character.attribute.reason")
-      }),
-      
-      determination: new fields.SchemaField({
-        value: new fields.NumberField({ required: true, integer: true, initial: 1 }),
-        max: new fields.NumberField({ required: true, integer: true, initial: 3 })
-      }),
-      
+
       disciplineorder: new fields.ArrayField(
         new fields.StringField(),
         { initial: ["command", "conn", "security", "engineering", "science", "medicine"] }
@@ -88,7 +49,16 @@ export class CharacterData extends CommonActorData {
         new fields.StringField(),
         { initial: ["command", "conn", "engineering", "security", "medicine", "science"] }
       ),
-      
+
+      attributes: new fields.SchemaField({
+        control: createAttributeSchema("sta.actor.character.attribute.control", 7, true),
+        daring: createAttributeSchema("sta.actor.character.attribute.daring"),
+        fitness: createAttributeSchema("sta.actor.character.attribute.fitness"),
+        insight: createAttributeSchema("sta.actor.character.attribute.insight"),
+        presence: createAttributeSchema("sta.actor.character.attribute.presence"),
+        reason: createAttributeSchema("sta.actor.character.attribute.reason")
+      }),
+
       disciplines: new fields.SchemaField({
         command: createDisciplineSchema("sta.actor.character.discipline.command", 0, true),
         conn: createDisciplineSchema("sta.actor.character.discipline.conn"),
@@ -97,13 +67,23 @@ export class CharacterData extends CommonActorData {
         science: createDisciplineSchema("sta.actor.character.discipline.science"),
         security: createDisciplineSchema("sta.actor.character.discipline.security")
       }),
-      
+
+      determination: new fields.SchemaField({
+        value: new fields.NumberField({ required: true, integer: true, initial: 1 }),
+        max: new fields.NumberField({ required: true, integer: true, initial: 3 })
+      }),
+
+      stress: new fields.SchemaField({
+        value: new fields.NumberField({ required: true, integer: true, initial: 0 })
+      }),
+
+      reputation: new fields.NumberField({ required: true, integer: true, initial: 3 }),
+
       environment: new fields.StringField({ initial: "" }),
       milestones: new fields.StringField({ initial: "" }),
       pronouns: new fields.StringField({ initial: "" }),
       characterrole: new fields.StringField({ initial: "" }),
       rank: new fields.StringField({ initial: "" }),
-      reputation: new fields.NumberField({ required: true, integer: true, initial: 3 }),
       acclaim: new fields.NumberField({ required: true, integer: true, initial: 0 }),
       reprimand: new fields.NumberField({ required: true, integer: true, initial: 0 }),
       species: new fields.StringField({ initial: "" }),
@@ -121,11 +101,7 @@ export class CharacterData extends CommonActorData {
       wealth: new fields.NumberField({ required: true, integer: true, initial: 0 }),
       legacy: new fields.StringField({ initial: "" }),
       traits: new fields.StringField({ initial: "" }),
-      
-      stress: new fields.SchemaField({
-        value: new fields.NumberField({ required: true, integer: true, initial: 0 })
-      }),
-      
+      notes: new fields.StringField({ initial: "" }),
       strmod: new fields.NumberField({ required: true, integer: true, initial: 0 }),
       rollrepnotdis: new fields.BooleanField({ initial: false }),
       upbringing: new fields.StringField({ initial: "" })
@@ -133,17 +109,10 @@ export class CharacterData extends CommonActorData {
   }
 }
 
-export class StarshipData extends CommonActorData {
+export class StarshipData extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
-    const parentSchema = super.defineSchema();
-    
     return {
-      ...parentSchema,
-      
-      crew: new fields.SchemaField({
-        value: new fields.NumberField({ required: true, integer: true, initial: 0 })
-      }),
       
       departmentorder: new fields.ArrayField(
         new fields.StringField(),
@@ -163,29 +132,7 @@ export class StarshipData extends CommonActorData {
         science: createDisciplineSchema("sta.actor.starship.department.science"),
         security: createDisciplineSchema("sta.actor.starship.department.security")
       }),
-      
-      designation: new fields.StringField({ initial: "" }),
-      missionprofile: new fields.StringField({ initial: "" }),
-      
-      power: new fields.SchemaField({
-        value: new fields.NumberField({ required: true, integer: true, initial: 0 })
-      }),
-      
-      refit: new fields.StringField({ initial: "" }),
-      resistance: new fields.NumberField({ required: true, integer: true, initial: 0 }),
-      scale: new fields.NumberField({ required: true, integer: true, initial: 1 }),
-      
-      shields: new fields.SchemaField({
-        value: new fields.NumberField({ required: true, integer: true, initial: 0 })
-      }),
-      
-      shieldmod: new fields.NumberField({ required: true, integer: true, initial: 0 }),
-      crwmod: new fields.NumberField({ required: true, integer: true, initial: 0 }),
-      reservepower: new fields.BooleanField({ initial: true }),
-      shaken: new fields.BooleanField({ initial: false }),
-      servicedate: new fields.StringField({ initial: "" }),
-      spaceframe: new fields.StringField({ initial: "" }),
-      
+
       systems: new fields.SchemaField({
         communications: createSystemSchema("sta.actor.starship.system.communications", 7, true),
         computers: createSystemSchema("sta.actor.starship.system.computers"),
@@ -194,25 +141,47 @@ export class StarshipData extends CommonActorData {
         structure: createSystemSchema("sta.actor.starship.system.structure"),
         weapons: createSystemSchema("sta.actor.starship.system.weapons")
       }),
-      
+
+      crew: new fields.SchemaField({
+        value: new fields.NumberField({ required: true, integer: true, initial: 0 })
+      }),
+
+      power: new fields.SchemaField({
+        value: new fields.NumberField({ required: true, integer: true, initial: 0 })
+      }),
+
+      shields: new fields.SchemaField({
+        value: new fields.NumberField({ required: true, integer: true, initial: 0 })
+      }),
+
+      designation: new fields.StringField({ initial: "" }),
+      missionprofile: new fields.StringField({ initial: "" }),
+      refit: new fields.StringField({ initial: "" }),
+      resistance: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+      scale: new fields.NumberField({ required: true, integer: true, initial: 1 }),
+      shieldmod: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+      crwmod: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+      reservepower: new fields.BooleanField({ initial: true }),
+      shaken: new fields.BooleanField({ initial: false }),
+      servicedate: new fields.StringField({ initial: "" }),
+      spaceframe: new fields.StringField({ initial: "" }),
+      notes: new fields.StringField({ initial: "" }),
       traits: new fields.StringField({ initial: "" })
     };
   }
 }
 
-export class ExtendedTaskData extends CommonActorData {
+export class ExtendedTaskData extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
-    const parentSchema = super.defineSchema();
-    
     return {
-      ...parentSchema,
       magnitude: new fields.NumberField({ required: true, integer: true, initial: 1 }),
       difficulty: new fields.NumberField({ required: true, integer: true, initial: 0 }),
       work: new fields.NumberField({ required: true, integer: true, initial: 1 }),
       resistance: new fields.NumberField({ required: true, integer: true, initial: 0 }),
       breakthroughs: new fields.NumberField({ required: true, integer: true, initial: 0 }),
-      workprogress: new fields.NumberField({ required: true, integer: true, initial: 0 })
+      workprogress: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+      description: new fields.StringField({ initial: "" })
     };
   }
 }
@@ -240,26 +209,7 @@ export class SmallCraftData extends foundry.abstract.TypeDataModel {
         science: createDisciplineSchema("sta.actor.starship.department.science"),
         security: createDisciplineSchema("sta.actor.starship.department.security")
       }),
-      
-      missionprofile: new fields.StringField({ initial: "" }),
-      parentShip: new fields.StringField({ initial: "" }), // CHANGED from 'parent'
-      
-      power: new fields.SchemaField({
-        value: new fields.NumberField({ required: true, integer: true, initial: 0 })
-      }),
-      
-      resistance: new fields.NumberField({ required: true, integer: true, initial: 1 }),
-      scale: new fields.NumberField({ required: true, integer: true, initial: 1 }),
-      reservepower: new fields.BooleanField({ initial: true }),
-      shaken: new fields.BooleanField({ initial: false }),
-      
-      shields: new fields.SchemaField({
-        value: new fields.NumberField({ required: true, integer: true, initial: 0 })
-      }),
-      
-      shieldmod: new fields.NumberField({ required: true, integer: true, initial: 0 }),
-      spaceframe: new fields.StringField({ initial: "" }),
-      
+
       systems: new fields.SchemaField({
         communications: createSystemSchema("sta.actor.starship.system.communications", 7, true),
         computers: createSystemSchema("sta.actor.starship.system.computers"),
@@ -268,17 +218,35 @@ export class SmallCraftData extends foundry.abstract.TypeDataModel {
         structure: createSystemSchema("sta.actor.starship.system.structure"),
         weapons: createSystemSchema("sta.actor.starship.system.weapons")
       }),
-      
+
+      power: new fields.SchemaField({
+        value: new fields.NumberField({ required: true, integer: true, initial: 0 })
+      }),
+
+      shields: new fields.SchemaField({
+        value: new fields.NumberField({ required: true, integer: true, initial: 0 })
+      }),
+
+      refit: new fields.StringField({ initial: "" }),
+      missionprofile: new fields.StringField({ initial: "" }),
+      parentShip: new fields.StringField({ initial: "" }), // CHANGED from 'parent'
+      resistance: new fields.NumberField({ required: true, integer: true, initial: 1 }),
+      scale: new fields.NumberField({ required: true, integer: true, initial: 1 }),
+      reservepower: new fields.BooleanField({ initial: true }),
+      shaken: new fields.BooleanField({ initial: false }),
+      shieldmod: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+      spaceframe: new fields.StringField({ initial: "" }),
+      servicedate: new fields.StringField({ initial: "" }),
+      designation: new fields.StringField({ initial: "" }),
+      notes: new fields.StringField({ initial: "" }),
       traits: new fields.StringField({ initial: "" })
     };
   }
 }
 
-export class SceneTraitsData extends CommonActorData {
+export class SceneTraitsData extends foundry.abstract.TypeDataModel {
   static defineSchema() {
-    const parentSchema = super.defineSchema();
     return {
-      ...parentSchema
     };
   }
 }
@@ -287,52 +255,17 @@ export class SceneTraitsData extends CommonActorData {
 // ITEM DATA MODELS
 // ============================================================================
 
-export class ItemData extends CommonItemData {
+export class CharacterWeaponData extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
-    const parentSchema = super.defineSchema();
-    
     return {
-      ...parentSchema,
-      quantity: new fields.NumberField({ required: true, integer: true, initial: 1 }),
-      opportunity: new fields.NumberField({ required: true, integer: true, initial: 0 }),
-      escalation: new fields.NumberField({ required: true, integer: true, initial: 0 })
-    };
-  }
-}
-
-export class FocusData extends CommonItemData {
-  static defineSchema() {
-    const parentSchema = super.defineSchema();
-    return {
-      ...parentSchema
-    };
-  }
-}
-
-export class ValueData extends CommonItemData {
-  static defineSchema() {
-    const fields = foundry.data.fields;
-    const parentSchema = super.defineSchema();
-    
-    return {
-      ...parentSchema,
-      used: new fields.BooleanField({ initial: false })
-    };
-  }
-}
-
-export class CharacterWeaponData extends CommonItemData {
-  static defineSchema() {
-    const fields = foundry.data.fields;
-    const parentSchema = super.defineSchema();
-    
-    return {
-      ...parentSchema,
       damage: new fields.NumberField({ required: true, integer: true, initial: 0 }),
       range: new fields.StringField({ initial: "melee" }),
       hands: new fields.NumberField({ required: true, integer: true, initial: 1 }),
-      
+      description: new fields.StringField({ initial: "" }),
+      opportunity: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+      escalation: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+
       qualities: new fields.SchemaField({
         area: new fields.BooleanField({ initial: false }),
         intense: new fields.BooleanField({ initial: false }),
@@ -347,25 +280,21 @@ export class CharacterWeaponData extends CommonItemData {
         nonlethal: new fields.BooleanField({ initial: false }),
         hiddenx: new fields.NumberField({ required: true, integer: true, initial: 0 }),
         piercingx: new fields.NumberField({ required: true, integer: true, initial: 0 }),
-        viciousx: new fields.NumberField({ required: true, integer: true, initial: 0 }),
-        opportunity: new fields.NumberField({ required: true, integer: true, initial: 0 }),
-        escalation: new fields.NumberField({ required: true, integer: true, initial: 0 })
+        viciousx: new fields.NumberField({ required: true, integer: true, initial: 0 })
       })
     };
   }
 }
 
-export class CharacterWeapon2eData extends CommonItemData {
+export class CharacterWeapon2eData extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
-    const parentSchema = super.defineSchema();
-    
     return {
-      ...parentSchema,
       damage: new fields.NumberField({ required: true, integer: true, initial: 0 }),
       range: new fields.StringField({ initial: "melee" }),
       hands: new fields.NumberField({ required: true, integer: true, initial: 1 }),
       severity: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+      description: new fields.StringField({ initial: "" }),
       
       qualities: new fields.SchemaField({
         deadly: new fields.BooleanField({ initial: false }),
@@ -387,15 +316,16 @@ export class CharacterWeapon2eData extends CommonItemData {
   }
 }
 
-export class StarshipWeaponData extends CommonItemData {
+export class StarshipWeaponData extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
-    const parentSchema = super.defineSchema();
-    
     return {
-      ...parentSchema,
       damage: new fields.NumberField({ required: true, integer: true, initial: 0 }),
       range: new fields.StringField({ initial: "close" }),
+      description: new fields.StringField({ initial: "" }),
+      opportunity: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+      escalation: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+      includescale: new fields.BooleanField({ initial: false }),
       
       qualities: new fields.SchemaField({
         area: new fields.BooleanField({ initial: false }),
@@ -414,16 +344,16 @@ export class StarshipWeaponData extends CommonItemData {
   }
 }
 
-export class StarshipWeapon2eData extends CommonItemData {
+export class StarshipWeapon2eData extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
-    const parentSchema = super.defineSchema();
-    
     return {
-      ...parentSchema,
       damage: new fields.NumberField({ required: true, integer: true, initial: 0 }),
       range: new fields.StringField({ initial: "close" }),
       includescale: new fields.StringField({ initial: "energy" }),
+      description: new fields.StringField({ initial: "" }),
+      opportunity: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+      escalation: new fields.NumberField({ required: true, integer: true, initial: 0 }),
       
       qualities: new fields.SchemaField({
         energy: new fields.BooleanField({ initial: false }),
@@ -442,36 +372,60 @@ export class StarshipWeapon2eData extends CommonItemData {
         slowing: new fields.BooleanField({ initial: false }),
         spread: new fields.BooleanField({ initial: false }),
         hiddenx: new fields.NumberField({ required: true, integer: true, initial: 0 }),
-        versatilex: new fields.NumberField({ required: true, integer: true, initial: 0 }),
-        opportunity: new fields.NumberField({ required: true, integer: true, initial: 0 }),
-        escalation: new fields.NumberField({ required: true, integer: true, initial: 0 })
+        versatilex: new fields.NumberField({ required: true, integer: true, initial: 0 })
       })
     };
   }
 }
 
-export class ArmorData extends CommonItemData {
+export class ItemData extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
-    const parentSchema = super.defineSchema();
-    
     return {
-      ...parentSchema,
-      protection: new fields.NumberField({ required: true, integer: true, initial: 0 }),
-      equipped: new fields.BooleanField({ initial: true }),
+      quantity: new fields.NumberField({ required: true, integer: true, initial: 1 }),
       opportunity: new fields.NumberField({ required: true, integer: true, initial: 0 }),
-      escalation: new fields.NumberField({ required: true, integer: true, initial: 0 })
+      escalation: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+      description: new fields.StringField({ initial: "" })
     };
   }
 }
 
-export class TalentData extends CommonItemData {
+export class FocusData extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
-    const parentSchema = super.defineSchema();
-    
     return {
-      ...parentSchema,
+      description: new fields.StringField({ initial: "" })
+    };
+  }
+}
+
+export class ValueData extends foundry.abstract.TypeDataModel {
+  static defineSchema() {
+    const fields = foundry.data.fields;
+    return {
+      used: new fields.BooleanField({ initial: false }),
+      description: new fields.StringField({ initial: "" })
+    };
+  }
+}
+export class ArmorData extends foundry.abstract.TypeDataModel {
+  static defineSchema() {
+    const fields = foundry.data.fields;
+    return {
+      protection: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+      equipped: new fields.BooleanField({ initial: true }),
+      opportunity: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+      escalation: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+      description: new fields.StringField({ initial: "" })
+    };
+  }
+}
+
+export class TalentData extends foundry.abstract.TypeDataModel {
+  static defineSchema() {
+    const fields = foundry.data.fields;
+    return {
+      description: new fields.StringField({ initial: "" }),
       talenttype: new fields.SchemaField({
         typeenum: new fields.StringField({ initial: "" }),
         description: new fields.StringField({ initial: "" }),
@@ -481,59 +435,62 @@ export class TalentData extends CommonItemData {
   }
 }
 
-export class MilestoneData extends CommonItemData {
+export class MilestoneData extends foundry.abstract.TypeDataModel {
   static defineSchema() {
-    const parentSchema = super.defineSchema();
-    return {
-      ...parentSchema
+    const fields = foundry.data.fields;
+    const schema = {
+      description: new fields.StringField({ initial: "" }),
+      arc: new fields.SchemaField({
+        isArc: new fields.BooleanField({ initial: false }),
+        steps: new fields.NumberField({ required: true, integer: true, initial: 3, max: 26})
+      })
     };
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+    for (const letter of letters) {
+      schema[`child${letter}`] = new fields.StringField({ initial: "" });
+    }
+    return schema;
   }
 }
 
-export class InjuryData extends CommonItemData {
+
+export class InjuryData extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
-    const parentSchema = super.defineSchema();
-    
     return {
-      ...parentSchema,
+      description: new fields.StringField({ initial: "" }),
       quantity: new fields.NumberField({ required: true, integer: true, initial: 1 })
     };
   }
 }
 
-export class SmallCraftContainerData extends CommonItemData {
+export class SmallCraftContainerData extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
-    const parentSchema = super.defineSchema();
-    
     return {
-      ...parentSchema,
+      description: new fields.StringField({ initial: "" }),
+      quantity: new fields.NumberField({ required: true, integer: true, initial: 1 }),
+      child: new fields.StringField({ initial: "" })
+    };
+  }
+}
+
+export class TraitData extends foundry.abstract.TypeDataModel {
+  static defineSchema() {
+    const fields = foundry.data.fields;
+    return {
+      description: new fields.StringField({ initial: "" }),
       quantity: new fields.NumberField({ required: true, integer: true, initial: 1 })
     };
   }
 }
 
-export class TraitData extends CommonItemData {
+export class LogData extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
-    const parentSchema = super.defineSchema();
-    
     return {
-      ...parentSchema,
-      quantity: new fields.NumberField({ required: true, integer: true, initial: 1 })
-    };
-  }
-}
-
-export class LogData extends CommonItemData {
-  static defineSchema() {
-    const fields = foundry.data.fields;
-    const parentSchema = super.defineSchema();
-    
-    return {
-      ...parentSchema,
-      quantity: new fields.NumberField({ required: true, integer: true, initial: 1 })
+      description: new fields.StringField({ initial: "" }),
+      valueStates: new fields.ObjectField({ initial: {} })
     };
   }
 }
