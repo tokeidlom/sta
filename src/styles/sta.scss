@@ -253,6 +253,7 @@ $foundrylightthemetext: rgb(34, 34, 34);
   .row {
     .image {
       flex: 0 0 26px;
+      margin: 2px;
       margin-right: 5px;
 
       img {
@@ -274,9 +275,9 @@ $foundrylightthemetext: rgb(34, 34, 34);
     }
 
     .control {
-          align-items: center;
-          display: flex;
-          gap: 8px;
+      align-items: center;
+      display: flex;
+      gap: 8px;
       padding-right: 2px;
       width: 40px;
     }
@@ -429,6 +430,7 @@ $foundrylightthemetext: rgb(34, 34, 34);
     background-color: $borderbluedark;
     font-weight: bold;
     border-radius: 0px 100px 100px 0px;
+    padding-left: 5px;
   }
 
   .tracktitle {
@@ -723,6 +725,7 @@ $foundrylightthemetext: rgb(34, 34, 34);
   .tab .note {
     height: 553px;
     text-align: left;
+    padding-left: 5px;
 
     .editor {
       height: 100%;
@@ -815,6 +818,7 @@ $foundrylightthemetext: rgb(34, 34, 34);
     background-color: $borderbluedark;
     font-weight: bold;
     border-radius: 0px 100px 100px 0px;
+    padding-left: 5px;
   }
 
   .tracktitle {
@@ -971,6 +975,7 @@ $foundrylightthemetext: rgb(34, 34, 34);
   .note {
     height: 250px;
     text-align: left;
+    padding-left: 5px;
 
     .editor {
       height: 100%;
@@ -1094,6 +1099,7 @@ $foundrylightthemetext: rgb(34, 34, 34);
     background-color: $borderbluedark;
     font-weight: bold;
     margin-right: 2px;
+    padding-left: 5px;
   }
 
   .tracktitle {
@@ -1208,6 +1214,7 @@ $foundrylightthemetext: rgb(34, 34, 34);
     background-color: $borderbluedark;
     font-weight: bold;
     margin-right: 2px;
+    padding-left: 5px;
   }
 
   .tracktitle {
@@ -1312,6 +1319,7 @@ $foundrylightthemetext: rgb(34, 34, 34);
     background-color: $borderbluedark;
     font-weight: bold;
     margin-right: 2px;
+    padding-left: 5px;
   }
 
   /* Image Styling */
