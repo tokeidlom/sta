@@ -55,11 +55,12 @@ $tooltiptext: #fff;
 $trackColors: transparent;
 $trackColorsselected: #F2CC0D;
 $palebackground: rgba(0, 0, 0, 0.1);
+$foundrylightthemetext: rgb(34, 34, 34);
 
 // ######################################################
 // #                                                    #
 // #                   Trackbars                        #
-//                                                    #
+// #                                                    #
 // ######################################################
 
 .track {
@@ -77,12 +78,12 @@ $palebackground: rgba(0, 0, 0, 0.1);
   border: 1px solid;
   border-collapse: collapse;
   border-radius: 14px;
-  display: block;
+  display: flex;
   font-size: 8pt;
   font-weight: bold;
-  height: 14px;
   padding: 0px;
-  text-align: center;
+  justify-content: center;
+  align-items: center;
 
   &:hover {
     box-shadow: 0 0 8px $taskbuttonColor;
@@ -91,6 +92,7 @@ $palebackground: rgba(0, 0, 0, 0.1);
 
   &.stress {
     background-color: $trackColors;
+    height: 17px;
 
     &.selected {
       background-color: $trackColorsselected;
@@ -100,6 +102,7 @@ $palebackground: rgba(0, 0, 0, 0.1);
 
   &.determination {
     background-color: $trackColors;
+    height: 17px;
 
     &.selected {
       background-color: $trackColorsselected;
@@ -109,6 +112,7 @@ $palebackground: rgba(0, 0, 0, 0.1);
 
   &.rep {
     background-color: $trackColors;
+    height: 17px;
 
     &.selected {
       background-color: $trackColorsselected;
@@ -118,6 +122,7 @@ $palebackground: rgba(0, 0, 0, 0.1);
 
   &.shields {
     background-color: $trackColors;
+    height: 14px;
 
     &.selected {
       background-color: $trackColorsselected;
@@ -127,6 +132,7 @@ $palebackground: rgba(0, 0, 0, 0.1);
 
   &.power {
     background-color: $trackColors;
+    height: 14px;
 
     &.selected {
       background-color: $trackColorsselected;
@@ -136,6 +142,7 @@ $palebackground: rgba(0, 0, 0, 0.1);
 
   &.crew {
     background-color: $trackColors;
+    height: 14px;
 
     &.selected {
       background-color: $trackColorsselected;
@@ -241,6 +248,7 @@ $palebackground: rgba(0, 0, 0, 0.1);
 .section {
   .header {
     background-color: $palestbluedark;
+    border-radius: 0px 100px 100px 0px;
   }
   .row {
     .image {
@@ -374,7 +382,7 @@ $palebackground: rgba(0, 0, 0, 0.1);
 
 .theme-light {
   .character-sheet {
-      scrollbar-color: $palestblue transparent;
+    scrollbar-color: $palestblue transparent;
     background: $background;
     .title {
       background-color: $borderblue;
@@ -420,7 +428,7 @@ $palebackground: rgba(0, 0, 0, 0.1);
     margin-top: 5px;
     background-color: $borderbluedark;
     font-weight: bold;
-    margin-right: 2px;
+    border-radius: 0px 100px 100px 0px;
   }
 
   .tracktitle {
@@ -613,6 +621,7 @@ $palebackground: rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: flex-end;
     width: 100%;
+    align-items: center;
 
     .numeric-entry {
         border-color: $borderbluedark;
@@ -624,10 +633,16 @@ $palebackground: rgba(0, 0, 0, 0.1);
 
   .attribute-block {
     margin-bottom: 10px;
+    .row-right {
+      margin-top: 2px;
+    }
   }
 
   .discipline-block {
     margin-bottom: 10px;
+    .row-right {
+      margin-top: 2px;
+    }
   }
 
   .npc-block {
@@ -664,7 +679,7 @@ $palebackground: rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    margin-bottom: 40px;
+    margin-bottom: 10px;
   }
 
   .rollrepnotdis .checkbox {
@@ -675,7 +690,7 @@ $palebackground: rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    margin-top: 40px;
+    margin-top: 20px;
   }
 
   .stressmod .text-entry {
@@ -706,7 +721,7 @@ $palebackground: rgba(0, 0, 0, 0.1);
 
   /* Note Field Styling */
   .tab .note {
-    height: 580px;
+    height: 553px;
     text-align: left;
 
     .editor {
@@ -731,6 +746,7 @@ $palebackground: rgba(0, 0, 0, 0.1);
     gap: 0px;
     justify-content: flex-start;
     padding-left: 70px;
+    border-radius: 0px 100px 100px 0px;
   }
 
   nav.sheet-tabs.tabs a.item {
@@ -770,6 +786,9 @@ $palebackground: rgba(0, 0, 0, 0.1);
     .title {
       background-color: $borderblue;
     }
+  .right-column::before {
+    background-color: $borderblue;
+  }
     .text-entry {
       border-color: $borderblue;
     }
@@ -795,7 +814,7 @@ $palebackground: rgba(0, 0, 0, 0.1);
     margin-top: 5px;
     background-color: $borderbluedark;
     font-weight: bold;
-    margin-right: 2px;
+    border-radius: 0px 100px 100px 0px;
   }
 
   .tracktitle {
@@ -817,7 +836,19 @@ $palebackground: rgba(0, 0, 0, 0.1);
   .right-column {
     flex: 0 0 625px;
     align-self: flex-start;
-    padding-left: 5px;
+    position: relative;
+    padding-left: 9px;
+  }
+
+  .right-column::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 5px;
+    bottom: 0;
+    width: 9px;
+    background-color: $borderbluedark;
+    border-top-left-radius: 9px;
   }
 
   .row {
@@ -869,7 +900,7 @@ $palebackground: rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    margin-top: 60px;
+    margin-top: 20px;
   }
 
   .shieldmod .text-entry {
@@ -962,6 +993,7 @@ $palebackground: rgba(0, 0, 0, 0.1);
   .systems-block .stat.row {
     display: flex;
     align-items: center;
+    margin-top: 2px;
   }
 
   .systems-block .text.list-entry {
@@ -1009,6 +1041,7 @@ $palebackground: rgba(0, 0, 0, 0.1);
   .departments-block .stat.row {
     display: flex;
     align-items: center;
+    margin-top: 2px;
   }
 
   .departments-block .text.list-entry {
@@ -1017,7 +1050,7 @@ $palebackground: rgba(0, 0, 0, 0.1);
   }
 
   .departments-block {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
   }
 }
 
@@ -1324,7 +1357,9 @@ $palebackground: rgba(0, 0, 0, 0.1);
     .window-header {
       background-color: $borderblue;
     }
-
+    .window-title {
+      color: $foundrylightthemetext;
+	}
     .text-entry {
       border-color: $borderblue;
     }
