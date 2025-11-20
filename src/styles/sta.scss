@@ -587,6 +587,12 @@ $foundrylightthemetext: rgb(34, 34, 34);
     }
   }
 
+  .amiklingon {
+    display: flex;
+    align-items: center;
+    margin: 5px;
+  }
+
   .items-column-left {
     display: flex;
     flex: 1;
@@ -684,6 +690,9 @@ $foundrylightthemetext: rgb(34, 34, 34);
     align-items: center;
     justify-content: flex-end;
     margin-bottom: 10px;
+    .checkbox {
+      margin-right: 5px;
+    }
   }
 
   .rollrepnotdis .checkbox {
@@ -1390,6 +1399,7 @@ $foundrylightthemetext: rgb(34, 34, 34);
     }
     nav.sheet-tabs.tabs {
       background-color: $borderblue;
+      box-shadow: -6px 0 0 $borderblue;
     }
     nav.sheet-tabs.tabs a.item {
       border-right: 3px solid $background;
@@ -1504,6 +1514,7 @@ $foundrylightthemetext: rgb(34, 34, 34);
     gap: 0px;
     justify-content: flex-start;
     padding-left: 10px;
+    box-shadow: -6px 0 0 $borderbluedark;
   }
 
   nav.sheet-tabs.tabs a.item {

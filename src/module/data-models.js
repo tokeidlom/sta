@@ -104,7 +104,9 @@ export class CharacterData extends foundry.abstract.TypeDataModel {
       notes: new fields.StringField({ initial: "" }),
       strmod: new fields.NumberField({ required: true, integer: true, initial: 0 }),
       rollrepnotdis: new fields.BooleanField({ initial: false }),
-      upbringing: new fields.StringField({ initial: "" })
+      upbringing: new fields.StringField({ initial: "" }),
+      npcType: new fields.StringField({ initial: "minor" }),
+	  showklingon: new fields.BooleanField({ initial: true })
     };
   }
 }
