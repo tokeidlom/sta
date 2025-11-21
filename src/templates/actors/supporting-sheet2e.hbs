@@ -136,11 +136,6 @@
             </div>
           </div>
 
-          <div class="amiklingon">
-            {{localize 'sta.actor.character.klingon.Klingon'}}:
-            <input class="checkbox" type="checkbox" name="system.showklingon" data-dtype="Boolean" {{checked actor.system.showklingon}}> 
-          </div>
-
           <div class="row">
             <div class="column house {{#unless actor.system.showklingon}}hidden{{/unless}}">
               <div class="title">{{localize 'sta.actor.character.klingon.house'}}</div>
@@ -173,11 +168,13 @@
 
           <div class="row">
             <div class="column acclaimfield">
-              <div class="title">{{localize 'sta.actor.character.acclaim'}}</div>
+              <div class="title {{#if actor.system.showklingon}}hidden{{/if}}">{{localize 'sta.actor.character.acclaim'}}</div>
+              <div class="title {{#unless actor.system.showklingon}}hidden{{/unless}}">{{localize 'sta.actor.character.klingon.glory'}}</div>
               <input class="text-entry" name="system.acclaim" type="number" value="{{actor.system.acclaim}}" placeholder="0" />
             </div>
             <div class="column reprimand">
-              <div class="title">{{localize 'sta.actor.character.reprimand'}}</div>
+              <div class="title {{#if actor.system.showklingon}}hidden{{/if}}">{{localize 'sta.actor.character.reprimand'}}</div>
+              <div class="title {{#unless actor.system.showklingon}}hidden{{/unless}}">{{localize 'sta.actor.character.klingon.shame'}}</div>
               <input class="text-entry" name="system.reprimand" id="currentreprimand" type="number" value="{{actor.system.reprimand}}" placeholder="0" />
             </div>
             <div class="column influence {{#unless actor.system.showklingon}}hidden{{/unless}}">
@@ -192,6 +189,10 @@
               <div class="title">{{localize 'sta.actor.character.klingon.wealth'}}</div>
               <input name="system.wealth" class="text-entry" type="number" value="{{actor.system.wealth}}" placeholder="0" />
             </div>
+          </div>
+          <div class="amiklingon">
+            {{localize 'sta.actor.character.klingon.Klingon'}}:
+            <input class="checkbox" type="checkbox" name="system.showklingon" data-dtype="Boolean" {{checked actor.system.showklingon}}> 
           </div>
         </div>
 

@@ -122,11 +122,6 @@
             </div>
           </div>
 
-          <div class="amiklingon">
-            {{localize 'sta.actor.character.klingon.Klingon'}}:
-            <input class="checkbox" type="checkbox" name="system.showklingon" data-dtype="Boolean" {{checked actor.system.showklingon}}> 
-          </div>
-
           <div class="row">
             <div class="column house {{#unless actor.system.showklingon}}hidden{{/unless}}">
               <div class="title">{{localize 'sta.actor.character.klingon.house'}}</div>
@@ -155,6 +150,10 @@
               <div class="title">{{localize 'sta.actor.character.klingon.househistory'}}</div>
               <input name="system.househistory" class="text-entry" type="text" value="{{actor.system.househistory}}" placeholder="{{localize 'sta.actor.character.klingon.househistory'}}" />
             </div>
+          </div>
+          <div class="amiklingon">
+            {{localize 'sta.actor.character.klingon.Klingon'}}:
+            <input class="checkbox" type="checkbox" name="system.showklingon" data-dtype="Boolean" {{checked actor.system.showklingon}}> 
           </div>
 
           <div class="title">{{localize 'sta.actor.note.title'}}</div>

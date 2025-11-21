@@ -106,7 +106,7 @@ export class CharacterData extends foundry.abstract.TypeDataModel {
       rollrepnotdis: new fields.BooleanField({ initial: false }),
       upbringing: new fields.StringField({ initial: "" }),
       npcType: new fields.StringField({ initial: "minor" }),
-	  showklingon: new fields.BooleanField({ initial: true })
+	  showklingon: new fields.BooleanField({ initial: false })
     };
   }
 }
