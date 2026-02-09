@@ -76,7 +76,7 @@ import {
 } from './apps/tracker.mjs';
 import {
   registerDsnUfpThemes
-} from './apps/dice-so-nice.js';
+} from './apps/dice-so-nice.mjs';
 import {
   Collapsible
 } from './apps/chatcards.mjs';
