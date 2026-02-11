@@ -794,7 +794,7 @@ $foundrylightthemetext: rgb(34, 34, 34);
 
 .theme-light {
   .starship-sheet {
-      scrollbar-color: $palestblue transparent;
+    scrollbar-color: $palestblue transparent;
     background: $background;
     .title {
       background-color: $borderblue;
@@ -1594,90 +1594,133 @@ $foundrylightthemetext: rgb(34, 34, 34);
 // #                                                    #
 // ######################################################
 
-.chat-message.message {
-  background: $background;
+
+//.theme-light {
+//  .chat-message.message.flexcol {
+//  .chatcard {
+//  border-left: 6px solid $borderblue;
+//  }
+//  }
+//}
+
+.chat-message.message.flexcol {
+background: black;
+color: white;
+padding-top: 0px;
+padding-bottom: 0px;
+padding-left: 0px;
+padding-right: 0px;
+
+
+.message-sender {
+color: white;
+padding-left: 4px;
 }
 
-.dice-pool .flexrow {
-  padding: 4px 5px;
+.message-timestamp {
+color: white;
+}
+.message-delete {
+color: white;
+padding-right: 4px;
 }
 
-.sta.roll {
 
-  .dice-tooltip {
-    display: block;
-  }
+.chatcard {
+  border-left: 6px solid $borderbluedark;
+  border-top-left-radius: 6px;
+          font-size: 13px;
 
-  header {
+.goldtext {
+  color: $trackColorsselected;
+  font-weight: bold;
+}
+
+.greentext {
+  color: $rollcriticalpass;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.redtext {
+  color: $rollcriticalfail;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+  .focusrow {
     display: flex;
-    gap: 10px;
-    margin-bottom: 5px;
-
-    img {
-      height: 45px;
-    }
-
-    .title {
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      text-align: start;
-      white-space: nowrap;
-    }
-
-    .name {
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .type {
-      font-size: 0.9em;
-    }
+    flex-direction: row;
+    justify-content: center;
+    color: $palestblue;
+    border-left: 1px solid $borderbluedark;
+    border-right: 1px solid $borderbluedark;
+    border-top: 1px solid $borderbluedark;
+    border-bottom: 1px solid $borderbluedark;
   }
 
-  .content {
-    &.dice-roll {
-      .dice-formula {
-        box-shadow: none;
-        cursor: pointer;
-        line-height: normal;
-        word-break: normal;
-      }
-    }
+.row {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+.columna {
+  flex: 1;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  border-left: 1px solid $borderbluedark;
+  border-right: 1px solid $borderbluedark;
+  border-top: 1px solid $borderbluedark;
+  padding-top: 2px;
+}
+.columnb {
+  flex: 1;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  border-left: 1px solid $borderbluedark;
+  border-right: 1px solid $borderbluedark;
+  border-bottom: 1px solid $borderbluedark;
+  padding-bottom: 2px;
+}
+.columnc {
+  flex: 1;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid $borderbluedark;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
 
-    .tooltip, .dice-tooltip {
-      order: -1;
-    }
-
-    .vars {
-      flex: 0 0 100%;
-      background: rgba(0, 0, 0, 0.1);
-      border: 1px solid $textgrey;
-      border-radius: 3px;
-      box-shadow: none;
-      line-height: normal;
-      margin-bottom: 5px;
-      position: relative;
-      text-align: center;
-      word-break: break-all;
-    }
-
-    .tags {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      margin-bottom: 5px;
-      text-align: center;
-
-      .tag {
-        border: 0.5px solid $chatcardvars;
-        border-radius: 3px;
-        flex-grow: 1;
-        font-size: 12px;
-        width: calc(100% / 3);
-      }
+.heading {
+  background: $borderbluedark;
+  padding-left: 8px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .name {
+    text-align: left;
+            font-size: 15px;
+  }
+  .flavor {
+    text-align: right;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    color: black;
+    &.task {
+    background: $taskbuttonColor;
     }
   }
+}
 
   .dice-rolls {
     display: flex;
@@ -1717,29 +1760,15 @@ $foundrylightthemetext: rgb(34, 34, 34);
       }
     }
   }
-
-  .dice-formula {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-  }
-
-  .additional-info {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    justify-content: center;
-    width: 100%;
-  }
-
   .reroll-button {
     display: flex;
     flex-direction: row;
     justify-content: center;
     &:hover {
-	  background: $palebackground;
+	  background: $borderbluedark;
     }
   }
+}
 }
 
 .collapsible {
@@ -1762,21 +1791,6 @@ $foundrylightthemetext: rgb(34, 34, 34);
     > * {
       margin: 0;
       overflow: hidden;
-    }
-  }
-}
-
-.message-content {
-
-  .table-draw {
-    img.result-image {
-      background: $background;
-    }
-
-    .result-text {
-      a.entity-link {
-        background: $background;
-      }
     }
   }
 }

@@ -192,25 +192,25 @@ export class STARoll {
         diceOutcome.push(result);
       }
     }
-
-    let withDetermination = '';
     if (taskData.usingDetermination) {
       diceString += `<li class="roll die d20 max">1</li>`;
       diceOutcome.push(1);
       success += 2;
-      withDetermination = `, ${game.i18n.format('sta.actor.character.determination')}`;
     }
 
     // Add information about what was rolled
-    let withFocus = '';
+    let bonuses = [];
     if (taskData.usingFocus) {
-      withFocus = `, ${game.i18n.format('sta.actor.belonging.focus.title')}`;
+      bonuses.push(game.i18n.format('sta.actor.belonging.focus.title'));
+    }
+    if (taskData.usingDedicatedFocus) {
+      bonuses.push(game.i18n.format('sta.roll.dedicatedfocus'));
+    }
+    if (taskData.usingDetermination) {
+      bonuses.push(game.i18n.format('sta.actor.character.determination'));
     }
 
-    let withDedicatedFocus = '';
-    if (taskData.usingDedicatedFocus) {
-      withDedicatedFocus = `, ${game.i18n.format('sta.roll.dedicatedfocus')}`;
-    }
+    let rollDetails = bonuses.join(', ');
 
     // Add flavor for the roll card
     let flavor = '';
@@ -219,8 +219,7 @@ export class STARoll {
       case 'character1e':
         flavor =
           `${game.i18n.format(`sta.actor.character.attribute.${taskData.selectedAttribute}`)} ` +
-          `${game.i18n.format(`sta.actor.character.discipline.${taskData.selectedDiscipline}`)} ` +
-          `${game.i18n.format('sta.roll.task.name')}`;
+          `${game.i18n.format(`sta.actor.character.discipline.${taskData.selectedDiscipline}`)}`;
         break;
       case 'starship':
         flavor =
@@ -253,12 +252,10 @@ export class STARoll {
       diceOutcome,
       success,
       complication,
-      withDetermination,
-      withFocus,
-      withDedicatedFocus,
       flavor,
       checkTarget,
       complicationMinimumValue,
+      rollDetails,
     };
   }
 
@@ -273,10 +270,9 @@ export class STARoll {
 
     let complicationText = '';
     if (taskData.complication === 1) {
-      complicationText = `<h4 class="dice-total failure"> ${game.i18n.format('sta.roll.complication')} </h4>`;
+      complicationText = `1 ${game.i18n.format('sta.roll.complication')}`;
     } else if (taskData.complication > 1) {
-      const localisedPluralisation = game.i18n.format('sta.roll.complicationPlural');
-      complicationText = `<h4 class="dice-total failure"> ${localisedPluralisation.replace('|#|', taskData.complication)} </h4>`;
+      complicationText = `${taskData.complication} ${game.i18n.format('sta.roll.complicationPlural')}`;
     }
 
     return { successText, complicationText };

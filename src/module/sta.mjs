@@ -463,11 +463,11 @@ Hooks.once('init', function() {
     RerollHandler.attachListeners(html);
   });
 
-  Hooks.once('renderSidebar', function() {
+  Hooks.once('renderSidebar', async function () {
+    if (game.STATracker) return;
     const tracker = new STATracker();
-    foundry.applications.handlebars.renderTemplate('systems/sta/templates/apps/tracker.hbs').then((html) => {
-      tracker.render(true);
-    });
+    game.STATracker = tracker;
+    await tracker.render(true);
   });
 
   Hooks.once('diceSoNiceReady', (dice3d) => {
