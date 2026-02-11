@@ -370,8 +370,9 @@ export class STARoller {
       close: () => null,
     });
     if (!formData) return;
+
     /* --------------------------------------------------------------------- */
-    /* Pull data from form                                                */
+    /* Pull data from form                                                   */
     /* --------------------------------------------------------------------- */
     let selectedAttributeValue = 7;
     let selectedDisciplineValue = 2;
@@ -388,7 +389,6 @@ export class STARoller {
     let usingDetermination = formData.get('usingDetermination') === 'on' || false;
     let skillLevel = formData.get('skillLevel') || 'basic';
     let selectedRoll = formData.get('rollList') || '';
-    let npcRating = '';
 
     /* --------------------------------------------------------------------- */
     /* Roll presets logic                                                   */

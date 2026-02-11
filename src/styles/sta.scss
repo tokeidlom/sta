@@ -1620,11 +1620,11 @@ padding-left: 4px;
 .message-timestamp {
 color: white;
 }
+
 .message-delete {
 color: white;
 padding-right: 4px;
 }
-
 
 .chatcard {
   border-left: 6px solid $borderbluedark;
@@ -1718,6 +1718,12 @@ padding-right: 4px;
     color: black;
     &.task {
     background: $taskbuttonColor;
+    }
+    &.challenge {
+    background: $challengebuttonColor;
+    }
+    &.acclaim {
+    background: $acclaimbuttonColor;
     }
   }
 }
