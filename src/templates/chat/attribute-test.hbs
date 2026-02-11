@@ -1,47 +1,49 @@
 <div class="chatcard">
-<div class="heading">
-<div class="name">
-{{speakerName}}
+  <div class="heading">
+    <div class="name">
+      {{speakerName}}
+    </div>
+    <div class="flavor task">
+      {{flavor}}
+    </div>
+  </div>
+<div class="collapsible-content">
+  <div class="row">
+    <div class="columna">
+      {{localize "sta.apps.dicepoolwindow"}}
+    </div>
+    <div class="columna">
+      {{localize "sta.roll.target"}}
+    </div>
+    <div class="columna">
+      {{localize "sta.roll.complicationrange"}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="columnb">
+      <div class="goldtext">{{dicePool}}d20</div>
+    </div>
+    <div class="columnb">
+      <div class="goldtext">{{checkTarget}}</div>
+    </div>
+    <div class="columnb">
+      <div class="goldtext">{{complicationMinimumValue}}+</div>
+    </div>
+  </div>
+  <div class="focusrow">
+    {{rollDetails}}
+  </div>
+  <div class="dice">
+    <ol class="dice-rolls">{{{diceString}}}</ol>
+  </div>
 </div>
-<div class="flavor task">
-{{flavor}}
-</div>
-</div>
-<div class="row">
-<div class="columna">
-{{localize "sta.apps.dicepoolwindow"}}
-</div>
-<div class="columna">
-{{localize "sta.roll.target"}}
-</div>
-<div class="columna">
-{{localize "sta.roll.complicationrange"}}
-</div>
-</div>
-<div class="row">
-<div class="columnb">
-<div class="goldtext">{{dicePool}}d20</div>
-</div>
-<div class="columnb">
-<div class="goldtext">{{checkTarget}}</div>
-</div>
-<div class="columnb">
-<div class="goldtext">{{complicationMinimumValue}}+</div>
-</div>
-</div>
-<div class="focusrow">
-{{rollDetails}}
-</div>
-<div class="dice">
-<ol class="dice-rolls">{{{diceString}}}</ol>
-</div>
-<div class="row">
-<div class="greentext">{{successText}}</div>
-</div>
-<div class="row">
-<div class="redtext">{{complicationText}}</div>
-</div>
-<div class="reroll-button" data-message-id="{{_id}}">
-{{localize "sta.roll.rerollresults"}}
-</div>
+  <div class="row">
+    <div class="greentext">{{successText}}</div>
+  </div>
+  <div class="row">
+    <div class="redtext">{{complicationText}}</div>
+  </div>
+  <div class="reroll-button" data-message-id="{{_id}}">
+    {{localize "sta.roll.rerollresults"}}
+  </div>
 </div>

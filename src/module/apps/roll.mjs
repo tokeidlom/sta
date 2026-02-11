@@ -62,7 +62,6 @@ export class STARoll {
     crewData = { ...crewData, ...crewtaskResult };
 
     let shipData = '';
-    let chatData = '';
     let crewshipData = '';
 
     if (taskData.selectedSystem === 'none') {
