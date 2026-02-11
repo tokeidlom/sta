@@ -1610,6 +1610,7 @@ padding-top: 0px;
 padding-bottom: 0px;
 padding-left: 0px;
 padding-right: 0px;
+border: none;
 
 
 .message-sender {
@@ -1629,11 +1630,12 @@ padding-right: 4px;
 .chatcard {
   border-left: 6px solid $borderbluedark;
   border-top-left-radius: 6px;
-          font-size: 13px;
+  font-size: 12px;
 
 .goldtext {
   color: $trackColorsselected;
   font-weight: bold;
+  font-size: 14px;
 }
 
 .greentext {
@@ -1644,6 +1646,12 @@ padding-right: 4px;
 
 .redtext {
   color: $rollcriticalfail;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.greytext {
+  color: $disabledsystem;
   font-weight: bold;
   font-size: 20px;
 }
@@ -1705,10 +1713,12 @@ padding-right: 4px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  
   .name {
     text-align: left;
-            font-size: 15px;
+    font-size: 14px;
   }
+  
   .flavor {
     text-align: right;
     padding-left: 8px;
@@ -1725,8 +1735,15 @@ padding-right: 4px;
     &.acclaim {
     background: $acclaimbuttonColor;
     }
+    &.item {
+      background: $disabledinput;
+    }
   }
 }
+
+  .img {
+    width: 45px;
+  }
 
   .dice-rolls {
     display: flex;

@@ -107,6 +107,7 @@ export class STARoll {
         complication: crewData.complication + shipData.complication,
         successText: crewData.successText + shipData.successText,
         complicationText: crewData.complicationText + shipData.complicationText,
+        rollDetails: crewData.rollDetails,
       };
 
       const crewshiptaskResultText = await this._taskResultText(crewshipData);
@@ -928,7 +929,8 @@ persistent: 'sta.actor.belonging.weapon.persistent',
           'systems/sta/templates/chat/generic-item.hbs', 
           rollData
         );
-      case 'weapon':
+        break;
+        case 'weapon':
         chatData = await foundry.applications.handlebars.renderTemplate(
           'systems/sta/templates/chat/weapon.hbs', 
           rollData

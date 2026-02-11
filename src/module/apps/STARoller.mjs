@@ -327,7 +327,7 @@ export class STARoller {
   </div>
   <div class="row">
     <div class="tracktitle">${game.i18n.localize(`sta.roll.task.name`)}</div>
-    <select id="rollList" class="form-select">
+    <select id="rollList" name="rollList" class="form-select">
       ${rollList.map((item) => `<option value="${item}">${game.i18n.localize(`sta.roll.${item}`)}</option>`).join('')}
     </select>
   </div>

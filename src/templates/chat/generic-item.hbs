@@ -1,7 +1,17 @@
-<div class="sta roll chat card" data-item-id="{{itemId}}" data-token-id="{{tokenId}}" data-speaker-id="{{speakerId}}">
+<div class="chatcard">
+  <div class="heading">
+
+    <div class="name">
+      {{name}}
+    </div>
+    <div class="flavor item">
+      {{type}}
+    </div>
+  </div>
+    <img class="img" src="{{img}}"/>
   <section class="card-header {{#if descFieldHtml}}collapsible{{/if}}">
     <header>
-      <img class="img" src="{{img}}"/>
+  
       <div class="title">
         <div class="name">{{name}}</div>
         <div class="type">{{type}}</div>

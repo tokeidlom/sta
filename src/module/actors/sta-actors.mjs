@@ -480,10 +480,10 @@ export class STAActors extends api.HandlebarsApplicationMixin(sheets.ActorSheetV
     departmentCheckboxes.forEach((checkbox) => {
       if (checkbox.checked) {
         const departmentId = checkbox.id.replace('.selector', '');
-        selectedDiscipline = departmentId;
+        selectedDepartment = departmentId;
         const departmentValueInput = this.element.querySelector(`#${departmentId}`);
         if (departmentValueInput) {
-          selectedDisciplineValue = parseInt(departmentValueInput.value, 10) || 0;
+          selectedDepartmentValue = parseInt(departmentValueInput.value, 10) || 0;
         }
       }
     });
