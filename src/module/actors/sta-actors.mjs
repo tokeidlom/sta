@@ -697,7 +697,7 @@ export class STAActors extends api.HandlebarsApplicationMixin(sheets.ActorSheetV
     const item = this.actor.items.get(itemId);
     const staRoll = new STARoll();
     if (item.system.description.toLowerCase().match(/\([0-9a-z]cd\)/i)) { 
-      staRoll._onItemtoWeapon(item, this.actor);
+      staRoll.onItemtoWeapon(item, this.actor);
       return;
     }
     switch (itemType) {

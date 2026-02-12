@@ -224,16 +224,14 @@ export class STARoll {
       case 'starship':
         flavor =
           `${game.i18n.format(`sta.actor.starship.system.${taskData.selectedSystem}`)} ` +
-          `${game.i18n.format(`sta.actor.starship.department.${taskData.selectedDepartment}`)} ` +
-          `${game.i18n.format('sta.roll.task.name')}`;
+          `${game.i18n.format(`sta.actor.starship.department.${taskData.selectedDepartment}`)} `;
         break;
       case 'starshipassist':
         flavor =
           `${game.i18n.format(`sta.actor.starship.system.${taskData.selectedSystem}`)} ` +
-          `${game.i18n.format(`sta.actor.starship.department.${taskData.selectedDepartment}`)} ` +
-          `${game.i18n.format('sta.roll.npcshipassist')}`;
+          `${game.i18n.format(`sta.actor.starship.department.${taskData.selectedDepartment}`)} `;
         break;
-        case 'sidebar':
+      case 'sidebar':
         flavor = game.i18n.format('sta.roll.task.name');
         break;
       case 'npccrew':
@@ -245,7 +243,13 @@ export class STARoll {
       case 'reroll':
         flavor = `${game.i18n.format('sta.roll.rerollresults')} ${speaker.id} ${game.i18n.format('sta.roll.task.name')}`;
         break;
-    }
+      case 'custom':
+        flavor = taskData.flavor;
+        break;
+      default:
+        flavor = '';
+        break;
+      }
 
     return {
       diceString,
@@ -412,18 +416,17 @@ export class STARoll {
   // #########################################################
 
   async performItemRoll(item, speaker) {
-
-    const variablePrompt = game.i18n.format('sta.roll.item.quantity');
-    const variable = `<div class='dice-formula'> ` + variablePrompt.replace('|#|', item.system.quantity) + `</div>`;
-
     const itemData = {
       speakerName: speaker.name,
       img: item.img,
       type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
       name: item.name,
-      descFieldHtml: item.system.description ? item.system.description : '',
-      varFieldHtml: variable,
+      descFieldHtml: item.system.description,
+      itemQuantity: item.system.quantity,
+      opportunityCost: item.system.opportunity,
+      escalationCost: item.system.escalation,
       rollType: 'item',
+      quantityRow: true,
     };
 
     this.sendToChat(itemData);
@@ -435,7 +438,7 @@ export class STARoll {
       img: item.img,
       type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
       name: item.name,
-      descFieldHtml: item.system.description ? item.system.description : '',
+      descFieldHtml: item.system.description,
       rollType: 'item',
     };
     this.sendToChat(itemData);
@@ -447,7 +450,7 @@ export class STARoll {
       img: item.img,
       type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
       name: item.name,
-      descFieldHtml: item.system.description ? item.system.description : '',
+      descFieldHtml: item.system.description,
       rollType: 'item',
     };
     this.sendToChat(itemData);
@@ -459,7 +462,7 @@ export class STARoll {
       img: item.img,
       type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
       name: item.name,
-      descFieldHtml: item.system.description ? item.system.description : '',
+      descFieldHtml: item.system.description,
       rollType: 'item',
     };
     this.sendToChat(itemData);
@@ -471,7 +474,7 @@ export class STARoll {
       img: item.img,
       type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
       name: item.name,
-      descFieldHtml: item.system.description ? item.system.description : '',
+      descFieldHtml: item.system.description,
       rollType: 'item',
     };
     this.sendToChat(itemData);
@@ -483,7 +486,7 @@ export class STARoll {
       img: item.img,
       type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
       name: item.name,
-      descFieldHtml: item.system.description ? item.system.description : '',
+      descFieldHtml: item.system.description,
       rollType: 'item',
     };
     this.sendToChat(itemData);
@@ -495,7 +498,7 @@ export class STARoll {
       img: item.img,
       type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
       name: item.name,
-      descFieldHtml: item.system.description ? item.system.description : '',
+      descFieldHtml: item.system.description,
       rollType: 'item',
     };
     this.sendToChat(itemData);
@@ -507,17 +510,33 @@ export class STARoll {
       img: item.img,
       type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
       name: item.name,
-      descFieldHtml: item.system.description ? item.system.description : '',
+      descFieldHtml: item.system.description,
       rollType: 'item',
     };
     this.sendToChat(itemData);
   }
 
+  async performArmorRoll(item, speaker) {
+    const itemData = {
+      speakerName: speaker.name,
+      img: item.img,
+      type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
+      name: item.name,
+      descFieldHtml: item.system.description,
+      itemQuantity: item.system.protection,
+      opportunityCost: item.system.opportunity,
+      escalationCost: item.system.escalation,
+      rollType: 'item',
+      quantityRow: true,
+    };
+    this.sendToChat(itemData);
+  }
+
   //Handle cases where (xCD) has been written into an item description causing it to be handled as a weapon instead of an item
-  static async _onItemtoWeapon(item, speaker) {
+  async onItemtoWeapon(item, speaker) {
     const regex = /\((.cd)\)/i;
     const match = item.system.description.toLowerCase().match(regex);
-    let challengeDice = 1; // Default value
+    let challengeDice = 1;
     
     if (match) {
       const x = match[1][0];
@@ -549,32 +568,33 @@ export class STARoll {
 
         challengeDice = formData.challengeDice;
       } else if (!isNaN(x) && x >= '0' && x <= '9') {
-        // Set challengedice to the number
         challengeDice = parseInt(x);
         console.log('Challengedice set to:', challengeDice);
       }
     }
 
-    const itemData = { 
-      name: item.name,
-      img: item.img,
-      type: item.type,
-      system: {
-        includescale: false,
-        damage: challengeDice,
-        description: item.system?.description || '',
-      },
-    };
-    itemData.toObject = () => foundry.utils.deepClone(itemData);  
+    const rolledChallenge = await new Roll(challengeDice + 'd6').evaluate({});
+    const getSuccessesEffects = await this._getSuccessesEffects(rolledChallenge);
+    const diceString = await this._getDiceImageListFromChallengeRoll(rolledChallenge);
+    let weapontype = game.i18n.localize(`sta.actor.starship.scale`);
+    if (item.system.includescale === false) {
+      weapontype = 'No ' + game.i18n.localize(`sta.actor.starship.scale`);
+    }
+    
+    const itemData = {
+    speakerName: speaker.name,
+    img: item.img,
+    type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
+    name: item.name,
+    descFieldHtml: item.system.description,
+    rollType: 'item',
+    ...getSuccessesEffects,
+    diceString,
+    rollAsWeapon: true,
+  };
 
-    const newactor = {
-      name: speaker.name,
-      system: {disciplines: {security: {value: 0}}},
-    };
-
-    const staRoll = new STARoll();
-    this.performWeaponRoll(itemData, newactor);
-  }
+    this.sendToChat(itemData);
+}
 
   // #########################################################
   // #                                                       #
@@ -583,11 +603,6 @@ export class STARoll {
   // #########################################################
 
 async performWeaponRoll2e(item, speaker) {
-
-  const variablePrompt = game.i18n.format('sta.roll.weapon.damage2e');
-  const variable = `<div class="dice-formula">
-                      ${variablePrompt.replace('|#|', item.system.damage)}
-                    </div>`;
 
   const LABELS = Object.freeze({
     accurate: 'sta.actor.belonging.weapon.accurate',
@@ -619,26 +634,33 @@ async performWeaponRoll2e(item, speaker) {
 
   const tags = [];
 
-  for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
-    if (rawValue === undefined || rawValue === null || rawValue === '') continue;
-    if (!Object.prototype.hasOwnProperty.call(LABELS, prop)) continue;
-    const label = game.i18n.localize(LABELS[prop]);
-    const display = Number.isFinite(rawValue) ? `${label} ${rawValue}` : label;
-    const tip = TOOLTIP_TEXT[prop] ?? '';
-    tags.push({ label: display, tooltip: tip });
-  }
+for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
+  if (rawValue === undefined || rawValue === null || rawValue === '') continue;
+  if (!Object.prototype.hasOwnProperty.call(LABELS, prop)) continue;
+  if (rawValue !== true) continue;  
+  const label = game.i18n.localize(LABELS[prop]);
+  const display = Number.isFinite(rawValue) ? `${label} ${rawValue}` : label;
+  const tip = TOOLTIP_TEXT[prop] ?? '';
+  tags.push({ label: display, tooltip: tip });
+}
+
 
   const itemData = {
     speakerName: speaker.alias ?? speaker.name,
     img: item.img,
     type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
     name: item.name,
-    descFieldHtml: item.system.description ?? '',
+    descFieldHtml: item.system.description,
     rollType: 'item',
-    varFieldHtml: variable,
+    itemDamage: item.system.damage,
+    itemQuantity: item.system.quantity || 1,
+    opportunityCost: item.system.opportunity,
+    escalationCost: item.system.escalation,
     tags,
-    range: game.i18n.localize(`sta.roll.${item.system.range}`),
+    range: game.i18n.localize(`sta.actor.belonging.weapon.${item.system.range}`),
     weapontype: item.system.hands + ' ' + game.i18n.localize(`sta.item.genericitem.handed`),
+    quantityRow: true,
+    damageRow: true,
   };
 
     this.sendToChat(itemData);
@@ -666,7 +688,7 @@ async performWeaponRoll2e(item, speaker) {
       highyield: 'sta.actor.belonging.weapon.highyield',
       intense: 'sta.actor.belonging.weapon.intense',
       jamming: 'sta.actor.belonging.weapon.jamming',
-persistent: 'sta.actor.belonging.weapon.persistent',
+      persistent: 'sta.actor.belonging.weapon.persistentx',
       piercing: 'sta.actor.belonging.weapon.piercingx',
       slowing: 'sta.actor.belonging.weapon.slowing',
       spread: 'sta.actor.belonging.weapon.spread',
@@ -684,7 +706,7 @@ persistent: 'sta.actor.belonging.weapon.persistent',
       highyield: game.i18n.localize('sta.tooltip.starship.weapon.highyield'),
       intense: game.i18n.localize('sta.tooltip.starship.weapon.intense'),
       jamming: game.i18n.localize('sta.tooltip.starship.weapon.jamming'),
-persistent: 'sta.actor.belonging.weapon.persistent',
+      persistent: game.i18n.localize('sta.tooltip.starship.weapon.persistent'),
       piercing: game.i18n.localize('sta.tooltip.starship.weapon.piercing'),
       slowing: game.i18n.localize('sta.tooltip.starship.weapon.slowing'),
       spread: game.i18n.localize('sta.tooltip.starship.weapon.spread'),
@@ -694,26 +716,33 @@ persistent: 'sta.actor.belonging.weapon.persistent',
 
   const tags = [];
 
-  for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
-    if (rawValue === undefined || rawValue === null || rawValue === '') continue;
-    if (!Object.prototype.hasOwnProperty.call(LABELS, prop)) continue;
-    const label = game.i18n.localize(LABELS[prop]);
-    const display = Number.isFinite(rawValue) ? `${label} ${rawValue}` : label;
-    const tip = TOOLTIP_TEXT[prop] ?? '';
-    tags.push({ label: display, tooltip: tip });
-  }
+for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
+  if (rawValue === undefined || rawValue === null || rawValue === '') continue;
+  if (!Object.prototype.hasOwnProperty.call(LABELS, prop)) continue;
+  if (rawValue !== true) continue;  
+  const label = game.i18n.localize(LABELS[prop]);
+  const display = Number.isFinite(rawValue) ? `${label} ${rawValue}` : label;
+  const tip = TOOLTIP_TEXT[prop] ?? '';
+  tags.push({ label: display, tooltip: tip });
+}
 
   const itemData = {
     speakerName: speaker.alias ?? speaker.name,
     img: item.img,
     type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
     name: item.name,
-    descFieldHtml: item.system.description ?? '',
+    descFieldHtml: item.system.description,
     rollType: 'item',
     varFieldHtml: variable,
     tags,
+    itemDamage: item.system.damage,
+    itemQuantity: item.system.quantity || 1,
+    opportunityCost: item.system.opportunity,
+    escalationCost: item.system.escalation,
     range: game.i18n.localize(`sta.actor.belonging.weapon.${item.system.range}`),
     weapontype: game.i18n.localize(`sta.actor.belonging.weapon.${item.system.includescale}`),
+    quantityRow: true,
+    damageRow: true,
   };
 
     this.sendToChat(itemData);
@@ -772,30 +801,40 @@ persistent: 'sta.actor.belonging.weapon.persistent',
 
   const tags = [];
 
-  for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
-    if (rawValue === undefined || rawValue === null || rawValue === '') continue;
-    if (!Object.prototype.hasOwnProperty.call(LABELS, prop)) continue;
-    const label = game.i18n.localize(LABELS[prop]);
-    const display = Number.isFinite(rawValue) ? `${label} ${rawValue}` : label;
-    const tip = TOOLTIP_TEXT[prop] ?? '';
-    tags.push({ label: display, tooltip: tip });
-  }
+for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
+  if (rawValue === undefined || rawValue === null || rawValue === '') continue;
+  if (!Object.prototype.hasOwnProperty.call(LABELS, prop)) continue;
+  if (rawValue !== true) continue;  
+  const label = game.i18n.localize(LABELS[prop]);
+  const display = Number.isFinite(rawValue) ? `${label} ${rawValue}` : label;
+  const tip = TOOLTIP_TEXT[prop] ?? '';
+  tags.push({ label: display, tooltip: tip });
+}
 
-    const damageRoll = await new Roll(calculatedDamage + 'd6').evaluate({});
-    const getSuccessesEffects = await this._getSuccessesEffects(damageRoll);
-    const diceImages = await this._getDiceImageListFromChallengeRoll(damageRoll);
+    const rolledChallenge = await new Roll(calculatedDamage + 'd6').evaluate({});
+    const getSuccessesEffects = await this._getSuccessesEffects(rolledChallenge);
+    const diceString = await this._getDiceImageListFromChallengeRoll(rolledChallenge);
 
     const itemData = {
     speakerName: speaker.alias ?? speaker.name,
     img: item.img,
     type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
     name: item.name,
-    descFieldHtml: item.system.description ?? '',
-    rollType: 'weapon',
+    descFieldHtml: item.system.description,
+    rollType: 'item',
     varFieldHtml: variable,
     tags,
+    itemDamage: item.system.damage + 'd6',
+    itemQuantity: item.system.quantity || 1,
+    opportunityCost: item.system.opportunity,
+    escalationCost: item.system.escalation,
     range: game.i18n.localize(`sta.roll.${item.system.range}`),
     weapontype: item.system.hands + ' ' + game.i18n.localize(`sta.item.genericitem.handed`),
+    quantityRow: true,
+    damageRow: true,
+    ...getSuccessesEffects,
+    diceString,
+    rollAsWeapon: true,
   };
 
     this.sendToChat(itemData);
@@ -827,7 +866,7 @@ persistent: 'sta.actor.belonging.weapon.persistent',
       dampening: 'sta.actor.belonging.weapon.dampening',
       calibration: 'sta.actor.belonging.weapon.calibration',
       hiddenx: 'sta.actor.belonging.weapon.hiddenx',
-persistent: 'sta.actor.belonging.weapon.persistent',
+      persistentx: 'sta.actor.belonging.weapon.persistentx',
       piercingx: 'sta.actor.belonging.weapon.piercingx',
       viciousx: 'sta.actor.belonging.weapon.viciousx',
       versatilex: 'sta.actor.belonging.weapon.versatilex',
@@ -841,7 +880,7 @@ persistent: 'sta.actor.belonging.weapon.persistent',
       dampening: game.i18n.localize('sta.tooltip.starship.weapon.dampening'),
       calibration: game.i18n.localize('sta.tooltip.starship.weapon.calibration'),
       hiddenx: game.i18n.localize('sta.tooltip.starship.weapon.hiddenx'),
-persistent: 'sta.actor.belonging.weapon.persistent',
+      persistentx: game.i18n.localize('sta.tooltip.starship.weapon.persistentx'),
       piercingx: game.i18n.localize('sta.tooltip.starship.weapon.piercingx'),
       viciousx: game.i18n.localize('sta.tooltip.starship.weapon.viciousx'),
       versatilex: game.i18n.localize('sta.tooltip.starship.weapon.versatilex'),
@@ -849,34 +888,170 @@ persistent: 'sta.actor.belonging.weapon.persistent',
 
   const tags = [];
 
-  for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
-    if (rawValue === undefined || rawValue === null || rawValue === '') continue;
-    if (!Object.prototype.hasOwnProperty.call(LABELS, prop)) continue;
-    const label = game.i18n.localize(LABELS[prop]);
-    const display = Number.isFinite(rawValue) ? `${label} ${rawValue}` : label;
-    const tip = TOOLTIP_TEXT[prop] ?? '';
-    tags.push({ label: display, tooltip: tip });
-  }
+for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
+  if (rawValue === undefined || rawValue === null || rawValue === '') continue;
+  if (!Object.prototype.hasOwnProperty.call(LABELS, prop)) continue;
+  if (rawValue !== true && (!Number.isFinite(rawValue) || rawValue <= 0)) continue;
+  
+  const label = game.i18n.localize(LABELS[prop]);
+  const display = Number.isFinite(rawValue) ? `${label} ${rawValue}` : label;
+  const tip = TOOLTIP_TEXT[prop] ?? '';
+  tags.push({ label: display, tooltip: tip });
+}
 
-    const damageRoll = await new Roll(calculatedDamage + 'd6').evaluate({});
-    const getSuccessesEffects = await this._getSuccessesEffects(damageRoll);
-    const diceImages = await this._getDiceImageListFromChallengeRoll(damageRoll);
+    const rolledChallenge = await new Roll(calculatedDamage + 'd6').evaluate({});
+    const getSuccessesEffects = await this._getSuccessesEffects(rolledChallenge);
+    const diceString = await this._getDiceImageListFromChallengeRoll(rolledChallenge);
+    let weapontype = game.i18n.localize(`sta.actor.starship.scale`);
+    if (item.system.includescale === false) {
+      weapontype = 'No ' + game.i18n.localize(`sta.actor.starship.scale`);
+    }
 
     const itemData = {
     speakerName: speaker.alias ?? speaker.name,
     img: item.img,
     type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
     name: item.name,
-    descFieldHtml: item.system.description ?? '',
-    rollType: 'weapon',
+    descFieldHtml: item.system.description,
+    rollType: 'item',
     varFieldHtml: variable,
     tags,
-    range: game.i18n.localize(`sta.roll.${item.system.range}`),
-    weapontype: item.system.hands + ' ' + game.i18n.localize(`sta.item.genericitem.handed`),
+    itemDamage: item.system.damage + 'd6',
+    itemQuantity: item.system.quantity || 1,
+    opportunityCost: item.system.opportunity,
+    escalationCost: item.system.escalation,
+    range: game.i18n.localize(`sta.actor.belonging.weapon.${item.system.range}`),
+    weapontype,
+    quantityRow: true,
+    damageRow: true,
+    ...getSuccessesEffects,
+    diceString,
+    rollAsWeapon: true,
   };
 
     this.sendToChat(itemData);
 }
+
+  // #########################################################
+  // #                                                       #
+  // #                      Reroll                           #
+  // #                                                       #
+  // #########################################################
+
+  async handleReroll(messageId) {
+    const message = game.messages.get(messageId);
+
+    if (!message) {
+      ui.notifications.warn(`No chat message found with ID ${messageId}`);
+      return;
+    }
+
+    const rollData = message.flags.sta ?? {};
+    switch (rollData.rollType) {
+      case 'task':
+        this.rerollTask(rollData);
+        break;
+      case 'challenge':
+        this.rerollChallenge(rollData);
+         break;
+      case 'npc':
+        this.rerollNPC(rollData);
+        break;
+      case 'item':
+        this.rerollItem(rollData);
+        break;
+      default:
+        break;
+      }
+  }
+
+  async rerollTask(rollData) {
+
+//      speakerName: 'STARoller',
+//      selectedAttributeValue,
+//      selectedDisciplineValue,
+//      selectedSystemValue: 0,
+//      selectedDepartmentValue: 0,
+//      rolltype: 'sidebar',
+//      dicePool,
+//      usingFocus,
+//      usingDedicatedFocus,
+//      usingDetermination,
+//      complicationRange,
+//    diceToRoll, taskRolled
+//      diceString,
+//      diceOutcome,
+//      success,
+//      complication,
+//      flavor,
+//      checkTarget,
+//      complicationMinimumValue,
+//      rollDetails,
+//     successText, complicationText
+
+    const usingFocus = rollData.usingFocus;
+    const usingDedicatedFocus = rollData.usingDedicatedFocus;
+    const usingDetermination = rollData.usingDetermination;
+    const complicationRange = rollData.complicationRange;
+
+    const template = `
+    <div class="dialogue">
+    </div>    
+    `;
+
+    const formData = await api.DialogV2.wait({
+      window: {
+        title: game.i18n.localize('sta.roll.rerollresults'),
+      },
+      position: {
+        height: 'auto',
+        width: 350,
+      },
+      content: template,
+      classes: ['dialogue'],
+      buttons: [
+        {
+          action: 'roll',
+          default: true,
+          label: game.i18n.localize('sta.roll.rerollresults'),
+          callback: (event, button, dialog) => {
+            const form = dialog.element.querySelector('form');
+            return form ? new FormData(form) : null;
+          },
+        },
+      ],
+      close: () => null,
+    });
+
+    if (!formData) return;
+
+      dicePool = parseInt(formData.get('dicePoolSlider'), 10);
+
+    const selectedAttributeValue = parseInt(
+      document.getElementById('selectedAttributeValue').value,
+      10
+    ) || 0;
+    const selectedDisciplineValue = parseInt(
+      document.getElementById('selectedDisciplineValue').value,
+      10
+    ) || 0;
+
+    const taskData = {
+      speakerName: 'STARoller',
+      selectedAttributeValue,
+      selectedDisciplineValue,
+      selectedSystemValue: 0,
+      selectedDepartmentValue: 0,
+      rolltype: 'sidebar',
+      dicePool,
+      usingFocus,
+      usingDedicatedFocus,
+      usingDetermination,
+      complicationRange,
+    };
+
+    await this.sendToChat(taskData);
+  }
 
   // #########################################################
   // #                                                       #
@@ -930,12 +1105,6 @@ persistent: 'sta.actor.belonging.weapon.persistent',
           rollData
         );
         break;
-        case 'weapon':
-        chatData = await foundry.applications.handlebars.renderTemplate(
-          'systems/sta/templates/chat/weapon.hbs', 
-          rollData
-        );
-        break;
       default:
         break;
       }
@@ -954,6 +1123,7 @@ persistent: 'sta.actor.belonging.weapon.persistent',
         'sta': {
           speakerName: rollData.speakerName,
           diceOutcome: rollData.diceOutcome,
+          rollType: rollData.rollType,
         }
       },
     };

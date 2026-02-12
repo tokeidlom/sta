@@ -64,13 +64,9 @@ export class STARoller {
 
     const taskData = {
       speakerName: 'STARoller',
-      selectedAttribute: '',
       selectedAttributeValue,
-      selectedDiscipline: '',
       selectedDisciplineValue,
-      selectedSystem: '',
       selectedSystemValue: 0,
-      selectedDepartment: '',
       selectedDepartmentValue: 0,
       rolltype: 'sidebar',
       dicePool,
