@@ -140,13 +140,13 @@ export class STARoll {
       taskData.selectedSystemValue +
       taskData.selectedDepartmentValue;
     const complicationMinimumValue = taskData.complicationMinimumValue || 21 - taskData.complicationRange;
-    const disDepTarget = taskdata.disDepTarget || 
+    let disDepTarget = taskdata.disDepTarget || 
       taskData.selectedDisciplineValue +
       taskData.selectedDepartmentValue;
 
     if (taskData.useReputationInstead) {
       taskData.selectedDiscipline = 'reputation';
-      taskData.selectedDisciplineValue = taskData.reputationValue;
+      disDepTarget = taskData.reputationValue;
     }
 
     const doubleDiscipline = disDepTarget * 2;
