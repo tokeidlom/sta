@@ -140,7 +140,7 @@ export class STARoll {
       taskData.selectedSystemValue +
       taskData.selectedDepartmentValue;
     const complicationMinimumValue = taskData.complicationMinimumValue || 21 - taskData.complicationRange;
-    let disDepTarget = taskdata.disDepTarget || 
+    let disDepTarget = taskData.disDepTarget || 
       taskData.selectedDisciplineValue +
       taskData.selectedDepartmentValue;
 
@@ -164,17 +164,15 @@ const resultsArray =
 
 
 resultsArray.forEach((result) => {
-  if (
-    (taskData.usingFocus &&
+  if ((taskData.usingFocus &&
       result <= disDepTarget) ||
-    result === 1
-  ) {
+    result === 1) {
     diceString += `<li class="roll die d20 max">${result}</li>`;
     diceOutcome.push(result);
     success += 2;
   } else if (
     (taskData.usingDedicatedFocus &&
-      result <= doubleDiscipline) {
+      result <= doubleDiscipline)) {
     diceString += `<li class="roll die d20 max">${result}</li>`;
     diceOutcome.push(result);
     success += 2;
@@ -1211,8 +1209,8 @@ const shipretainedTaskDice = {
 checkTarget: rollData.checkTarget,
 complicationMinimumValue: rollData.complicationMinimumValue,
 shipdisDepTarget: rollData.shipdisDepTarget,
-customResults: shipkept,
 usingFocus: true,
+customResults: shipkept,
 }
 shipretainedResult = await this._taskResult(shipretainedTaskDice);
 
@@ -1222,8 +1220,7 @@ const shiprerolledTaskDice = {
 checkTarget: rollData.checkTarget,
 complicationMinimumValue: rollData.complicationMinimumValue,
 shipdisDepTarget: rollData.shipdisDepTarget,
-usingFocus: rollData.usingFocus,
-usingDedicatedFocus: rollData.usingDedicatedFocus,
+usingFocus: true,
 ...shiptaskRolled,
 }
 shiprerolledResult = await this._taskResult(shiprerolledTaskDice);
