@@ -7,7 +7,7 @@ export class STARoll {
   // #                                                       #
   // #########################################################
 
-  //Perform a normal Task Roll
+  // Perform a normal Task Roll
   async rollTask(taskData) {
     const taskRollData = await this._performRollTask(taskData);
     taskData = { ...taskData, ...taskRollData };
@@ -20,8 +20,8 @@ export class STARoll {
 
     this.sendToChat(taskData);
   }
-  
-  //Task roll from the NPC Roller
+
+  // Task roll from the NPC Roller
   async rollNPCTask(taskData) {
     let crewRolltype = '';
     let shipRolltype = '';
@@ -67,7 +67,6 @@ export class STARoll {
     if (taskData.selectedSystem === 'none') {
       const crewtaskResultText = await this._taskResultText(crewData);
       crewshipData = { ...crewData, ...crewtaskResultText, rollType: 'task' };
-
     } else {
       shipData = {
         speakerName: taskData.starshipName,
@@ -113,10 +112,10 @@ export class STARoll {
       };
 
       const crewshiptaskResultText = await this._taskResultText(crewshipData);
-      crewshipData = { ...crewshipData, ...crewshiptaskResultText, rollType: 'npc', };
+      crewshipData = { ...crewshipData, ...crewshiptaskResultText, rollType: 'npc' };
     }
 
-      this.sendToChat(crewshipData);
+    this.sendToChat(crewshipData);
   }
 
   async _performRollTask(taskData) {
@@ -154,48 +153,46 @@ export class STARoll {
     let diceOutcome = [];
     let success = 0;
     let complication = 0;
-    let i;
     let result = 0;
 
-const resultsArray =
-  taskData.customResults
-  ?? taskData.taskRolled?.dice?.flatMap(d => d.results.map(r => r.result))
-  ?? [];
+    const resultsArray =
+      taskData.customResults
+      ?? taskData.taskRolled?.dice?.flatMap(d => d.results.map(r => r.result))
+      ?? [];
 
+    resultsArray.forEach((result) => {
+      if ((taskData.usingFocus &&
+          result <= disDepTarget) ||
+        result === 1) {
+        diceString += `<li class="roll die d20 max">${result}</li>`;
+        diceOutcome.push(result);
+        success += 2;
+      } else if (
+        (taskData.usingDedicatedFocus &&
+          result <= doubleDiscipline)) {
+        diceString += `<li class="roll die d20 max">${result}</li>`;
+        diceOutcome.push(result);
+        success += 2;
+      } else if (result <= checkTarget) {
+        diceString += `<li class="roll die d20">${result}</li>`;
+        diceOutcome.push(result);
+        success += 1;
+      } else if (result >= complicationMinimumValue) {
+        diceString += `<li class="roll die d20 min">${result}</li>`;
+        diceOutcome.push(result);
+        complication += 1;
+      } else {
+        diceString += `<li class="roll die d20">${result}</li>`;
+        diceOutcome.push(result);
+      }
+    });
 
-resultsArray.forEach((result) => {
-  if ((taskData.usingFocus &&
-      result <= disDepTarget) ||
-    result === 1) {
-    diceString += `<li class="roll die d20 max">${result}</li>`;
-    diceOutcome.push(result);
-    success += 2;
-  } else if (
-    (taskData.usingDedicatedFocus &&
-      result <= doubleDiscipline)) {
-    diceString += `<li class="roll die d20 max">${result}</li>`;
-    diceOutcome.push(result);
-    success += 2;
-  } else if (result <= checkTarget) {
-    diceString += `<li class="roll die d20">${result}</li>`;
-    diceOutcome.push(result);
-    success += 1;
-  } else if (result >= complicationMinimumValue) {
-    diceString += `<li class="roll die d20 min">${result}</li>`;
-    diceOutcome.push(result);
-    complication += 1;
-  } else {
-    diceString += `<li class="roll die d20">${result}</li>`;
-    diceOutcome.push(result);
-  }
-});
-
-// Add Determination bonus
-if (taskData.usingDetermination) {
-  diceString += `<li class="roll die d20 max">1</li>`;
-  diceOutcome.push(1);
-  success += 2;
-}
+    // Add Determination bonus
+    if (taskData.usingDetermination) {
+      diceString += `<li class="roll die d20 max">1</li>`;
+      diceOutcome.push(1);
+      success += 2;
+    }
 
     // Add information about what was rolled
     let bonuses = [];
@@ -240,7 +237,7 @@ if (taskData.usingDetermination) {
         flavor = `${game.i18n.format('sta.roll.npcshipassist')}`;
         break;
       case 'reroll':
-        flavor = `${game.i18n.format('sta.roll.rerollresults')} ${speaker.id} ${game.i18n.format('sta.roll.task.name')}`;
+        flavor = `${game.i18n.format('sta.roll.rerollresults')} ${taskData.speakerName} ${game.i18n.format('sta.roll.task.name')}`;
         break;
       case 'custom':
         flavor = taskData.flavor;
@@ -248,7 +245,7 @@ if (taskData.usingDetermination) {
       default:
         flavor = '';
         break;
-      }
+    }
 
     return {
       diceString,
@@ -323,7 +320,7 @@ if (taskData.usingDetermination) {
   // #                                                       #
   // #########################################################
 
-  //Perform a normal Challenge Roll
+  // Perform a normal Challenge Roll
   async performChallengeRoll(challengeData) {
     const rolledChallenge = await new Roll(challengeData.dicePool + 'd6').evaluate({});
     const getSuccessesEffects = await this._getSuccessesEffects(rolledChallenge);
@@ -337,28 +334,26 @@ if (taskData.usingDetermination) {
   }
 
   /* Creates an HTML list of die face images from the results of a challenge roll */
-async _getDiceImageListFromChallengeRoll(rolledChallenge) {
+  async _getDiceImageListFromChallengeRoll(rolledChallenge) {
+    const diceFaceTable = [
+      '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Success1_small.png" /></li>',
+      '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Success2_small.png" /></li>',
+      '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Success0_small.png" /></li>',
+      '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Success0_small.png" /></li>',
+      '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Effect_small.png" /></li>',
+      '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Effect_small.png" /></li>',
+    ];
 
-  const diceFaceTable = [
-    '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Success1_small.png" /></li>',
-    '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Success2_small.png" /></li>',
-    '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Success0_small.png" /></li>',
-    '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Success0_small.png" /></li>',
-    '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Effect_small.png" /></li>',
-    '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Effect_small.png" /></li>',
-  ];
+    const resultsArray = rolledChallenge.customResults
+      ?? rolledChallenge?.dice?.[0]?.results?.map(d => d.result)
+      ?? [];
 
-  const resultsArray = rolledChallenge.customResults
-    ?? rolledChallenge?.dice?.[0]?.results?.map(d => d.result)
-    ?? [];
+    const diceString = resultsArray
+      .map(result => diceFaceTable[result - 1])
+      .join(' ');
 
-  const diceString = resultsArray
-    .map(result => diceFaceTable[result - 1])
-    .join(' ');
-
-  return diceString;
-}
-
+    return diceString;
+  }
 
   /* Returns the number of successes in a d6 challenge die roll */
   async _getSuccessesEffects(rolledChallenge) {
@@ -366,8 +361,8 @@ async _getDiceImageListFromChallengeRoll(rolledChallenge) {
     let effects = 0;
     const diceOutcome = [];
     const dice = rolledChallenge.customResults
-    ?? rolledChallenge?.dice?.[0]?.results?.map(d => d.result)
-    ?? [];
+      ?? rolledChallenge?.dice?.[0]?.results?.map(d => d.result)
+      ?? [];
 
     for (const die of dice) {
       switch (die) {
@@ -403,9 +398,8 @@ async _getDiceImageListFromChallengeRoll(rolledChallenge) {
     return { diceOutcome, successes, effects };
   }
 
-    /* Writes the success text for the chatcare */
-  async _getSuccessesEffectsText (getSuccessesEffects) {
-
+  /* Writes the success text for the chat card */
+  async _getSuccessesEffectsText(getSuccessesEffects) {
     let successText = '';
     if (getSuccessesEffects.successes === 1) {
       successText = `${getSuccessesEffects.successes} ${game.i18n.format('sta.roll.success')}`;
@@ -546,15 +540,15 @@ async _getDiceImageListFromChallengeRoll(rolledChallenge) {
     this.sendToChat(itemData);
   }
 
-  //Handle cases where (xCD) has been written into an item description causing it to be handled as a weapon instead of an item
+  // Handle cases where (xCD) has been written into an item description causing it to be handled as a weapon instead of an item
   async onItemtoWeapon(item, speaker) {
     const regex = /\((.cd)\)/i;
     const match = item.system.description.toLowerCase().match(regex);
     let challengeDice = 1;
-    
+
     if (match) {
       const x = match[1][0];
-        
+
       if (x === 'x') {
         const defaultValue = 1;
         const template = 'systems/sta/templates/apps/dicepool-challenge.hbs';
@@ -562,8 +556,8 @@ async _getDiceImageListFromChallengeRoll(rolledChallenge) {
           defaultValue
         });
         const formData = await api.DialogV2.wait({
-          window: {title: game.i18n.localize('sta.apps.dicepoolwindow')},
-          position: {height: 'auto', width: 350},
+          window: { title: game.i18n.localize('sta.apps.dicepoolwindow') },
+          position: { height: 'auto', width: 350 },
           content: html,
           classes: ['dialogue'],
           buttons: [{
@@ -594,21 +588,21 @@ async _getDiceImageListFromChallengeRoll(rolledChallenge) {
     if (item.system.includescale === false) {
       weapontype = 'No ' + game.i18n.localize(`sta.actor.starship.scale`);
     }
-    
+
     const itemData = {
-    speakerName: speaker.name,
-    img: item.img,
-    type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
-    name: item.name,
-    descFieldHtml: item.system.description,
-    rollType: 'item',
-    ...getSuccessesEffects,
-    diceString,
-    rollAsWeapon: true,
-  };
+      speakerName: speaker.name,
+      img: item.img,
+      type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
+      name: item.name,
+      descFieldHtml: item.system.description,
+      rollType: 'item',
+      ...getSuccessesEffects,
+      diceString,
+      rollAsWeapon: true,
+    };
 
     this.sendToChat(itemData);
-}
+  }
 
   // #########################################################
   // #                                                       #
@@ -616,69 +610,67 @@ async _getDiceImageListFromChallengeRoll(rolledChallenge) {
   // #                                                       #
   // #########################################################
 
-async performWeaponRoll2e(item, speaker) {
+  async performWeaponRoll2e(item, speaker) {
+    const LABELS = Object.freeze({
+      accurate: 'sta.actor.belonging.weapon.accurate',
+      area: 'sta.actor.belonging.weapon.area',
+      charge: 'sta.actor.belonging.weapon.charge',
+      cumbersome: 'sta.actor.belonging.weapon.cumbersome',
+      debilitating: 'sta.actor.belonging.weapon.debilitating',
+      grenade: 'sta.actor.belonging.weapon.grenade',
+      inaccurate: 'sta.actor.belonging.weapon.inaccurate',
+      intense: 'sta.actor.belonging.weapon.intense',
+      piercingx: 'sta.actor.belonging.weapon.piercingx',
+      hiddenx: 'sta.actor.belonging.weapon.hiddenx',
+      stun: 'sta.actor.belonging.weapon.stun',
+      deadly: 'sta.actor.belonging.weapon.deadly',
+    });
 
-  const LABELS = Object.freeze({
-    accurate: 'sta.actor.belonging.weapon.accurate',
-    area: 'sta.actor.belonging.weapon.area',
-    charge: 'sta.actor.belonging.weapon.charge',
-    cumbersome: 'sta.actor.belonging.weapon.cumbersome',
-    debilitating: 'sta.actor.belonging.weapon.debilitating',
-    grenade: 'sta.actor.belonging.weapon.grenade',
-    inaccurate: 'sta.actor.belonging.weapon.inaccurate',
-    intense: 'sta.actor.belonging.weapon.intense',
-    piercingx: 'sta.actor.belonging.weapon.piercingx',
-    hiddenx: 'sta.actor.belonging.weapon.hiddenx',
-    stun: 'sta.actor.belonging.weapon.stun',
-    deadly: 'sta.actor.belonging.weapon.deadly',
-  });
+    const TOOLTIP_TEXT = Object.freeze({
+      accurate: game.i18n.localize('sta.tooltip.character.weapon.accurate'),
+      area: game.i18n.localize('sta.tooltip.character.weapon.area'),
+      charge: game.i18n.localize('sta.tooltip.character.weapon.charge'),
+      cumbersome: game.i18n.localize('sta.tooltip.character.weapon.cumbersome'),
+      debilitating: game.i18n.localize('sta.tooltip.character.weapon.debilitating'),
+      grenade: game.i18n.localize('sta.tooltip.character.weapon.grenade'),
+      inaccurate: game.i18n.localize('sta.tooltip.character.weapon.inaccurate'),
+      intense: game.i18n.localize('sta.tooltip.character.weapon.intense'),
+      piercingx: game.i18n.localize('sta.tooltip.character.weapon.piercingx'),
+      hiddenx: game.i18n.localize('sta.tooltip.character.weapon.hiddenx'),
+    });
 
-  const TOOLTIP_TEXT = Object.freeze({
-    accurate: game.i18n.localize('sta.tooltip.character.weapon.accurate'),
-    area: game.i18n.localize('sta.tooltip.character.weapon.area'),
-    charge: game.i18n.localize('sta.tooltip.character.weapon.charge'),
-    cumbersome: game.i18n.localize('sta.tooltip.character.weapon.cumbersome'),
-    debilitating: game.i18n.localize('sta.tooltip.character.weapon.debilitating'),
-    grenade: game.i18n.localize('sta.tooltip.character.weapon.grenade'),
-    inaccurate: game.i18n.localize('sta.tooltip.character.weapon.inaccurate'),
-    intense: game.i18n.localize('sta.tooltip.character.weapon.intense'),
-    piercingx: game.i18n.localize('sta.tooltip.character.weapon.piercingx'),
-    hiddenx: game.i18n.localize('sta.tooltip.character.weapon.hiddenx'),
-  });
+    const tags = [];
 
-  const tags = [];
+    for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
+      if (rawValue === undefined || rawValue === null || rawValue === '') continue;
+      if (!Object.prototype.hasOwnProperty.call(LABELS, prop)) continue;
+      if (rawValue !== true) continue;
+      const label = game.i18n.localize(LABELS[prop]);
+      const display = Number.isFinite(rawValue) ? `${label} ${rawValue}` : label;
+      const tip = TOOLTIP_TEXT[prop] ?? '';
+      tags.push({ label: display, tooltip: tip });
+    }
 
-for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
-  if (rawValue === undefined || rawValue === null || rawValue === '') continue;
-  if (!Object.prototype.hasOwnProperty.call(LABELS, prop)) continue;
-  if (rawValue !== true) continue;  
-  const label = game.i18n.localize(LABELS[prop]);
-  const display = Number.isFinite(rawValue) ? `${label} ${rawValue}` : label;
-  const tip = TOOLTIP_TEXT[prop] ?? '';
-  tags.push({ label: display, tooltip: tip });
-}
-
-
-  const itemData = {
-    speakerName: speaker.alias ?? speaker.name,
-    img: item.img,
-    type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
-    name: item.name,
-    descFieldHtml: item.system.description,
-    rollType: 'item',
-    itemDamage: item.system.damage,
-    itemQuantity: item.system.quantity || 1,
-    opportunityCost: item.system.opportunity,
-    escalationCost: item.system.escalation,
-    tags,
-    range: game.i18n.localize(`sta.actor.belonging.weapon.${item.system.range}`),
-    weapontype: item.system.hands + ' ' + game.i18n.localize(`sta.item.genericitem.handed`),
-    quantityRow: true,
-    damageRow: true,
-  };
+    const itemData = {
+      speakerName: speaker.alias ?? speaker.name,
+      img: item.img,
+      type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
+      name: item.name,
+      descFieldHtml: item.system.description,
+      rollType: 'item',
+      itemDamage: item.system.damage,
+      itemQuantity: item.system.quantity || 1,
+      opportunityCost: item.system.opportunity,
+      escalationCost: item.system.escalation,
+      tags,
+      range: game.i18n.localize(`sta.actor.belonging.weapon.${item.system.range}`),
+      weapontype: item.system.hands + ' ' + game.i18n.localize(`sta.item.genericitem.handed`),
+      quantityRow: true,
+      damageRow: true,
+    };
 
     this.sendToChat(itemData);
-}
+  }
 
   async performStarshipWeaponRoll2e(item, speaker) {
     let actorWeapons = 0;
@@ -710,7 +702,7 @@ for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
       versatilex: 'sta.actor.belonging.weapon.versatilex',
     });
 
-  const TOOLTIP_TEXT = Object.freeze({
+    const TOOLTIP_TEXT = Object.freeze({
       area: game.i18n.localize('sta.tooltip.starship.weapon.area'),
       calibration: game.i18n.localize('sta.tooltip.starship.weapon.calibration'),
       cumbersome: game.i18n.localize('sta.tooltip.starship.weapon.cumbersome'),
@@ -728,41 +720,41 @@ for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
       versatilex: game.i18n.localize('sta.tooltip.starship.weapon.versatilex'),
     });
 
-  const tags = [];
+    const tags = [];
 
-for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
-  if (rawValue === undefined || rawValue === null || rawValue === '') continue;
-  if (!Object.prototype.hasOwnProperty.call(LABELS, prop)) continue;
-  if (rawValue !== true) continue;  
-  const label = game.i18n.localize(LABELS[prop]);
-  const display = Number.isFinite(rawValue) ? `${label} ${rawValue}` : label;
-  const tip = TOOLTIP_TEXT[prop] ?? '';
-  tags.push({ label: display, tooltip: tip });
-}
+    for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
+      if (rawValue === undefined || rawValue === null || rawValue === '') continue;
+      if (!Object.prototype.hasOwnProperty.call(LABELS, prop)) continue;
+      if (rawValue !== true) continue;
+      const label = game.i18n.localize(LABELS[prop]);
+      const display = Number.isFinite(rawValue) ? `${label} ${rawValue}` : label;
+      const tip = TOOLTIP_TEXT[prop] ?? '';
+      tags.push({ label: display, tooltip: tip });
+    }
 
-  const itemData = {
-    speakerName: speaker.alias ?? speaker.name,
-    img: item.img,
-    type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
-    name: item.name,
-    descFieldHtml: item.system.description,
-    rollType: 'item',
-    varFieldHtml: variable,
-    tags,
-    itemDamage: item.system.damage,
-    itemQuantity: item.system.quantity || 1,
-    opportunityCost: item.system.opportunity,
-    escalationCost: item.system.escalation,
-    range: game.i18n.localize(`sta.actor.belonging.weapon.${item.system.range}`),
-    weapontype: game.i18n.localize(`sta.actor.belonging.weapon.${item.system.includescale}`),
-    quantityRow: true,
-    damageRow: true,
-  };
+    const itemData = {
+      speakerName: speaker.alias ?? speaker.name,
+      img: item.img,
+      type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
+      name: item.name,
+      descFieldHtml: item.system.description,
+      rollType: 'item',
+      varFieldHtml: variable,
+      tags,
+      itemDamage: item.system.damage,
+      itemQuantity: item.system.quantity || 1,
+      opportunityCost: item.system.opportunity,
+      escalationCost: item.system.escalation,
+      range: game.i18n.localize(`sta.actor.belonging.weapon.${item.system.range}`),
+      weapontype: game.i18n.localize(`sta.actor.belonging.weapon.${item.system.includescale}`),
+      quantityRow: true,
+      damageRow: true,
+    };
 
     this.sendToChat(itemData);
-}
+  }
 
-    async performWeaponRoll1e(item, speaker) {
+  async performWeaponRoll1e(item, speaker) {
     let actorSecurity = 0;
     if (speaker.system.disciplines) {
       actorSecurity = parseInt(speaker.system.disciplines.security.value);
@@ -796,7 +788,7 @@ for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
       viciousx: 'sta.actor.belonging.weapon.viciousx',
     });
 
-  const TOOLTIP_TEXT = Object.freeze({
+    const TOOLTIP_TEXT = Object.freeze({
       charge: game.i18n.localize('sta.tooltip.character.weapon.charge'),
       grenade: game.i18n.localize('sta.tooltip.character.weapon.grenade'),
       area: game.i18n.localize('sta.tooltip.character.weapon.area'),
@@ -813,48 +805,48 @@ for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
       viciousx: game.i18n.localize('sta.tooltip.character.weapon.viciousx'),
     });
 
-  const tags = [];
+    const tags = [];
 
-for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
-  if (rawValue === undefined || rawValue === null || rawValue === '') continue;
-  if (!Object.prototype.hasOwnProperty.call(LABELS, prop)) continue;
-  if (rawValue !== true) continue;  
-  const label = game.i18n.localize(LABELS[prop]);
-  const display = Number.isFinite(rawValue) ? `${label} ${rawValue}` : label;
-  const tip = TOOLTIP_TEXT[prop] ?? '';
-  tags.push({ label: display, tooltip: tip });
-}
+    for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
+      if (rawValue === undefined || rawValue === null || rawValue === '') continue;
+      if (!Object.prototype.hasOwnProperty.call(LABELS, prop)) continue;
+      if (rawValue !== true) continue;
+      const label = game.i18n.localize(LABELS[prop]);
+      const display = Number.isFinite(rawValue) ? `${label} ${rawValue}` : label;
+      const tip = TOOLTIP_TEXT[prop] ?? '';
+      tags.push({ label: display, tooltip: tip });
+    }
 
     const rolledChallenge = await new Roll(calculatedDamage + 'd6').evaluate({});
     const getSuccessesEffects = await this._getSuccessesEffects(rolledChallenge);
     const diceString = await this._getDiceImageListFromChallengeRoll(rolledChallenge);
 
     const itemData = {
-    speakerName: speaker.alias ?? speaker.name,
-    img: item.img,
-    type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
-    name: item.name,
-    descFieldHtml: item.system.description,
-    rollType: 'item',
-    varFieldHtml: variable,
-    tags,
-    itemDamage: item.system.damage + 'd6',
-    itemQuantity: item.system.quantity || 1,
-    opportunityCost: item.system.opportunity,
-    escalationCost: item.system.escalation,
-    range: game.i18n.localize(`sta.roll.${item.system.range}`),
-    weapontype: item.system.hands + ' ' + game.i18n.localize(`sta.item.genericitem.handed`),
-    quantityRow: true,
-    damageRow: true,
-    ...getSuccessesEffects,
-    diceString,
-    rollAsWeapon: true,
-  };
+      speakerName: speaker.alias ?? speaker.name,
+      img: item.img,
+      type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
+      name: item.name,
+      descFieldHtml: item.system.description,
+      rollType: 'item',
+      varFieldHtml: variable,
+      tags,
+      itemDamage: item.system.damage + 'd6',
+      itemQuantity: item.system.quantity || 1,
+      opportunityCost: item.system.opportunity,
+      escalationCost: item.system.escalation,
+      range: game.i18n.localize(`sta.roll.${item.system.range}`),
+      weapontype: item.system.hands + ' ' + game.i18n.localize(`sta.item.genericitem.handed`),
+      quantityRow: true,
+      damageRow: true,
+      ...getSuccessesEffects,
+      diceString,
+      rollAsWeapon: true,
+    };
 
     this.sendToChat(itemData);
-}
+  }
 
-    async performStarshipWeaponRoll1e(item, speaker) {
+  async performStarshipWeaponRoll1e(item, speaker) {
     let actorSecurity = 0;
     if (speaker.system.disciplines) {
       actorSecurity = parseInt(speaker.system.disciplines.security.value);
@@ -871,7 +863,6 @@ for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
     }
     const variable = `<div class='dice-formula'> ` + variablePrompt.replace('|#|', calculatedDamage) + `</div>`;
 
-
     const LABELS = Object.freeze({
       area: 'sta.actor.belonging.weapon.area',
       spread: 'sta.actor.belonging.weapon.spread',
@@ -886,7 +877,7 @@ for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
       versatilex: 'sta.actor.belonging.weapon.versatilex',
     });
 
-  const TOOLTIP_TEXT = Object.freeze({
+    const TOOLTIP_TEXT = Object.freeze({
       area: game.i18n.localize('sta.tooltip.starship.weapon.area'),
       spread: game.i18n.localize('sta.tooltip.starship.weapon.spread'),
       highyield: game.i18n.localize('sta.tooltip.starship.weapon.highyield'),
@@ -900,18 +891,18 @@ for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
       versatilex: game.i18n.localize('sta.tooltip.starship.weapon.versatilex'),
     });
 
-  const tags = [];
+    const tags = [];
 
-for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
-  if (rawValue === undefined || rawValue === null || rawValue === '') continue;
-  if (!Object.prototype.hasOwnProperty.call(LABELS, prop)) continue;
-  if (rawValue !== true && (!Number.isFinite(rawValue) || rawValue <= 0)) continue;
-  
-  const label = game.i18n.localize(LABELS[prop]);
-  const display = Number.isFinite(rawValue) ? `${label} ${rawValue}` : label;
-  const tip = TOOLTIP_TEXT[prop] ?? '';
-  tags.push({ label: display, tooltip: tip });
-}
+    for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
+      if (rawValue === undefined || rawValue === null || rawValue === '') continue;
+      if (!Object.prototype.hasOwnProperty.call(LABELS, prop)) continue;
+      if (rawValue !== true && (!Number.isFinite(rawValue) || rawValue <= 0)) continue;
+
+      const label = game.i18n.localize(LABELS[prop]);
+      const display = Number.isFinite(rawValue) ? `${label} ${rawValue}` : label;
+      const tip = TOOLTIP_TEXT[prop] ?? '';
+      tags.push({ label: display, tooltip: tip });
+    }
 
     const rolledChallenge = await new Roll(calculatedDamage + 'd6').evaluate({});
     const getSuccessesEffects = await this._getSuccessesEffects(rolledChallenge);
@@ -922,29 +913,29 @@ for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
     }
 
     const itemData = {
-    speakerName: speaker.alias ?? speaker.name,
-    img: item.img,
-    type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
-    name: item.name,
-    descFieldHtml: item.system.description,
-    rollType: 'item',
-    varFieldHtml: variable,
-    tags,
-    itemDamage: item.system.damage + 'd6',
-    itemQuantity: item.system.quantity || 1,
-    opportunityCost: item.system.opportunity,
-    escalationCost: item.system.escalation,
-    range: game.i18n.localize(`sta.actor.belonging.weapon.${item.system.range}`),
-    weapontype,
-    quantityRow: true,
-    damageRow: true,
-    ...getSuccessesEffects,
-    diceString,
-    rollAsWeapon: true,
-  };
+      speakerName: speaker.alias ?? speaker.name,
+      img: item.img,
+      type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
+      name: item.name,
+      descFieldHtml: item.system.description,
+      rollType: 'item',
+      varFieldHtml: variable,
+      tags,
+      itemDamage: item.system.damage + 'd6',
+      itemQuantity: item.system.quantity || 1,
+      opportunityCost: item.system.opportunity,
+      escalationCost: item.system.escalation,
+      range: game.i18n.localize(`sta.actor.belonging.weapon.${item.system.range}`),
+      weapontype,
+      quantityRow: true,
+      damageRow: true,
+      ...getSuccessesEffects,
+      diceString,
+      rollAsWeapon: true,
+    };
 
     this.sendToChat(itemData);
-}
+  }
 
   // #########################################################
   // #                                                       #
@@ -961,114 +952,105 @@ for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
     }
     const rollData = message.flags.sta ?? {};
 
-const diceOutcome = rollData.diceOutcome;
-const crewdiceOutcome = rollData.crewdiceOutcome;
-const shipdiceOutcome = rollData.shipdiceOutcome;
+    const diceOutcome = rollData.diceOutcome;
+    const crewdiceOutcome = rollData.crewdiceOutcome;
+    const shipdiceOutcome = rollData.shipdiceOutcome;
 
-let dicePool = '';
+    let dicePool = '';
 
-let template = `
-        <div class="dialogue">
-${game.i18n.localize(`sta.roll.rerollwhichresults`)}
-        <div class="dice-rolls">
+    let template = `
+      <div class="dialogue">
+      ${game.i18n.localize(`sta.roll.rerollwhichresults`)}
+      <div class="dice-rolls">
+    `;
 
-`;
-
-let diceImage = '';
+    let diceImage = '';
 
     switch (rollData.rollType) {
       case 'task':
-
-diceOutcome.forEach((num, i) => {
-  template += `
-<div>
-        <div class="die-image">
-      <li class="roll die d20">${num}</li>
-        </div>
-        <div class="checkbox-container">
-      <input type="checkbox" name="num" value="${num}">
-       </div>  
-       </div>  
-       `;
-});
+        diceOutcome.forEach((num, i) => {
+          template += `
+            <div>
+              <div class="die-image">
+                <li class="roll die d20">${num}</li>
+              </div>
+              <div class="checkbox-container">
+                <input type="checkbox" name="num" value="${num}">
+              </div>  
+            </div>  
+          `;
+        });
         break;
       case 'challenge':
-              case 'item':
+      case 'item':
+        diceOutcome.forEach((num, i) => {
+          switch (num) {
+            case 1:
+              diceImage = 'Success1';
+              break;
+            case 2:
+              diceImage = 'Success2';
+              break;
+            case 3:
+            case 4:
+              diceImage = 'Success0';
+              break;
+            case 5:
+            case 6:
+              diceImage = 'Effect';
+              break;
+            default:
+              break;
+          };
 
-
-diceOutcome.forEach((num, i) => {
-
-      switch (num) {
-      case 1:
-        diceImage = 'Success1';
+          template += `
+            <div>
+              <div class="die-image">
+                <li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_${diceImage}_small.png" /></li>
+              </div>
+              <div class="checkbox-container">
+                <input type="checkbox" name="num" value="${num}">
+              </div>  
+            </div>  
+          `;
+        });
         break;
-      case 2:
-        diceImage = 'Success2';
-        break;
-      case 3:
-      case 4:
-        diceImage = 'Success0';
-        break;
-      case 5:
-      case 6:
-        diceImage = 'Effect';
-        break;
-      default:
-        break;
-      };
-
-  template += `
-<div>
-        <div class="die-image">
-      <li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_${diceImage}_small.png" /></li>
-        </div>
-        <div class="checkbox-container">
-      <input type="checkbox" name="num" value="${num}">
-       </div>  
-       </div>  
-       `;
-});
-
-         break;
       case 'npc':
+        diceOutcome.forEach((crewnum, i) => {
+          template += `
+            <div>
+              <div class="die-image">
+                <li class="roll die d20">${crewnum}</li>
+              </div>
+              <div class="checkbox-container">
+                <input type="checkbox" name="crewnum" value="${crewnum}">
+              </div>  
+            </div>  
+          `;
+        });
 
-diceOutcome.forEach((crewnum, i) => {
-  template += `
-<div>
-        <div class="die-image">
-      <li class="roll die d20">${crewnum}</li>
-        </div>
-        <div class="checkbox-container">
-      <input type="checkbox" name="crewnum" value="${crewnum}">
-       </div>  
-       </div>  
-       `;
-});
-
-shipdiceOutcome.forEach((shipnum, i) => {
-  template += `
-<div>
-        <div class="die-image">
-      <li class="roll die d20">${shipnum}</li>
-        </div>
-        <div class="checkbox-container">
-      <input type="checkbox" name="shipnum" value="${shipnum}">
-       </div>  
-       </div>  
-       `;
-});
-
+        shipdiceOutcome.forEach((shipnum, i) => {
+          template += `
+            <div>
+              <div class="die-image">
+                <li class="roll die d20">${shipnum}</li>
+              </div>
+              <div class="checkbox-container">
+                <input type="checkbox" name="shipnum" value="${shipnum}">
+              </div>  
+            </div>  
+          `;
+        });
         break;
 
       default:
         break;
-      }
+    }
 
-
-template += `
-  </div>
-  </div>
-  `;
+    template += `
+      </div>
+      </div>
+    `;
 
     const formData = await api.DialogV2.wait({
       window: {
@@ -1096,174 +1078,155 @@ template += `
 
     if (!formData) return;
 
+    const rerolled = formData.getAll("num").map(Number);
+    const kept = diceOutcome?.filter(n => !rerolled.includes(n));
+    const crewrerolled = formData.getAll("crewnum").map(Number);
+    const crewkept = diceOutcome?.filter(n => !crewrerolled.includes(n));
+    const shiprerolled = formData.getAll("shipnum").map(Number);
+    const shipkept = shipdiceOutcome?.filter(n => !shiprerolled.includes(n));
 
-  const rerolled = formData.getAll("num").map(Number);
-  const kept = diceOutcome?.filter(n => !rerolled.includes(n));
-  const crewrerolled = formData.getAll("crewnum").map(Number);
-  const crewkept = diceOutcome?.filter(n => !crewrerolled.includes(n));
-  const shiprerolled = formData.getAll("shipnum").map(Number);
-  const shipkept = shipdiceOutcome?.filter(n => !shiprerolled.includes(n));
-
-  
-let retainedResult = '';
-let rerolledResult = '';
-let resultText = '';
-let shipretainedResult = '';
-let shiprerolledResult = '';
-let shipresultText = '';
-let isTaskReroll = false;
-let isChallengeReroll = false;
-let isNPCReroll = false;
-
-
+    let retainedResult = '';
+    let rerolledResult = '';
+    let resultText = '';
+    let shipretainedResult = '';
+    let shiprerolledResult = '';
+    let shipresultText = '';
+    let isTaskReroll = false;
+    let isChallengeReroll = false;
+    let isNPCReroll = false;
 
     switch (rollData.rollType) {
       case 'task':
-const retainedTaskDice = {
-checkTarget: rollData.checkTarget,
-complicationMinimumValue: rollData.complicationMinimumValue,
-disDepTarget: rollData.disDepTarget,
-customResults: kept,
-usingFocus: rollData.usingFocus,
-usingDedicatedFocus: rollData.usingDedicatedFocus,
-}
-retainedResult = await this._taskResult(retainedTaskDice);
+        const retainedTaskDice = {
+          checkTarget: rollData.checkTarget,
+          complicationMinimumValue: rollData.complicationMinimumValue,
+          disDepTarget: rollData.disDepTarget,
+          customResults: kept,
+          usingFocus: rollData.usingFocus,
+          usingDedicatedFocus: rollData.usingDedicatedFocus,
+        };
+        retainedResult = await this._taskResult(retainedTaskDice);
 
-const taskRolled = await this._performRollTask({ dicePool: rerolled.length });
+        const taskRolled = await this._performRollTask({ dicePool: rerolled.length });
 
-const rerolledTaskDice = {
-checkTarget: rollData.checkTarget,
-complicationMinimumValue: rollData.complicationMinimumValue,
-disDepTarget: rollData.disDepTarget,
-usingFocus: rollData.usingFocus,
-usingDedicatedFocus: rollData.usingDedicatedFocus,
-...taskRolled,
-}
-rerolledResult = await this._taskResult(rerolledTaskDice);
+        const rerolledTaskDice = {
+          checkTarget: rollData.checkTarget,
+          complicationMinimumValue: rollData.complicationMinimumValue,
+          disDepTarget: rollData.disDepTarget,
+          usingFocus: rollData.usingFocus,
+          usingDedicatedFocus: rollData.usingDedicatedFocus,
+          ...taskRolled,
+        };
+        rerolledResult = await this._taskResult(rerolledTaskDice);
 
-const taskData = {
-  success: retainedResult.success + rerolledResult.success,
-  complication: retainedResult.complication + rerolledResult.complication,
-}
+        const taskData = {
+          success: retainedResult.success + rerolledResult.success,
+          complication: retainedResult.complication + rerolledResult.complication,
+        };
 
-resultText = await this._taskResultText(taskData);
-isTaskReroll = true;
-
+        resultText = await this._taskResultText(taskData);
+        isTaskReroll = true;
         break;
       case 'challenge':
       case 'item':
+        const retainedChallengeDice = { customResults: kept, };
+        const retainedDiceString = await this._getDiceImageListFromChallengeRoll(retainedChallengeDice);
+        const retainedSuccessesEffects = await this._getSuccessesEffects(retainedChallengeDice);
 
-const retainedChallengeDice = {customResults: kept,}
-const retainedDiceString = await this._getDiceImageListFromChallengeRoll(retainedChallengeDice);
-const retainedSuccessesEffects = await this._getSuccessesEffects(retainedChallengeDice);
+        retainedResult = { diceString: retainedDiceString, };
 
-retainedResult = {diceString: retainedDiceString,};
+        const rolledChallenge = await new Roll(rerolled.length + 'd6').evaluate({});
+        const rerolledDiceString = await this._getDiceImageListFromChallengeRoll(rolledChallenge);
+        const rerolledSuccessesEffects = await this._getSuccessesEffects(rolledChallenge);
 
-const rolledChallenge = await new Roll(rerolled.length + 'd6').evaluate({});
-const rerolledDiceString = await this._getDiceImageListFromChallengeRoll(rolledChallenge);
-const rerolledSuccessesEffects = await this._getSuccessesEffects(rolledChallenge);
+        rerolledResult = { diceString: rerolledDiceString, };
 
-rerolledResult = {diceString: rerolledDiceString,};
+        const challengeData = {
+          successes: retainedSuccessesEffects.successes + rerolledSuccessesEffects.successes,
+          effects: retainedSuccessesEffects.effects + rerolledSuccessesEffects.effects,
+        };
 
+        resultText = await this._getSuccessesEffectsText(challengeData);
 
-const challengeData= {
-  successes: retainedSuccessesEffects.successes + rerolledSuccessesEffects.successes,
-  effects: retainedSuccessesEffects.effects + rerolledSuccessesEffects.effects,
-};
-
-resultText = await this._getSuccessesEffectsText(challengeData);
-
-isChallengeReroll = true;
-
-         break;
+        isChallengeReroll = true;
+        break;
       case 'npc':
+        // CREW
+        const crewretainedTaskDice = {
+          checkTarget: rollData.checkTarget,
+          complicationMinimumValue: rollData.complicationMinimumValue,
+          disDepTarget: rollData.disDepTarget,
+          customResults: crewkept,
+          usingFocus: rollData.usingFocus,
+          usingDedicatedFocus: rollData.usingDedicatedFocus,
+        };
+        retainedResult = await this._taskResult(crewretainedTaskDice);
 
-//CREW
+        const crewtaskRolled = await this._performRollTask({ dicePool: crewrerolled.length });
 
-const crewretainedTaskDice = {
-checkTarget: rollData.checkTarget,
-complicationMinimumValue: rollData.complicationMinimumValue,
-disDepTarget: rollData.disDepTarget,
-customResults: crewkept,
-usingFocus: rollData.usingFocus,
-usingDedicatedFocus: rollData.usingDedicatedFocus,
-}
-retainedResult = await this._taskResult(crewretainedTaskDice);
+        const crewrerolledTaskDice = {
+          checkTarget: rollData.checkTarget,
+          complicationMinimumValue: rollData.complicationMinimumValue,
+          disDepTarget: rollData.disDepTarget,
+          usingFocus: rollData.usingFocus,
+          usingDedicatedFocus: rollData.usingDedicatedFocus,
+          ...crewtaskRolled,
+        };
+        rerolledResult = await this._taskResult(crewrerolledTaskDice);
 
-const crewtaskRolled = await this._performRollTask({ dicePool: crewrerolled.length });
+        // SHIP
+        const shipretainedTaskDice = {
+          checkTarget: rollData.checkTarget,
+          complicationMinimumValue: rollData.complicationMinimumValue,
+          shipdisDepTarget: rollData.shipdisDepTarget,
+          usingFocus: true,
+          customResults: shipkept,
+        };
+        shipretainedResult = await this._taskResult(shipretainedTaskDice);
 
-const crewrerolledTaskDice = {
-checkTarget: rollData.checkTarget,
-complicationMinimumValue: rollData.complicationMinimumValue,
-disDepTarget: rollData.disDepTarget,
-usingFocus: rollData.usingFocus,
-usingDedicatedFocus: rollData.usingDedicatedFocus,
-...crewtaskRolled,
-}
-rerolledResult = await this._taskResult(crewrerolledTaskDice);
+        const shiptaskRolled = await this._performRollTask({ dicePool: shiprerolled.length });
 
+        const shiprerolledTaskDice = {
+          checkTarget: rollData.checkTarget,
+          complicationMinimumValue: rollData.complicationMinimumValue,
+          shipdisDepTarget: rollData.shipdisDepTarget,
+          usingFocus: rollData.usingFocus,
+          ...shiptaskRolled,
+        };
+        shiprerolledResult = await this._taskResult(shiprerolledTaskDice);
 
-//SHIP
+        const shipcrewData = {
+          success: shipretainedResult.success + shiprerolledResult.success + retainedResult.success + rerolledResult.success,
+          complication: shipretainedResult.complication + shiprerolledResult.complication + retainedResult.complication + rerolledResult.complication,
+        };
 
-const shipretainedTaskDice = {
-checkTarget: rollData.checkTarget,
-complicationMinimumValue: rollData.complicationMinimumValue,
-shipdisDepTarget: rollData.shipdisDepTarget,
-usingFocus: true,
-customResults: shipkept,
-}
-shipretainedResult = await this._taskResult(shipretainedTaskDice);
+        resultText = await this._taskResultText(shipcrewData);
 
-const shiptaskRolled = await this._performRollTask({ dicePool: shiprerolled.length });
-
-const shiprerolledTaskDice = {
-checkTarget: rollData.checkTarget,
-complicationMinimumValue: rollData.complicationMinimumValue,
-shipdisDepTarget: rollData.shipdisDepTarget,
-usingFocus: true,
-...shiptaskRolled,
-}
-shiprerolledResult = await this._taskResult(shiprerolledTaskDice);
-
-
-const shipcrewData = {
-success: shipretainedResult.success + shiprerolledResult.success + retainedResult.success + rerolledResult.success,
-complication: shipretainedResult.complication + shiprerolledResult.complication + retainedResult.complication + rerolledResult.complication,
-}
-
-resultText = await this._taskResultText(shipcrewData);
-
-isNPCReroll = true;
-
-
-
-
+        isNPCReroll = true;
         break;
 
       default:
         break;
-      }
+    }
 
-
-const rerollData = {
-  speakerName: rollData.speakerName,
-    rollType: 'reroll',
-    originalRollType: rollData.rollType,
-    flavor: rollData.flavor + ' ' + game.i18n.localize('sta.roll.rerollresults'),
-    retainedRoll: retainedResult.diceString,
-    rerolledRoll: rerolledResult.diceString,
-    shipretainedRoll: shipretainedResult.diceString,
-    shiprerolledRoll: shiprerolledResult.diceString,
-    ...resultText,
-    starshipName: rollData.starshipName,
-    flavorship: rollData.flavorship + ' ' + game.i18n.localize('sta.roll.rerollresults'),
-    isTaskReroll,
-    isChallengeReroll,
-    isNPCReroll,
-}
+    const rerollData = {
+      speakerName: rollData.speakerName,
+      rollType: 'reroll',
+      originalRollType: rollData.rollType,
+      flavor: rollData.flavor + ' ' + game.i18n.localize('sta.roll.rerollresults'),
+      retainedRoll: retainedResult.diceString,
+      rerolledRoll: rerolledResult.diceString,
+      shipretainedRoll: shipretainedResult.diceString,
+      shiprerolledRoll: shiprerolledResult.diceString,
+      ...resultText,
+      starshipName: rollData.starshipName,
+      flavorship: rollData.flavorship + ' ' + game.i18n.localize('sta.roll.rerollresults'),
+      isTaskReroll,
+      isChallengeReroll,
+      isNPCReroll,
+    };
 
     this.sendToChat(rerollData);
-
   }
 
   // #########################################################
@@ -1273,24 +1236,23 @@ const rerollData = {
   // #########################################################
 
   async sendToChat(rollData) {
-
     let chatData = '';
     let sound = '';
     switch (rollData.rollType) {
       case 'task':
         chatData = await foundry.applications.handlebars.renderTemplate(
           'systems/sta/templates/chat/attribute-test.hbs',
-           rollData
+          rollData
         );
         sound = CONFIG.sounds.dice;
         break;
       case 'challenge':
         chatData = await foundry.applications.handlebars.renderTemplate(
           'systems/sta/templates/chat/challenge-roll.hbs',
-           rollData
-         );
+          rollData
+        );
         sound = CONFIG.sounds.dice;
-         break;
+        break;
       case 'npc':
         chatData = await foundry.applications.handlebars.renderTemplate(
           'systems/sta/templates/chat/attribute-test-npc.hbs',
@@ -1314,21 +1276,21 @@ const rerollData = {
         break;
       case 'item':
         chatData = await foundry.applications.handlebars.renderTemplate(
-          'systems/sta/templates/chat/generic-item.hbs', 
+          'systems/sta/templates/chat/generic-item.hbs',
           rollData
         );
         break;
       default:
         break;
-      }
+    }
 
     const rollMode = game.settings.get('core', 'rollMode');
 
     // Check if the dice3d module exists (Dice So Nice). If it does, post a roll in that.
-    if (game.dice3d) {
-      game.dice3d.showForRoll(taskRolled, game.user, true);
+    if (game.dice3d && rollData.taskRolled) {
+      game.dice3d.showForRoll(rollData.taskRolled, game.user, true);
     }
-    
+
     const messageProps = {
       content: chatData,
       sound,
