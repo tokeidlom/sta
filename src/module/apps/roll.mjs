@@ -98,7 +98,8 @@ export class STARoll {
         success: crewData.success + shipData.success,
         checkTarget: crewData.checkTarget,
         checkTargetship: shipData.checkTarget,
-        doubleDiscipline: crewData.doubleDiscipline,
+        disDepTarget: crewData.disDepTarget,
+        shipdisDepTarget: shipData.disDepTarget,
         complicationMinimumValue: crewData.complicationMinimumValue,
         withDetermination: crewData.withDetermination,
         withFocus: crewData.withFocus,
@@ -139,13 +140,16 @@ export class STARoll {
       taskData.selectedSystemValue +
       taskData.selectedDepartmentValue;
     const complicationMinimumValue = taskData.complicationMinimumValue || 21 - taskData.complicationRange;
+    const disDepTarget = taskdata.disDepTarget || 
+      taskData.selectedDisciplineValue +
+      taskData.selectedDepartmentValue;
 
     if (taskData.useReputationInstead) {
       taskData.selectedDiscipline = 'reputation';
       taskData.selectedDisciplineValue = taskData.reputationValue;
     }
 
-const doubleDiscipline = taskData.doubleDiscipline || taskData.selectedDisciplineValue * 2;
+    const doubleDiscipline = disDepTarget * 2;
     let diceString = '';
     let diceOutcome = [];
     let success = 0;
@@ -162,7 +166,7 @@ const resultsArray =
 resultsArray.forEach((result) => {
   if (
     (taskData.usingFocus &&
-      result <= checkTarget) ||
+      result <= disDepTarget) ||
     result === 1
   ) {
     diceString += `<li class="roll die d20 max">${result}</li>`;
@@ -170,9 +174,7 @@ resultsArray.forEach((result) => {
     success += 2;
   } else if (
     (taskData.usingDedicatedFocus &&
-      result <= doubleDiscipline) ||
-    result === 1
-  ) {
+      result <= doubleDiscipline) {
     diceString += `<li class="roll die d20 max">${result}</li>`;
     diceOutcome.push(result);
     success += 2;
@@ -258,6 +260,7 @@ if (taskData.usingDetermination) {
       flavor,
       checkTarget,
       complicationMinimumValue,
+      disDepTarget,
       rollDetails,
     };
   }
@@ -1121,7 +1124,7 @@ let isNPCReroll = false;
 const retainedTaskDice = {
 checkTarget: rollData.checkTarget,
 complicationMinimumValue: rollData.complicationMinimumValue,
-doubleDiscipline: rollData.doubleDiscipline,
+disDepTarget: rollData.disDepTarget,
 customResults: kept,
 usingFocus: rollData.usingFocus,
 usingDedicatedFocus: rollData.usingDedicatedFocus,
@@ -1133,7 +1136,7 @@ const taskRolled = await this._performRollTask({ dicePool: rerolled.length });
 const rerolledTaskDice = {
 checkTarget: rollData.checkTarget,
 complicationMinimumValue: rollData.complicationMinimumValue,
-doubleDiscipline: rollData.doubleDiscipline,
+disDepTarget: rollData.disDepTarget,
 usingFocus: rollData.usingFocus,
 usingDedicatedFocus: rollData.usingDedicatedFocus,
 ...taskRolled,
@@ -1182,7 +1185,7 @@ isChallengeReroll = true;
 const crewretainedTaskDice = {
 checkTarget: rollData.checkTarget,
 complicationMinimumValue: rollData.complicationMinimumValue,
-doubleDiscipline: rollData.doubleDiscipline,
+disDepTarget: rollData.disDepTarget,
 customResults: crewkept,
 usingFocus: rollData.usingFocus,
 usingDedicatedFocus: rollData.usingDedicatedFocus,
@@ -1194,7 +1197,7 @@ const crewtaskRolled = await this._performRollTask({ dicePool: crewrerolled.leng
 const crewrerolledTaskDice = {
 checkTarget: rollData.checkTarget,
 complicationMinimumValue: rollData.complicationMinimumValue,
-doubleDiscipline: rollData.doubleDiscipline,
+disDepTarget: rollData.disDepTarget,
 usingFocus: rollData.usingFocus,
 usingDedicatedFocus: rollData.usingDedicatedFocus,
 ...crewtaskRolled,
@@ -1207,6 +1210,7 @@ rerolledResult = await this._taskResult(crewrerolledTaskDice);
 const shipretainedTaskDice = {
 checkTarget: rollData.checkTarget,
 complicationMinimumValue: rollData.complicationMinimumValue,
+shipdisDepTarget: rollData.shipdisDepTarget,
 customResults: shipkept,
 usingFocus: true,
 }
@@ -1217,7 +1221,7 @@ const shiptaskRolled = await this._performRollTask({ dicePool: shiprerolled.leng
 const shiprerolledTaskDice = {
 checkTarget: rollData.checkTarget,
 complicationMinimumValue: rollData.complicationMinimumValue,
-doubleDiscipline: rollData.doubleDiscipline,
+shipdisDepTarget: rollData.shipdisDepTarget,
 usingFocus: rollData.usingFocus,
 usingDedicatedFocus: rollData.usingDedicatedFocus,
 ...shiptaskRolled,
@@ -1342,6 +1346,8 @@ const rerollData = {
           dicePool: rollData.dicePool,
           complicationMinimumValue: rollData.complicationMinimumValue,
           checkTarget: rollData.checkTarget,
+          disDepTarget: rollData.disDepTarget,
+          shipdisDepTarget: rollData.shipdisDepTarget,
           flavor: rollData.flavor,
           flavorship: rollData.flavorship,
           usingFocus: rollData.usingFocus,
