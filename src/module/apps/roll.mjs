@@ -91,18 +91,19 @@ export class STARoll {
 
       crewshipData = {
         ...taskData,
-        diceStringcrew: crewData.diceString,
+        diceString: crewData.diceString,
         diceStringship: shipData.diceString,
-        diceOutcome: [...crewData.diceOutcome, ...shipData.diceOutcome || []],
+        diceOutcome: crewData.diceOutcome,
+        shipdiceOutcome: shipData.diceOutcome,
         success: crewData.success + shipData.success,
-        checkTargetcrew: crewData.checkTarget,
+        checkTarget: crewData.checkTarget,
         checkTargetship: shipData.checkTarget,
         doubleDiscipline: crewData.doubleDiscipline,
         complicationMinimumValue: crewData.complicationMinimumValue,
         withDetermination: crewData.withDetermination,
         withFocus: crewData.withFocus,
         withDedicatedFocus: crewData.withDedicatedFocus,
-        flavorcrew: crewData.flavor,
+        flavor: crewData.flavor,
         flavorship: shipData.flavor,
         complication: crewData.complication + shipData.complication,
         successText: crewData.successText + shipData.successText,
@@ -127,25 +128,24 @@ export class STARoll {
     // Do the roll
     const taskRolled = await new Roll(diceToRoll + 'd20').evaluate({});
 
-    return { diceToRoll, taskRolled };
+    return { taskRolled };
   }
 
   // Assemble the result strings for the chat card
   async _taskResult(taskData) {
-    const checkTarget =
+    const checkTarget = taskData.checkTarget || 
       taskData.selectedAttributeValue +
       taskData.selectedDisciplineValue +
       taskData.selectedSystemValue +
       taskData.selectedDepartmentValue;
-    const complicationMinimumValue = 21 - taskData.complicationRange;
+    const complicationMinimumValue = taskData.complicationMinimumValue || 21 - taskData.complicationRange;
 
     if (taskData.useReputationInstead) {
       taskData.selectedDiscipline = 'reputation';
       taskData.selectedDisciplineValue = taskData.reputationValue;
     }
 
-    const doubleDiscipline =
-      taskData.selectedDisciplineValue + taskData.selectedDisciplineValue;
+const doubleDiscipline = taskData.doubleDiscipline || taskData.selectedDisciplineValue * 2;
     let diceString = '';
     let diceOutcome = [];
     let success = 0;
@@ -153,50 +153,49 @@ export class STARoll {
     let i;
     let result = 0;
 
-    // Work out the number of successes and complications
-    for (i = 0; i < taskData.diceToRoll; i++) {
-      result = taskData.taskRolled.terms[0].results[i].result;
+const resultsArray =
+  taskData.customResults
+  ?? taskData.taskRolled?.dice?.flatMap(d => d.results.map(r => r.result))
+  ?? [];
 
-      // If using focus and the result is less than or equal to the discipline, that counts as 2 successes and we want to show the dice as green.
-      if (
-        (taskData.usingFocus &&
-          result <=
-            taskData.selectedDisciplineValue + taskData.selectedDepartmentValue) ||
-        result === 1
-      ) {
-        diceString += `<li class="roll die d20 max">${result}</li>`;
-        diceOutcome.push(result);
-        success += 2;
-      // If using dedicated focus and the result is less than or equal to double the discipline, that counts as 2 successes and we want to show the dice as green.
-      } else if (
-        (taskData.usingDedicatedFocus &&
-          result <= doubleDiscipline) ||
-        result === 1
-      ) {
-        diceString += `<li class="roll die d20 max">${result}</li>`;
-        diceOutcome.push(result);
-        success += 2;
-      // If the result is less than or equal to the target (the discipline and attribute added together), that counts as 1 success but we want to show the dice as normal.
-      } else if (result <= checkTarget) {
-        diceString += `<li class="roll die d20">${result}</li>`;
-        diceOutcome.push(result);
-        success += 1;
-      // If the result is greater than or equal to the complication range, then we want to count it as a complication. We also want to show it as red!
-      } else if (result >= complicationMinimumValue) {
-        diceString += `<li class="roll die d20 min">${result}</li>`;
-        diceOutcome.push(result);
-        complication += 1;
-      // If none of the above is true, the dice failed to do anything and is treated as normal.
-      } else {
-        diceString += `<li class="roll die d20">${result}</li>`;
-        diceOutcome.push(result);
-      }
-    }
-    if (taskData.usingDetermination) {
-      diceString += `<li class="roll die d20 max">1</li>`;
-      diceOutcome.push(1);
-      success += 2;
-    }
+
+resultsArray.forEach((result) => {
+  if (
+    (taskData.usingFocus &&
+      result <= checkTarget) ||
+    result === 1
+  ) {
+    diceString += `<li class="roll die d20 max">${result}</li>`;
+    diceOutcome.push(result);
+    success += 2;
+  } else if (
+    (taskData.usingDedicatedFocus &&
+      result <= doubleDiscipline) ||
+    result === 1
+  ) {
+    diceString += `<li class="roll die d20 max">${result}</li>`;
+    diceOutcome.push(result);
+    success += 2;
+  } else if (result <= checkTarget) {
+    diceString += `<li class="roll die d20">${result}</li>`;
+    diceOutcome.push(result);
+    success += 1;
+  } else if (result >= complicationMinimumValue) {
+    diceString += `<li class="roll die d20 min">${result}</li>`;
+    diceOutcome.push(result);
+    complication += 1;
+  } else {
+    diceString += `<li class="roll die d20">${result}</li>`;
+    diceOutcome.push(result);
+  }
+});
+
+// Add Determination bonus
+if (taskData.usingDetermination) {
+  diceString += `<li class="roll die d20 max">1</li>`;
+  diceOutcome.push(1);
+  success += 2;
+}
 
     // Add information about what was rolled
     let bonuses = [];
@@ -327,39 +326,47 @@ export class STARoll {
   async performChallengeRoll(challengeData) {
     const rolledChallenge = await new Roll(challengeData.dicePool + 'd6').evaluate({});
     const getSuccessesEffects = await this._getSuccessesEffects(rolledChallenge);
+    const getSuccessesEffectsText = await this._getSuccessesEffectsText(getSuccessesEffects);
     const diceString = await this._getDiceImageListFromChallengeRoll(rolledChallenge);
     const flavor = `${challengeData.challengeName} ${game.i18n.format('sta.roll.challenge.name')}`;
 
-    challengeData = { ...challengeData, ...getSuccessesEffects, diceString, flavor, rollType: 'challenge' };
+    challengeData = { ...challengeData, ...getSuccessesEffects, ...getSuccessesEffectsText, diceString, flavor, rollType: 'challenge' };
 
     this.sendToChat(challengeData);
   }
 
   /* Creates an HTML list of die face images from the results of a challenge roll */
-  async _getDiceImageListFromChallengeRoll(rolledChallenge) {
-    const diceFaceTable = [
-      '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Success1_small.png" /></li>',
-      '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Success2_small.png" /></li>',
-      '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Success0_small.png" /></li>',
-      '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Success0_small.png" /></li>',
-      '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Effect_small.png" /></li>',
-      '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Effect_small.png" /></li>',
-    ];
+async _getDiceImageListFromChallengeRoll(rolledChallenge) {
 
-    const diceString = rolledChallenge.terms[0].results
-      .map((die) => die.result)
-      .map((result) => diceFaceTable[result - 1])
-      .join(' ');
+  const diceFaceTable = [
+    '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Success1_small.png" /></li>',
+    '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Success2_small.png" /></li>',
+    '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Success0_small.png" /></li>',
+    '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Success0_small.png" /></li>',
+    '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Effect_small.png" /></li>',
+    '<li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_Effect_small.png" /></li>',
+  ];
 
-    return diceString;
-  }
+  const resultsArray = rolledChallenge.customResults
+    ?? rolledChallenge?.dice?.[0]?.results?.map(d => d.result)
+    ?? [];
+
+  const diceString = resultsArray
+    .map(result => diceFaceTable[result - 1])
+    .join(' ');
+
+  return diceString;
+}
+
 
   /* Returns the number of successes in a d6 challenge die roll */
   async _getSuccessesEffects(rolledChallenge) {
     let successes = 0;
     let effects = 0;
     const diceOutcome = [];
-    const dice = rolledChallenge.terms[0].results.map((die) => die.result);
+    const dice = rolledChallenge.customResults
+    ?? rolledChallenge?.dice?.[0]?.results?.map(d => d.result)
+    ?? [];
 
     for (const die of dice) {
       switch (die) {
@@ -392,21 +399,27 @@ export class STARoll {
       }
     }
 
+    return { diceOutcome, successes, effects };
+  }
+
+    /* Writes the success text for the chatcare */
+  async _getSuccessesEffectsText (getSuccessesEffects) {
+
     let successText = '';
-    if (successes === 1) {
-      successText = `${successes} ${game.i18n.format('sta.roll.success')}`;
+    if (getSuccessesEffects.successes === 1) {
+      successText = `${getSuccessesEffects.successes} ${game.i18n.format('sta.roll.success')}`;
     } else {
-      successText = `${successes} ${game.i18n.format('sta.roll.successPlural')}`;
+      successText = `${getSuccessesEffects.successes} ${game.i18n.format('sta.roll.successPlural')}`;
     }
 
     let effectText = '';
-    if (effects === 1) {
-      effectText = `${effects} ${game.i18n.format('sta.roll.effect')}`;
+    if (getSuccessesEffects.effects === 1) {
+      effectText = `${getSuccessesEffects.effects} ${game.i18n.format('sta.roll.effect')}`;
     } else {
-      effectText = `${effects} ${game.i18n.format('sta.roll.effectPlural')}`;
+      effectText = `${getSuccessesEffects.effects} ${game.i18n.format('sta.roll.effectPlural')}`;
     }
 
-    return { successes, effects, successText, effectText };
+    return { successText, effectText };
   }
 
   // #########################################################
@@ -945,59 +958,116 @@ for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
       ui.notifications.warn(`No chat message found with ID ${messageId}`);
       return;
     }
-
     const rollData = message.flags.sta ?? {};
+
+const diceOutcome = rollData.diceOutcome;
+const crewdiceOutcome = rollData.crewdiceOutcome;
+const shipdiceOutcome = rollData.shipdiceOutcome;
+
+let dicePool = '';
+
+let template = `
+        <div class="dialogue">
+${game.i18n.localize(`sta.roll.rerollwhichresults`)}
+        <div class="dice-rolls">
+
+`;
+
+let diceImage = '';
+
     switch (rollData.rollType) {
       case 'task':
-        this.rerollTask(rollData);
+
+diceOutcome.forEach((num, i) => {
+  template += `
+<div>
+        <div class="die-image">
+      <li class="roll die d20">${num}</li>
+        </div>
+        <div class="checkbox-container">
+      <input type="checkbox" name="num" value="${num}">
+       </div>  
+       </div>  
+       `;
+});
         break;
       case 'challenge':
-        this.rerollChallenge(rollData);
-         break;
-      case 'npc':
-        this.rerollNPC(rollData);
+              case 'item':
+
+
+diceOutcome.forEach((num, i) => {
+
+      switch (num) {
+      case 1:
+        diceImage = 'Success1';
         break;
-      case 'item':
-        this.rerollItem(rollData);
+      case 2:
+        diceImage = 'Success2';
+        break;
+      case 3:
+      case 4:
+        diceImage = 'Success0';
+        break;
+      case 5:
+      case 6:
+        diceImage = 'Effect';
         break;
       default:
         break;
+      };
+
+  template += `
+<div>
+        <div class="die-image">
+      <li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_${diceImage}_small.png" /></li>
+        </div>
+        <div class="checkbox-container">
+      <input type="checkbox" name="num" value="${num}">
+       </div>  
+       </div>  
+       `;
+});
+
+         break;
+      case 'npc':
+
+diceOutcome.forEach((crewnum, i) => {
+  template += `
+<div>
+        <div class="die-image">
+      <li class="roll die d20">${crewnum}</li>
+        </div>
+        <div class="checkbox-container">
+      <input type="checkbox" name="crewnum" value="${crewnum}">
+       </div>  
+       </div>  
+       `;
+});
+
+shipdiceOutcome.forEach((shipnum, i) => {
+  template += `
+<div>
+        <div class="die-image">
+      <li class="roll die d20">${shipnum}</li>
+        </div>
+        <div class="checkbox-container">
+      <input type="checkbox" name="shipnum" value="${shipnum}">
+       </div>  
+       </div>  
+       `;
+});
+
+        break;
+
+      default:
+        break;
       }
-  }
 
-  async rerollTask(rollData) {
 
-//      speakerName: 'STARoller',
-//      selectedAttributeValue,
-//      selectedDisciplineValue,
-//      selectedSystemValue: 0,
-//      selectedDepartmentValue: 0,
-//      rolltype: 'sidebar',
-//      dicePool,
-//      usingFocus,
-//      usingDedicatedFocus,
-//      usingDetermination,
-//      complicationRange,
-//    diceToRoll, taskRolled
-//      diceString,
-//      diceOutcome,
-//      success,
-//      complication,
-//      flavor,
-//      checkTarget,
-//      complicationMinimumValue,
-//      rollDetails,
-//     successText, complicationText
-
-    const usingFocus = rollData.usingFocus;
-    const usingDedicatedFocus = rollData.usingDedicatedFocus;
-    const usingDetermination = rollData.usingDetermination;
-    const complicationRange = rollData.complicationRange;
-
-    const template = `
-    <div class="dialogue">
-    </div>    
-    `;
+template += `
+  </div>
+  </div>
+  `;
 
     const formData = await api.DialogV2.wait({
       window: {
@@ -1005,7 +1075,7 @@ for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
       },
       position: {
         height: 'auto',
-        width: 350,
+        width: 375,
       },
       content: template,
       classes: ['dialogue'],
@@ -1025,32 +1095,174 @@ for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
 
     if (!formData) return;
 
-      dicePool = parseInt(formData.get('dicePoolSlider'), 10);
 
-    const selectedAttributeValue = parseInt(
-      document.getElementById('selectedAttributeValue').value,
-      10
-    ) || 0;
-    const selectedDisciplineValue = parseInt(
-      document.getElementById('selectedDisciplineValue').value,
-      10
-    ) || 0;
+  const rerolled = formData.getAll("num").map(Number);
+  const kept = diceOutcome?.filter(n => !rerolled.includes(n));
+  const crewrerolled = formData.getAll("crewnum").map(Number);
+  const crewkept = diceOutcome?.filter(n => !crewrerolled.includes(n));
+  const shiprerolled = formData.getAll("shipnum").map(Number);
+  const shipkept = shipdiceOutcome?.filter(n => !shiprerolled.includes(n));
 
-    const taskData = {
-      speakerName: 'STARoller',
-      selectedAttributeValue,
-      selectedDisciplineValue,
-      selectedSystemValue: 0,
-      selectedDepartmentValue: 0,
-      rolltype: 'sidebar',
-      dicePool,
-      usingFocus,
-      usingDedicatedFocus,
-      usingDetermination,
-      complicationRange,
-    };
+  
+let retainedResult = '';
+let rerolledResult = '';
+let resultText = '';
+let shipretainedResult = '';
+let shiprerolledResult = '';
+let shipresultText = '';
+let isTaskReroll = false;
+let isChallengeReroll = false;
+let isNPCReroll = false;
 
-    await this.sendToChat(taskData);
+
+
+    switch (rollData.rollType) {
+      case 'task':
+const retainedTaskDice = {
+checkTarget: rollData.checkTarget,
+complicationMinimumValue: rollData.complicationMinimumValue,
+doubleDiscipline: rollData.doubleDiscipline,
+customResults: kept,
+usingFocus: rollData.usingFocus,
+usingDedicatedFocus: rollData.usingDedicatedFocus,
+}
+retainedResult = await this._taskResult(retainedTaskDice);
+
+const taskRolled = await this._performRollTask({ dicePool: rerolled.length });
+
+const rerolledTaskDice = {
+checkTarget: rollData.checkTarget,
+complicationMinimumValue: rollData.complicationMinimumValue,
+doubleDiscipline: rollData.doubleDiscipline,
+usingFocus: rollData.usingFocus,
+usingDedicatedFocus: rollData.usingDedicatedFocus,
+...taskRolled,
+}
+rerolledResult = await this._taskResult(rerolledTaskDice);
+
+const taskData = {
+  success: retainedResult.success + rerolledResult.success,
+  complication: retainedResult.complication + rerolledResult.complication,
+}
+
+resultText = await this._taskResultText(taskData);
+isTaskReroll = true;
+
+        break;
+      case 'challenge':
+      case 'item':
+
+const retainedChallengeDice = {customResults: kept,}
+const retainedDiceString = await this._getDiceImageListFromChallengeRoll(retainedChallengeDice);
+const retainedSuccessesEffects = await this._getSuccessesEffects(retainedChallengeDice);
+
+retainedResult = {diceString: retainedDiceString,};
+
+const rolledChallenge = await new Roll(rerolled.length + 'd6').evaluate({});
+const rerolledDiceString = await this._getDiceImageListFromChallengeRoll(rolledChallenge);
+const rerolledSuccessesEffects = await this._getSuccessesEffects(rolledChallenge);
+
+rerolledResult = {diceString: rerolledDiceString,};
+
+
+const challengeData= {
+  successes: retainedSuccessesEffects.successes + rerolledSuccessesEffects.successes,
+  effects: retainedSuccessesEffects.effects + rerolledSuccessesEffects.effects,
+};
+
+resultText = await this._getSuccessesEffectsText(challengeData);
+
+isChallengeReroll = true;
+
+         break;
+      case 'npc':
+
+//CREW
+
+const crewretainedTaskDice = {
+checkTarget: rollData.checkTarget,
+complicationMinimumValue: rollData.complicationMinimumValue,
+doubleDiscipline: rollData.doubleDiscipline,
+customResults: crewkept,
+usingFocus: rollData.usingFocus,
+usingDedicatedFocus: rollData.usingDedicatedFocus,
+}
+retainedResult = await this._taskResult(crewretainedTaskDice);
+
+const crewtaskRolled = await this._performRollTask({ dicePool: crewrerolled.length });
+
+const crewrerolledTaskDice = {
+checkTarget: rollData.checkTarget,
+complicationMinimumValue: rollData.complicationMinimumValue,
+doubleDiscipline: rollData.doubleDiscipline,
+usingFocus: rollData.usingFocus,
+usingDedicatedFocus: rollData.usingDedicatedFocus,
+...crewtaskRolled,
+}
+rerolledResult = await this._taskResult(crewrerolledTaskDice);
+
+
+//SHIP
+
+const shipretainedTaskDice = {
+checkTarget: rollData.checkTarget,
+complicationMinimumValue: rollData.complicationMinimumValue,
+customResults: shipkept,
+usingFocus: true,
+}
+shipretainedResult = await this._taskResult(shipretainedTaskDice);
+
+const shiptaskRolled = await this._performRollTask({ dicePool: shiprerolled.length });
+
+const shiprerolledTaskDice = {
+checkTarget: rollData.checkTarget,
+complicationMinimumValue: rollData.complicationMinimumValue,
+doubleDiscipline: rollData.doubleDiscipline,
+usingFocus: rollData.usingFocus,
+usingDedicatedFocus: rollData.usingDedicatedFocus,
+...shiptaskRolled,
+}
+shiprerolledResult = await this._taskResult(shiprerolledTaskDice);
+
+
+const shipcrewData = {
+success: shipretainedResult.success + shiprerolledResult.success + retainedResult.success + rerolledResult.success,
+complication: shipretainedResult.complication + shiprerolledResult.complication + retainedResult.complication + rerolledResult.complication,
+}
+
+resultText = await this._taskResultText(shipcrewData);
+
+isNPCReroll = true;
+
+
+
+
+        break;
+
+      default:
+        break;
+      }
+
+
+const rerollData = {
+  speakerName: rollData.speakerName,
+    rollType: 'reroll',
+    originalRollType: rollData.rollType,
+    flavor: rollData.flavor + ' ' + game.i18n.localize('sta.roll.rerollresults'),
+    retainedRoll: retainedResult.diceString,
+    rerolledRoll: rerolledResult.diceString,
+    shipretainedRoll: shipretainedResult.diceString,
+    shiprerolledRoll: shiprerolledResult.diceString,
+    ...resultText,
+    starshipName: rollData.starshipName,
+    flavorship: rollData.flavorship + ' ' + game.i18n.localize('sta.roll.rerollresults'),
+    isTaskReroll,
+    isChallengeReroll,
+    isNPCReroll,
+}
+
+    this.sendToChat(rerollData);
+
   }
 
   // #########################################################
@@ -1122,8 +1334,18 @@ for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
       flags: {
         'sta': {
           speakerName: rollData.speakerName,
+          starshipName: rollData.starshipName,
           diceOutcome: rollData.diceOutcome,
+          crewdiceOutcome: rollData.crewdiceOutcome,
+          shipdiceOutcome: rollData.shipdiceOutcome,
           rollType: rollData.rollType,
+          dicePool: rollData.dicePool,
+          complicationMinimumValue: rollData.complicationMinimumValue,
+          checkTarget: rollData.checkTarget,
+          flavor: rollData.flavor,
+          flavorship: rollData.flavorship,
+          usingFocus: rollData.usingFocus,
+          usingDedicatedFocus: rollData.usingDedicatedFocus,
         }
       },
     };
