@@ -133,15 +133,16 @@ export class STARoll {
 
   // Assemble the result strings for the chat card
   async _taskResult(taskData) {
-    const checkTarget = taskData.checkTarget || 
-      taskData.selectedAttributeValue +
-      taskData.selectedDisciplineValue +
-      taskData.selectedSystemValue +
-      taskData.selectedDepartmentValue;
-    const complicationMinimumValue = taskData.complicationMinimumValue || 21 - taskData.complicationRange;
+  
+    const attribValue = taskData.selectedAttributeValue ||
+      taskData.selectedSystemValue ||
+      0;
     let disDepTarget = taskData.disDepTarget || 
-      taskData.selectedDisciplineValue +
-      taskData.selectedDepartmentValue;
+      taskData.selectedDisciplineValue || 
+      taskData.selectedDepartmentValue || 
+      0;
+    const checkTarget = taskData.checkTarget || attribValue + disDepTarget;
+    const complicationMinimumValue = taskData.complicationMinimumValue || 21 - taskData.complicationRange;
 
     if (taskData.useReputationInstead) {
       taskData.selectedDiscipline = 'reputation';
@@ -960,8 +961,8 @@ export class STARoll {
 
     let template = `
       <div class="dialogue">
-      ${game.i18n.localize(`sta.roll.rerollwhichresults`)}
-      <div class="dice-rolls">
+        ${game.i18n.localize(`sta.roll.rerollwhichresults`)}
+        <div class="dice-rolls">
     `;
 
     let diceImage = '';
@@ -1037,7 +1038,7 @@ export class STARoll {
               </div>
               <div class="checkbox-container">
                 <input type="checkbox" name="shipnum" value="${shipnum}">
-              </div>  
+              </div>
             </div>  
           `;
         });
@@ -1048,7 +1049,7 @@ export class STARoll {
     }
 
     template += `
-      </div>
+        </div>
       </div>
     `;
 

@@ -66,8 +66,6 @@ export class STARoller {
       speakerName: 'STARoller',
       selectedAttributeValue,
       selectedDisciplineValue,
-      selectedSystemValue: 0,
-      selectedDepartmentValue: 0,
       rolltype: 'sidebar',
       dicePool,
       usingFocus,
