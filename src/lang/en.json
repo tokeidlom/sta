@@ -493,7 +493,6 @@
   "sta.tooltip.character.weapon.2e.accurate": "If you perform the Aim minor action before making an attack with this weapon, you may re-roll up to two d20s in your dice pool, rather than only one.",
   "sta.tooltip.character.weapon.2e.charge": "If you perform the Prepare minor action before attacking with this weapon, you may add one of the following qualities to the attack: Area, Intense, or Piercing. If you choose Area, the attack’s severity is reduced by 1.",
   "sta.tooltip.character.weapon.2e.cumbersome": "You cannot attack with a cumbersome weapon unless you take the Prepare minor action on the same turn.",
-  "sta.tooltip.character.weapon.2e.deadly": "The weapon is designed to be lethal; if the character attempts to make a non-lethal attack with this weapon, the Difficulty of the attack increases by 1.",
   "sta.tooltip.character.weapon.2e.debilitating": "The Difficulty to treat or to heal injuries caused by this weapon is increased by 1.",
   "sta.tooltip.character.weapon.2e.grenade": "You can attack a target at up to Medium range and have enough grenades for three separate attacks.",
   "sta.tooltip.character.weapon.2e.inaccurate": "The weapon is imprecise and clumsy. You do not benefit from the Aim minor action when making an attack with this weapon.",
