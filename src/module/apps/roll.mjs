@@ -16,7 +16,12 @@ export class STARoll {
     taskData = { ...taskData, ...taskResult };
 
     const taskResultText = await this._taskResultText(taskData);
-    taskData = { ...taskData, ...taskResultText, rollType: 'task' };
+    taskData = { 
+      ...taskData, 
+      ...taskResultText, 
+      rollType: 'task', 
+      dice3dRoll: taskData.taskRolled,
+    };
 
     this.sendToChat(taskData);
   }
@@ -66,7 +71,11 @@ export class STARoll {
 
     if (taskData.selectedSystem === 'none') {
       const crewtaskResultText = await this._taskResultText(crewData);
-      crewshipData = { ...crewData, ...crewtaskResultText, rollType: 'task' };
+      crewshipData = { 
+        ...crewData, 
+        ...crewtaskResultText, 
+        dice3dRoll: crewData.taskRolled,
+        rollType: 'task' };
     } else {
       shipData = {
         speakerName: taskData.starshipName,
@@ -109,6 +118,8 @@ export class STARoll {
         successText: crewData.successText + shipData.successText,
         complicationText: crewData.complicationText + shipData.complicationText,
         rollDetails: crewData.rollDetails,
+        dice3dRoll: crewData.taskRolled,
+        dice3dshipRoll: shipData.taskRolled,
       };
 
       const crewshiptaskResultText = await this._taskResultText(crewshipData);
@@ -329,7 +340,15 @@ export class STARoll {
     const diceString = await this._getDiceImageListFromChallengeRoll(rolledChallenge);
     const flavor = `${challengeData.challengeName} ${game.i18n.format('sta.roll.challenge.name')}`;
 
-    challengeData = { ...challengeData, ...getSuccessesEffects, ...getSuccessesEffectsText, diceString, flavor, rollType: 'challenge' };
+    challengeData = { 
+      ...challengeData, 
+      ...getSuccessesEffects, 
+      ...getSuccessesEffectsText, 
+      dice3dRoll: rolledChallenge, 
+      diceString, 
+      flavor, 
+      rollType: 'challenge' 
+    };
 
     this.sendToChat(challengeData);
   }
@@ -584,6 +603,7 @@ export class STARoll {
 
     const rolledChallenge = await new Roll(challengeDice + 'd6').evaluate({});
     const getSuccessesEffects = await this._getSuccessesEffects(rolledChallenge);
+    const getSuccessesEffectsText = await this._getSuccessesEffectsText(getSuccessesEffects);
     const diceString = await this._getDiceImageListFromChallengeRoll(rolledChallenge);
     let weapontype = game.i18n.localize(`sta.actor.starship.scale`);
     if (item.system.includescale === false) {
@@ -597,9 +617,10 @@ export class STARoll {
       name: item.name,
       descFieldHtml: item.system.description,
       rollType: 'item',
-      ...getSuccessesEffects,
+      ...getSuccessesEffectsText,
       diceString,
       rollAsWeapon: true,
+      dice3dRoll: rolledChallenge,
     };
 
     this.sendToChat(itemData);
@@ -628,16 +649,16 @@ export class STARoll {
     });
 
     const TOOLTIP_TEXT = Object.freeze({
-      accurate: game.i18n.localize('sta.tooltip.character.weapon.accurate'),
-      area: game.i18n.localize('sta.tooltip.character.weapon.area'),
-      charge: game.i18n.localize('sta.tooltip.character.weapon.charge'),
-      cumbersome: game.i18n.localize('sta.tooltip.character.weapon.cumbersome'),
-      debilitating: game.i18n.localize('sta.tooltip.character.weapon.debilitating'),
-      grenade: game.i18n.localize('sta.tooltip.character.weapon.grenade'),
-      inaccurate: game.i18n.localize('sta.tooltip.character.weapon.inaccurate'),
-      intense: game.i18n.localize('sta.tooltip.character.weapon.intense'),
-      piercingx: game.i18n.localize('sta.tooltip.character.weapon.piercingx'),
-      hiddenx: game.i18n.localize('sta.tooltip.character.weapon.hiddenx'),
+      accurate: game.i18n.localize('sta.tooltip.character.weapon.2e.accurate'),
+      area: game.i18n.localize('sta.tooltip.character.weapon.2e.area'),
+      charge: game.i18n.localize('sta.tooltip.character.weapon.2e.charge'),
+      cumbersome: game.i18n.localize('sta.tooltip.character.weapon.2e.cumbersome'),
+      debilitating: game.i18n.localize('sta.tooltip.character.weapon.2e.debilitating'),
+      grenade: game.i18n.localize('sta.tooltip.character.weapon.2e.grenade'),
+      inaccurate: game.i18n.localize('sta.tooltip.character.weapon.2e.inaccurate'),
+      intense: game.i18n.localize('sta.tooltip.character.weapon.2e.intense'),
+      piercingx: game.i18n.localize('sta.tooltip.character.weapon.2e.piercingx'),
+      hiddenx: game.i18n.localize('sta.tooltip.character.weapon.2e.hiddenx'),
     });
 
     const tags = [];
@@ -704,21 +725,21 @@ export class STARoll {
     });
 
     const TOOLTIP_TEXT = Object.freeze({
-      area: game.i18n.localize('sta.tooltip.starship.weapon.area'),
-      calibration: game.i18n.localize('sta.tooltip.starship.weapon.calibration'),
-      cumbersome: game.i18n.localize('sta.tooltip.starship.weapon.cumbersome'),
-      dampening: game.i18n.localize('sta.tooltip.starship.weapon.dampening'),
-      depleting: game.i18n.localize('sta.tooltip.starship.weapon.depleting'),
-      devastating: game.i18n.localize('sta.tooltip.starship.weapon.devastating'),
-      highyield: game.i18n.localize('sta.tooltip.starship.weapon.highyield'),
-      intense: game.i18n.localize('sta.tooltip.starship.weapon.intense'),
-      jamming: game.i18n.localize('sta.tooltip.starship.weapon.jamming'),
-      persistent: game.i18n.localize('sta.tooltip.starship.weapon.persistent'),
-      piercing: game.i18n.localize('sta.tooltip.starship.weapon.piercing'),
-      slowing: game.i18n.localize('sta.tooltip.starship.weapon.slowing'),
-      spread: game.i18n.localize('sta.tooltip.starship.weapon.spread'),
-      hiddenx: game.i18n.localize('sta.tooltip.starship.weapon.hiddenx'),
-      versatilex: game.i18n.localize('sta.tooltip.starship.weapon.versatilex'),
+      area: game.i18n.localize('sta.tooltip.starship.weapon.2e.area'),
+      calibration: game.i18n.localize('sta.tooltip.starship.weapon.2e.calibration'),
+      cumbersome: game.i18n.localize('sta.tooltip.starship.weapon.2e.cumbersome'),
+      dampening: game.i18n.localize('sta.tooltip.starship.weapon.2e.dampening'),
+      depleting: game.i18n.localize('sta.tooltip.starship.weapon.2e.depleting'),
+      devastating: game.i18n.localize('sta.tooltip.starship.weapon.2e.devastating'),
+      highyield: game.i18n.localize('sta.tooltip.starship.weapon.2e.highyield'),
+      intense: game.i18n.localize('sta.tooltip.starship.weapon.2e.intense'),
+      jamming: game.i18n.localize('sta.tooltip.starship.weapon.2e.jamming'),
+      persistent: game.i18n.localize('sta.tooltip.starship.weapon.2e.persistent'),
+      piercing: game.i18n.localize('sta.tooltip.starship.weapon.2e.piercing'),
+      slowing: game.i18n.localize('sta.tooltip.starship.weapon.2e.slowing'),
+      spread: game.i18n.localize('sta.tooltip.starship.weapon.2e.spread'),
+      hiddenx: game.i18n.localize('sta.tooltip.starship.weapon.2e.hiddenx'),
+      versatilex: game.i18n.localize('sta.tooltip.starship.weapon.2e.versatilex'),
     });
 
     const tags = [];
@@ -790,20 +811,20 @@ export class STARoll {
     });
 
     const TOOLTIP_TEXT = Object.freeze({
-      charge: game.i18n.localize('sta.tooltip.character.weapon.charge'),
-      grenade: game.i18n.localize('sta.tooltip.character.weapon.grenade'),
-      area: game.i18n.localize('sta.tooltip.character.weapon.area'),
-      intense: game.i18n.localize('sta.tooltip.character.weapon.intense'),
-      knockdown: game.i18n.localize('sta.tooltip.character.weapon.knockdown'),
-      accurate: game.i18n.localize('sta.tooltip.character.weapon.accurate'),
-      debilitating: game.i18n.localize('sta.tooltip.character.weapon.debilitating'),
-      cumbersome: game.i18n.localize('sta.tooltip.character.weapon.cumbersome'),
-      inaccurate: game.i18n.localize('sta.tooltip.character.weapon.inaccurate'),
-      deadly: game.i18n.localize('sta.tooltip.character.weapon.deadly'),
-      nonlethal: game.i18n.localize('sta.tooltip.character.weapon.nonlethal'),
-      hiddenx: game.i18n.localize('sta.tooltip.character.weapon.hiddenx'),
-      piercingx: game.i18n.localize('sta.tooltip.character.weapon.piercingx'),
-      viciousx: game.i18n.localize('sta.tooltip.character.weapon.viciousx'),
+      charge: game.i18n.localize('sta.tooltip.character.weapon.1e.charge'),
+      grenade: game.i18n.localize('sta.tooltip.character.weapon.1e.grenade'),
+      area: game.i18n.localize('sta.tooltip.character.weapon.1e.area'),
+      intense: game.i18n.localize('sta.tooltip.character.weapon.1e.intense'),
+      knockdown: game.i18n.localize('sta.tooltip.character.weapon.1e.knockdown'),
+      accurate: game.i18n.localize('sta.tooltip.character.weapon.1e.accurate'),
+      debilitating: game.i18n.localize('sta.tooltip.character.weapon.1e.debilitating'),
+      cumbersome: game.i18n.localize('sta.tooltip.character.weapon.1e.cumbersome'),
+      inaccurate: game.i18n.localize('sta.tooltip.character.weapon.1e.inaccurate'),
+      deadly: game.i18n.localize('sta.tooltip.character.weapon.1e.deadly'),
+      nonlethal: game.i18n.localize('sta.tooltip.character.weapon.1e.nonlethal'),
+      hiddenx: game.i18n.localize('sta.tooltip.character.weapon.1e.hiddenx'),
+      piercingx: game.i18n.localize('sta.tooltip.character.weapon.1e.piercingx'),
+      viciousx: game.i18n.localize('sta.tooltip.character.weapon.1e.viciousx'),
     });
 
     const tags = [];
@@ -820,6 +841,7 @@ export class STARoll {
 
     const rolledChallenge = await new Roll(calculatedDamage + 'd6').evaluate({});
     const getSuccessesEffects = await this._getSuccessesEffects(rolledChallenge);
+    const getSuccessesEffectsText = await this._getSuccessesEffectsText(getSuccessesEffects);
     const diceString = await this._getDiceImageListFromChallengeRoll(rolledChallenge);
 
     const itemData = {
@@ -839,9 +861,10 @@ export class STARoll {
       weapontype: item.system.hands + ' ' + game.i18n.localize(`sta.item.genericitem.handed`),
       quantityRow: true,
       damageRow: true,
-      ...getSuccessesEffects,
+      ...getSuccessesEffectsText,
       diceString,
       rollAsWeapon: true,
+      dice3dRoll: rolledChallenge,
     };
 
     this.sendToChat(itemData);
@@ -879,17 +902,17 @@ export class STARoll {
     });
 
     const TOOLTIP_TEXT = Object.freeze({
-      area: game.i18n.localize('sta.tooltip.starship.weapon.area'),
-      spread: game.i18n.localize('sta.tooltip.starship.weapon.spread'),
-      highyield: game.i18n.localize('sta.tooltip.starship.weapon.highyield'),
-      devastating: game.i18n.localize('sta.tooltip.starship.weapon.devastating'),
-      dampening: game.i18n.localize('sta.tooltip.starship.weapon.dampening'),
-      calibration: game.i18n.localize('sta.tooltip.starship.weapon.calibration'),
-      hiddenx: game.i18n.localize('sta.tooltip.starship.weapon.hiddenx'),
-      persistentx: game.i18n.localize('sta.tooltip.starship.weapon.persistentx'),
-      piercingx: game.i18n.localize('sta.tooltip.starship.weapon.piercingx'),
-      viciousx: game.i18n.localize('sta.tooltip.starship.weapon.viciousx'),
-      versatilex: game.i18n.localize('sta.tooltip.starship.weapon.versatilex'),
+      area: game.i18n.localize('sta.tooltip.starship.weapon.1e.area'),
+      spread: game.i18n.localize('sta.tooltip.starship.weapon.1e.spread'),
+      highyield: game.i18n.localize('sta.tooltip.starship.weapon.1e.highyield'),
+      devastating: game.i18n.localize('sta.tooltip.starship.weapon.1e.devastating'),
+      dampening: game.i18n.localize('sta.tooltip.starship.weapon.1e.dampening'),
+      calibration: game.i18n.localize('sta.tooltip.starship.weapon.1e.calibration'),
+      hiddenx: game.i18n.localize('sta.tooltip.starship.weapon.1e.hiddenx'),
+      persistentx: game.i18n.localize('sta.tooltip.starship.weapon.1e.persistentx'),
+      piercingx: game.i18n.localize('sta.tooltip.starship.weapon.1e.piercingx'),
+      viciousx: game.i18n.localize('sta.tooltip.starship.weapon.1e.viciousx'),
+      versatilex: game.i18n.localize('sta.tooltip.starship.weapon.1e.versatilex'),
     });
 
     const tags = [];
@@ -907,6 +930,7 @@ export class STARoll {
 
     const rolledChallenge = await new Roll(calculatedDamage + 'd6').evaluate({});
     const getSuccessesEffects = await this._getSuccessesEffects(rolledChallenge);
+    const getSuccessesEffectsText = await this._getSuccessesEffectsText(getSuccessesEffects);
     const diceString = await this._getDiceImageListFromChallengeRoll(rolledChallenge);
     let weapontype = game.i18n.localize(`sta.actor.starship.scale`);
     if (item.system.includescale === false) {
@@ -930,9 +954,10 @@ export class STARoll {
       weapontype,
       quantityRow: true,
       damageRow: true,
-      ...getSuccessesEffects,
+      ...getSuccessesEffectsText,
       diceString,
       rollAsWeapon: true,
+      dice3dRoll: rolledChallenge,
     };
 
     this.sendToChat(itemData);
@@ -1032,14 +1057,16 @@ export class STARoll {
 
         shipdiceOutcome.forEach((shipnum, i) => {
           template += `
-            <div>
-              <div class="die-image">
-                <li class="roll die d20">${shipnum}</li>
-              </div>
-              <div class="checkbox-container">
-                <input type="checkbox" name="shipnum" value="${shipnum}">
-              </div>
-            </div>  
+            </div>
+            <div class="dice-rolls">
+              <div>
+                <div class="die-image">
+                  <li class="roll die d20">${shipnum}</li>
+                </div>
+                <div class="checkbox-container">
+                  <input type="checkbox" name="shipnum" value="${shipnum}">
+                </div>
+              </div>  
           `;
         });
         break;
@@ -1091,7 +1118,8 @@ export class STARoll {
     let resultText = '';
     let shipretainedResult = '';
     let shiprerolledResult = '';
-    let shipresultText = '';
+    let taskRolled = [];
+    let shiptaskRolled = [];
     let isTaskReroll = false;
     let isChallengeReroll = false;
     let isNPCReroll = false;
@@ -1108,7 +1136,7 @@ export class STARoll {
         };
         retainedResult = await this._taskResult(retainedTaskDice);
 
-        const taskRolled = await this._performRollTask({ dicePool: rerolled.length });
+        taskRolled = await this._performRollTask({ dicePool: rerolled.length });
 
         const rerolledTaskDice = {
           checkTarget: rollData.checkTarget,
@@ -1136,9 +1164,9 @@ export class STARoll {
 
         retainedResult = { diceString: retainedDiceString, };
 
-        const rolledChallenge = await new Roll(rerolled.length + 'd6').evaluate({});
-        const rerolledDiceString = await this._getDiceImageListFromChallengeRoll(rolledChallenge);
-        const rerolledSuccessesEffects = await this._getSuccessesEffects(rolledChallenge);
+        taskRolled = await new Roll(rerolled.length + 'd6').evaluate({});
+        const rerolledDiceString = await this._getDiceImageListFromChallengeRoll(taskRolled);
+        const rerolledSuccessesEffects = await this._getSuccessesEffects(taskRolled);
 
         rerolledResult = { diceString: rerolledDiceString, };
 
@@ -1163,7 +1191,7 @@ export class STARoll {
         };
         retainedResult = await this._taskResult(crewretainedTaskDice);
 
-        const crewtaskRolled = await this._performRollTask({ dicePool: crewrerolled.length });
+        taskRolled = await this._performRollTask({ dicePool: crewrerolled.length });
 
         const crewrerolledTaskDice = {
           checkTarget: rollData.checkTarget,
@@ -1171,7 +1199,7 @@ export class STARoll {
           disDepTarget: rollData.disDepTarget,
           usingFocus: rollData.usingFocus,
           usingDedicatedFocus: rollData.usingDedicatedFocus,
-          ...crewtaskRolled,
+          ...taskRolled,
         };
         rerolledResult = await this._taskResult(crewrerolledTaskDice);
 
@@ -1185,7 +1213,7 @@ export class STARoll {
         };
         shipretainedResult = await this._taskResult(shipretainedTaskDice);
 
-        const shiptaskRolled = await this._performRollTask({ dicePool: shiprerolled.length });
+        shiptaskRolled = await this._performRollTask({ dicePool: shiprerolled.length });
 
         const shiprerolledTaskDice = {
           checkTarget: rollData.checkTarget,
@@ -1225,6 +1253,8 @@ export class STARoll {
       isTaskReroll,
       isChallengeReroll,
       isNPCReroll,
+      dice3dRoll: taskRolled.taskRolled || taskRolled,
+      dice3dshipRoll: shiptaskRolled.taskRolled,
     };
 
     this.sendToChat(rerollData);
@@ -1288,8 +1318,12 @@ export class STARoll {
     const rollMode = game.settings.get('core', 'rollMode');
 
     // Check if the dice3d module exists (Dice So Nice). If it does, post a roll in that.
-    if (game.dice3d && rollData.taskRolled) {
-      game.dice3d.showForRoll(rollData.taskRolled, game.user, true);
+    if (game.dice3d && rollData.dice3dRoll) {
+      game.dice3d.showForRoll(rollData.dice3dRoll, game.user, true);
+    }
+
+    if (game.dice3d && rollData.dice3dshipRoll) {
+      game.dice3d.showForRoll(rollData.dice3dshipRoll, game.user, true);
     }
 
     const messageProps = {

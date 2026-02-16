@@ -632,6 +632,7 @@ export class STAActors extends api.HandlebarsApplicationMixin(sheets.ActorSheetV
       complicationThreshold,
       negativeInfluences,
       rollType: 'acclaim',
+      dice3dRoll: roll,
     };
 
     const staRoll = new STARoll();

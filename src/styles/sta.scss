@@ -56,6 +56,8 @@ $trackColors: transparent;
 $trackColorsselected: #F2CC0D;
 $palebackground: rgba(0, 0, 0, 0.1);
 $foundrylightthemetext: rgb(34, 34, 34);
+$rerollborder: #8b0000;
+$trackerchatborder: #BA8E23;
 
 // ######################################################
 // #                                                    #
@@ -654,6 +656,9 @@ $foundrylightthemetext: rgb(34, 34, 34);
     margin-bottom: 10px;
     .row-right {
       margin-top: 2px;
+    }
+    .control{
+      padding-left: 4px;
     }
   }
 
@@ -1685,19 +1690,53 @@ $foundrylightthemetext: rgb(34, 34, 34);
 
   .chatcard {
     border-left: 6px solid $borderbluedark;
+    border-bottom: 1px solid $borderbluedark;
     border-top-left-radius: 6px;
     font-size: 12px;
 
+    &.reroll {
+      border-left: 6px solid $rerollborder;
+      border-bottom: 1px solid $rerollborder;
+
+      .heading {
+        background: $rerollborder;
+      }
+
+      .columna {
+        border-left: 1px solid $rerollborder;
+        border-right: 1px solid $rerollborder;
+        border-top: 1px solid $rerollborder;
+      }
+
+      .columnb {
+        border-left: 1px solid $rerollborder;
+        border-right: 1px solid $rerollborder;
+        border-bottom: 1px solid $rerollborder;
+      }
+    }
+
     &.tracker {
-      padding-left: 6px;
       font-size: 16px;
+      border-left: 6px solid $trackerchatborder;
+      border-bottom: 1px solid $trackerchatborder;
+
+      .heading {
+        background: $trackerchatborder;
+        padding: 8px;
+      }
+
+      .name {
+        color: black;
+      }
 
       .momentumtext {
         color: $borderblue;
+        padding-left: 6px;
       }
 
       .threattext {
         color: $challengebuttonColor;
+        padding-left: 6px;
       }
     }
 

@@ -208,6 +208,8 @@ export class STATracker extends api.HandlebarsApplicationMixin(api.ApplicationV2
         if ((momentumMessage || threatMessage) && game.settings.get('sta', 'sendMomemtumThreatToChat')) {
           let chatContent = `
             <div class="chatcard tracker">
+              <div class="heading">
+              </div>
               <div class="momentumtext">${momentumMessage}</div>
               <div class="threattext">${threatMessage}</div>
             </div>
