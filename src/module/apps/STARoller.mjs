@@ -460,6 +460,7 @@ export class STARoller {
     const taskData = {
       speakerName: character.name || 'NPC Crew',
       starshipName: starship.name || 'NPC Ship',
+      rolltype: 'character2e',
       selectedAttribute,
       selectedAttributeValue,
       selectedDiscipline,

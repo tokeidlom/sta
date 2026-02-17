@@ -34,7 +34,7 @@ export class STARoll {
     if (taskData.speakerName === 'NPC Crew') {
       crewRolltype = 'npccrew';
     } else {
-      crewRolltype = 'character2e';
+      crewRolltype = taskData.rolltype;
     }
 
     if (taskData.starshipName === 'NPC Ship') {
@@ -58,6 +58,8 @@ export class STARoll {
       skillLevel: taskData.skillLevel,
       selectedSystemValue: 0,
       selectedDepartmentValue: 0,
+      reputationValue: taskData.reputationValue,
+      useReputationInstead: taskData.useReputationInstead,
     };
 
     const crewtaskRollData = await this._performRollTask(crewData);
@@ -232,12 +234,12 @@ export class STARoll {
       case 'starship':
         flavor =
           `${game.i18n.format(`sta.actor.starship.system.${taskData.selectedSystem}`)} ` +
-          `${game.i18n.format(`sta.actor.starship.department.${taskData.selectedDepartment}`)} `;
+          `${game.i18n.format(`sta.actor.starship.department.${taskData.selectedDepartment}`)}`;
         break;
       case 'starshipassist':
         flavor =
           `${game.i18n.format(`sta.actor.starship.system.${taskData.selectedSystem}`)} ` +
-          `${game.i18n.format(`sta.actor.starship.department.${taskData.selectedDepartment}`)} `;
+          `${game.i18n.format(`sta.actor.starship.department.${taskData.selectedDepartment}`)}`;
         break;
       case 'sidebar':
         flavor = game.i18n.format('sta.roll.task.name');
