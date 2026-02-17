@@ -447,7 +447,7 @@ export class STARoll {
     const itemData = {
       speakerName: speaker.name,
       img: item.img,
-      type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
+      flavor: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
       name: item.name,
       descFieldHtml: item.system.description,
       itemQuantity: item.system.quantity,
@@ -464,7 +464,7 @@ export class STARoll {
     const itemData = {
       speakerName: speaker.name,
       img: item.img,
-      type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
+      flavor: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
       name: item.name,
       descFieldHtml: item.system.description,
       rollType: 'item',
@@ -476,7 +476,7 @@ export class STARoll {
     const itemData = {
       speakerName: speaker.name,
       img: item.img,
-      type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
+      flavor: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
       name: item.name,
       descFieldHtml: item.system.description,
       rollType: 'item',
@@ -488,7 +488,7 @@ export class STARoll {
     const itemData = {
       speakerName: speaker.name,
       img: item.img,
-      type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
+      flavor: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
       name: item.name,
       descFieldHtml: item.system.description,
       rollType: 'item',
@@ -500,7 +500,7 @@ export class STARoll {
     const itemData = {
       speakerName: speaker.name,
       img: item.img,
-      type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
+      flavor: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
       name: item.name,
       descFieldHtml: item.system.description,
       rollType: 'item',
@@ -512,7 +512,7 @@ export class STARoll {
     const itemData = {
       speakerName: speaker.name,
       img: item.img,
-      type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
+      flavor: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
       name: item.name,
       descFieldHtml: item.system.description,
       rollType: 'item',
@@ -524,7 +524,7 @@ export class STARoll {
     const itemData = {
       speakerName: speaker.name,
       img: item.img,
-      type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
+      flavor: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
       name: item.name,
       descFieldHtml: item.system.description,
       rollType: 'item',
@@ -536,7 +536,7 @@ export class STARoll {
     const itemData = {
       speakerName: speaker.name,
       img: item.img,
-      type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
+      flavor: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
       name: item.name,
       descFieldHtml: item.system.description,
       rollType: 'item',
@@ -548,7 +548,7 @@ export class STARoll {
     const itemData = {
       speakerName: speaker.name,
       img: item.img,
-      type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
+      flavor: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
       name: item.name,
       descFieldHtml: item.system.description,
       itemQuantity: item.system.protection,
@@ -613,10 +613,11 @@ export class STARoll {
     const itemData = {
       speakerName: speaker.name,
       img: item.img,
-      type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
+      flavor: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
       name: item.name,
       descFieldHtml: item.system.description,
       rollType: 'item',
+      ...getSuccessesEffects,
       ...getSuccessesEffectsText,
       diceString,
       rollAsWeapon: true,
@@ -666,17 +667,23 @@ export class STARoll {
     for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
       if (rawValue === undefined || rawValue === null || rawValue === '') continue;
       if (!Object.prototype.hasOwnProperty.call(LABELS, prop)) continue;
-      if (rawValue !== true) continue;
-      const label = game.i18n.localize(LABELS[prop]);
-      const display = Number.isFinite(rawValue) ? `${label} ${rawValue}` : label;
-      const tip = TOOLTIP_TEXT[prop] ?? '';
-      tags.push({ label: display, tooltip: tip });
+      if (rawValue === true) {
+        const label = game.i18n.localize(LABELS[prop]);
+        const tip = TOOLTIP_TEXT[prop] ?? '';
+        tags.push({ label, tooltip: tip });
+      }
+      else if (Number.isFinite(rawValue) && rawValue > 0) {
+        const label = game.i18n.localize(LABELS[prop]);
+        const display = `${label} ${rawValue}`;
+        const tip = TOOLTIP_TEXT[prop] ?? '';
+        tags.push({ label: display, tooltip: tip });
+      }
     }
 
     const itemData = {
       speakerName: speaker.alias ?? speaker.name,
       img: item.img,
-      type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
+      flavor: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
       name: item.name,
       descFieldHtml: item.system.description,
       rollType: 'item',
@@ -747,17 +754,23 @@ export class STARoll {
     for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
       if (rawValue === undefined || rawValue === null || rawValue === '') continue;
       if (!Object.prototype.hasOwnProperty.call(LABELS, prop)) continue;
-      if (rawValue !== true) continue;
-      const label = game.i18n.localize(LABELS[prop]);
-      const display = Number.isFinite(rawValue) ? `${label} ${rawValue}` : label;
-      const tip = TOOLTIP_TEXT[prop] ?? '';
-      tags.push({ label: display, tooltip: tip });
+      if (rawValue === true) {
+        const label = game.i18n.localize(LABELS[prop]);
+        const tip = TOOLTIP_TEXT[prop] ?? '';
+        tags.push({ label, tooltip: tip });
+      }
+      else if (Number.isFinite(rawValue) && rawValue > 0) {
+        const label = game.i18n.localize(LABELS[prop]);
+        const display = `${label} ${rawValue}`;
+        const tip = TOOLTIP_TEXT[prop] ?? '';
+        tags.push({ label: display, tooltip: tip });
+      }
     }
 
     const itemData = {
       speakerName: speaker.alias ?? speaker.name,
       img: item.img,
-      type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
+      flavor: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
       name: item.name,
       descFieldHtml: item.system.description,
       rollType: 'item',
@@ -832,11 +845,17 @@ export class STARoll {
     for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
       if (rawValue === undefined || rawValue === null || rawValue === '') continue;
       if (!Object.prototype.hasOwnProperty.call(LABELS, prop)) continue;
-      if (rawValue !== true) continue;
-      const label = game.i18n.localize(LABELS[prop]);
-      const display = Number.isFinite(rawValue) ? `${label} ${rawValue}` : label;
-      const tip = TOOLTIP_TEXT[prop] ?? '';
-      tags.push({ label: display, tooltip: tip });
+      if (rawValue === true) {
+        const label = game.i18n.localize(LABELS[prop]);
+        const tip = TOOLTIP_TEXT[prop] ?? '';
+        tags.push({ label, tooltip: tip });
+      }
+      else if (Number.isFinite(rawValue) && rawValue > 0) {
+        const label = game.i18n.localize(LABELS[prop]);
+        const display = `${label} ${rawValue}`;
+        const tip = TOOLTIP_TEXT[prop] ?? '';
+        tags.push({ label: display, tooltip: tip });
+      }
     }
 
     const rolledChallenge = await new Roll(calculatedDamage + 'd6').evaluate({});
@@ -847,7 +866,7 @@ export class STARoll {
     const itemData = {
       speakerName: speaker.alias ?? speaker.name,
       img: item.img,
-      type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
+      flavor: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
       name: item.name,
       descFieldHtml: item.system.description,
       rollType: 'item',
@@ -861,6 +880,7 @@ export class STARoll {
       weapontype: item.system.hands + ' ' + game.i18n.localize(`sta.item.genericitem.handed`),
       quantityRow: true,
       damageRow: true,
+      ...getSuccessesEffects,
       ...getSuccessesEffectsText,
       diceString,
       rollAsWeapon: true,
@@ -920,12 +940,17 @@ export class STARoll {
     for (const [prop, rawValue] of Object.entries(item.system.qualities)) {
       if (rawValue === undefined || rawValue === null || rawValue === '') continue;
       if (!Object.prototype.hasOwnProperty.call(LABELS, prop)) continue;
-      if (rawValue !== true && (!Number.isFinite(rawValue) || rawValue <= 0)) continue;
-
-      const label = game.i18n.localize(LABELS[prop]);
-      const display = Number.isFinite(rawValue) ? `${label} ${rawValue}` : label;
-      const tip = TOOLTIP_TEXT[prop] ?? '';
-      tags.push({ label: display, tooltip: tip });
+      if (rawValue === true) {
+        const label = game.i18n.localize(LABELS[prop]);
+        const tip = TOOLTIP_TEXT[prop] ?? '';
+        tags.push({ label, tooltip: tip });
+      }
+      else if (Number.isFinite(rawValue) && rawValue > 0) {
+        const label = game.i18n.localize(LABELS[prop]);
+        const display = `${label} ${rawValue}`;
+        const tip = TOOLTIP_TEXT[prop] ?? '';
+        tags.push({ label: display, tooltip: tip });
+      }
     }
 
     const rolledChallenge = await new Roll(calculatedDamage + 'd6').evaluate({});
@@ -940,7 +965,7 @@ export class STARoll {
     const itemData = {
       speakerName: speaker.alias ?? speaker.name,
       img: item.img,
-      type: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
+      flavor: game.i18n.localize(`sta.actor.belonging.${item.type}.title`),
       name: item.name,
       descFieldHtml: item.system.description,
       rollType: 'item',
@@ -954,6 +979,7 @@ export class STARoll {
       weapontype,
       quantityRow: true,
       damageRow: true,
+      ...getSuccessesEffects,
       ...getSuccessesEffectsText,
       diceString,
       rollAsWeapon: true,
@@ -979,10 +1005,7 @@ export class STARoll {
     const rollData = message.flags.sta ?? {};
 
     const diceOutcome = rollData.diceOutcome;
-    const crewdiceOutcome = rollData.crewdiceOutcome;
     const shipdiceOutcome = rollData.shipdiceOutcome;
-
-    let dicePool = '';
 
     let template = `
       <div class="dialogue">
@@ -1001,7 +1024,7 @@ export class STARoll {
                 <li class="roll die d20">${num}</li>
               </div>
               <div class="checkbox-container">
-                <input type="checkbox" name="num" value="${num}">
+                <input type="checkbox" name="num" value="${i}">
               </div>  
             </div>  
           `;
@@ -1035,7 +1058,7 @@ export class STARoll {
                 <li class="roll die d6"><img src="systems/sta/assets/icons/ChallengeDie_${diceImage}_small.png" /></li>
               </div>
               <div class="checkbox-container">
-                <input type="checkbox" name="num" value="${num}">
+                <input type="checkbox" name="num" value="${i}">
               </div>  
             </div>  
           `;
@@ -1049,7 +1072,7 @@ export class STARoll {
                 <li class="roll die d20">${crewnum}</li>
               </div>
               <div class="checkbox-container">
-                <input type="checkbox" name="crewnum" value="${crewnum}">
+                <input type="checkbox" name="crewnum" value="${i}">
               </div>  
             </div>  
           `;
@@ -1064,7 +1087,7 @@ export class STARoll {
                   <li class="roll die d20">${shipnum}</li>
                 </div>
                 <div class="checkbox-container">
-                  <input type="checkbox" name="shipnum" value="${shipnum}">
+                  <input type="checkbox" name="shipnum" value="${i}">
                 </div>
               </div>  
           `;
@@ -1107,11 +1130,11 @@ export class STARoll {
     if (!formData) return;
 
     const rerolled = formData.getAll("num").map(Number);
-    const kept = diceOutcome?.filter(n => !rerolled.includes(n));
+    const kept = diceOutcome?.filter((_, i) => !rerolled.includes(i));
     const crewrerolled = formData.getAll("crewnum").map(Number);
-    const crewkept = diceOutcome?.filter(n => !crewrerolled.includes(n));
+    const crewkept = diceOutcome?.filter((_, i) => !crewrerolled.includes(i));
     const shiprerolled = formData.getAll("shipnum").map(Number);
-    const shipkept = shipdiceOutcome?.filter(n => !shiprerolled.includes(n));
+    const shipkept = shipdiceOutcome?.filter((_, i) => !shiprerolled.includes(i));
 
     let retainedResult = '';
     let rerolledResult = '';
