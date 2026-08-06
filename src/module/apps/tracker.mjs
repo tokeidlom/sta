@@ -1,6 +1,9 @@
 import {
   STARoller
 } from './STARoller.mjs';
+import {
+  STAConsole
+} from './STAConsole.mjs';
 
 const api = foundry.applications.api;
 
@@ -23,6 +26,7 @@ export class STATracker extends api.HandlebarsApplicationMixin(api.ApplicationV2
       onTaskRoll: STARoller._onTaskRoll,
       onChallengeRoll: STARoller._onChallengeRoll,
       onNPCRoll: STARoller._onNPCRoll,
+      onConsole: STAConsole._onConsole,
     },
     form: {
       submitOnChange: true,

@@ -2139,6 +2139,46 @@ $trackerchatborder: #FF9900;
 
 // ######################################################
 // #                                                    #
+// #                 Console Container                  #
+// #                                                    #
+// ######################################################
+
+.console-container {
+
+  nav.sheet-tabs.tabs {
+    background-color: $borderbluedark;
+    border-bottom: none;
+    border-top: none;
+    display: flex;
+    gap: 0px;
+    justify-content: flex-start;
+    padding-left: 70px;
+  }
+
+  nav.sheet-tabs.tabs a.item {
+    border-right: 3px solid $textgrey;
+    display: inline-block;
+    text-align: center;
+    width: 100px;
+  }
+  nav.sheet-tabs.tabs a.item:first-child {
+    border-left: 3px solid $textgrey;
+  }
+
+  nav.sheet-tabs.tabs a.item.active {
+    text-shadow: none;
+    background-color: $palestbluedark;
+  }
+
+  nav.sheet-tabs.tabs a.item:hover {
+    text-shadow: 0 0 10px $borderblue, 0 0 10px $borderblue;
+  }
+
+}
+
+
+// ######################################################
+// #                                                    #
 // #                 Combat Encounters                  #
 // #                                                    #
 // ######################################################
