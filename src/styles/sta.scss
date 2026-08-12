@@ -2143,9 +2143,53 @@ $trackerchatborder: #FF9900;
 // #                                                    #
 // ######################################################
 
-.console-container {
+.console-container::before {
+  content: "";
+  display: block;
+  width: 10px;
+  height: 100%;
+  background-color: $borderbluedark;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
 
-  nav.sheet-tabs.tabs {
+
+.console-container {
+  .window-header {
+    background-color: $borderbluedark;
+    border: none;
+  }
+
+  .title {
+    margin-top: 5px;
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-right: 2px;
+    background-color: $borderbluedark;
+    border-radius: 0px 100px 100px 0px;
+    box-shadow: -6px 0 0 $borderbluedark;
+  }
+
+  .tracktitle {
+    font-weight: bold;
+    margin-right: 5px;
+  }
+
+  .starship-header img,
+  .crew-list img {
+    width: 50px;
+  }
+  
+  .row {
+    align-items: center;
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    padding-top: 3px;
+  }
+
+  nav.tabs {
     background-color: $borderbluedark;
     border-bottom: none;
     border-top: none;
@@ -2155,22 +2199,22 @@ $trackerchatborder: #FF9900;
     padding-left: 70px;
   }
 
-  nav.sheet-tabs.tabs a.item {
+  nav.tabs a.item {
     border-right: 3px solid $textgrey;
     display: inline-block;
     text-align: center;
     width: 100px;
   }
-  nav.sheet-tabs.tabs a.item:first-child {
+  nav.tabs a.item:first-child {
     border-left: 3px solid $textgrey;
   }
 
-  nav.sheet-tabs.tabs a.item.active {
+  nav.tabs a.item.active {
     text-shadow: none;
     background-color: $palestbluedark;
   }
 
-  nav.sheet-tabs.tabs a.item:hover {
+  nav.tabs a.item:hover {
     text-shadow: 0 0 10px $borderblue, 0 0 10px $borderblue;
   }
 

@@ -1,0 +1,97 @@
+<div class="console-container">
+  <nav class="tabs" data-group="primary">
+    {{#each tabs}}
+      <a class="item {{#if active}}active{{/if}}" data-action="tab" data-tab="{{id}}" data-group="primary">
+        {{name}}
+      </a>
+    {{/each}}
+  </nav>
+
+  <section class="console-content">
+    {{#each tabs}}
+      <div class="tab {{#if active}}active{{/if}}" data-tab="{{id}}" data-group="primary">
+<div 
+  class="starship-header row" 
+  data-action="openActor" 
+  data-actor-id="{{actor.id}}" 
+  title="Open {{name}} sheet"
+>
+  <img src="{{img}}" alt="{{name}}">
+  <div class="tracktitle">{{name}}</div>
+  {{totalCount}} crew assigned
+</div>
+
+
+        {{#if groups.character.length}}
+          <section class="crew-group">
+            <div class="title">
+            Characters {{characterCount}}
+            </div>
+
+            <div class="crew-list">
+
+              {{#each groups.character}}
+                <div class="crew-member row" data-action="openActor" data-actor-id="{{id}}" title="Open {{name}}">
+                    <img src="{{img}}" alt="{{name}}">
+          <div class="tracktitle">{{name}}</div>
+                </div>
+              {{/each}}
+
+            </div>
+          </section>
+        {{/if}}
+
+        {{#if groups.supporting.length}}
+          <section class="crew-group">
+            <div class="title">
+            Supporting Characters {{supportingCount}}
+            </div>
+            
+            <div class="crew-list">
+
+              {{#each groups.supporting}}
+                <div class="crew-member row" data-action="openActor" data-actor-id="{{id}}" title="Open {{name}}">
+                  <img src="{{img}}" alt="{{name}}">
+          <div class="tracktitle">{{name}}</div>
+                </div>
+              {{/each}}
+
+            </div>
+          </section>
+        {{/if}}
+
+        {{#if groups.npc.length}}
+          <section class="crew-group">
+              <div class="title">
+              NPCs {{npcCount}}
+            </div>
+
+            <div class="crew-list">
+
+              {{#each groups.npc}}
+
+                <div class="crew-member row" data-action="openActor" data-actor-id="{{id}}" title="Open {{name}}">
+                    <img src="{{img}}" alt="{{name}}">
+          <div class="tracktitle">{{name}}</div>
+                </div>
+              {{/each}}
+
+            </div>
+          </section>
+        {{/if}}
+
+        {{#unless totalCount}}
+          <div class="no-crew">
+              Just in case section
+            </p>
+          </div>
+        {{/unless}}
+      </div>
+    {{/each}}
+  </section>
+
+<div class="title">
+  Buttons and stuff
+  </div>
+
+</div>
