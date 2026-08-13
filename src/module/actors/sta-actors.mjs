@@ -1101,9 +1101,18 @@ export class STAActors extends api.HandlebarsApplicationMixin(sheets.ActorSheetV
     if (maxShieldsInput && maxShieldsInput.value != shieldsTrackMax) {
       maxShieldsInput.value = shieldsTrackMax;
     }
+    const storedValue = this.actor?.system?.shields?.value ?? 0;
+    const inputEl = this.element.querySelector('#total-shields');
+    const inputValue = inputEl ? parseInt(inputEl.value, 10) : null;
+    const totalShieldsValue = isNaN(storedValue) 
+      ? (isNaN(inputValue) ? 0 : inputValue)
+      : storedValue;
     const barRenderer = this.element.querySelector('#bar-shields-renderer');
+    if (!barRenderer) return;
     barRenderer.innerHTML = '';
-    const totalShieldsValue = this.actor?.system?.shields?.value || parseInt(this.element.querySelector('#total-shields')?.value || 0, 10);
+    const quarterIndex = Math.ceil(shieldsTrackMax / 4);
+    const halfIndex    = Math.ceil(shieldsTrackMax / 2);
+    const gapAfterIndices = new Set([quarterIndex, halfIndex]);
     for (let i = 1; i <= shieldsTrackMax; i++) {
       const div = document.createElement('div');
       div.className = 'box shields';
@@ -1115,6 +1124,11 @@ export class STAActors extends api.HandlebarsApplicationMixin(sheets.ActorSheetV
         div.classList.add('selected');
       }
       barRenderer.appendChild(div);
+      if (gapAfterIndices.has(i) && i < shieldsTrackMax) {
+        const gap = document.createElement('div');
+        gap.className = 'shield-gap';
+        barRenderer.appendChild(gap);
+      }
     }
     if (!this.document.isOwner) return;
     this.actor?.update({
