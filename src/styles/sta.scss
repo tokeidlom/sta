@@ -2159,12 +2159,41 @@ $trackerchatborder: #FF9900;
   top: 0;
 }
 
-
 .console-container {
+
   .window-header {
     background-color: $borderbluedark;
     border: none;
   }
+
+  .split-section {
+    display: flex;
+    width: 100%;
+  }
+
+  .left-column {
+    flex: 0 0 400px;
+    align-self: flex-start;
+    padding-right: 5px;
+  }
+
+  .right-column {
+    flex: 0 0 300px;
+    align-self: flex-start;
+    position: relative;
+    padding-left: 20px;
+  }
+
+  .right-column::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 9px;
+    background-color: $borderbluedark;
+  }
+
 
   .title {
     margin-top: 5px;
@@ -2201,7 +2230,8 @@ $trackerchatborder: #FF9900;
     display: flex;
     gap: 0px;
     justify-content: flex-start;
-    padding-left: 70px;
+    padding-left: 10px;
+    box-shadow: -6px 0 0 $borderbluedark;
   }
 
   nav.tabs a.item {

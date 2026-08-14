@@ -1,97 +1,223 @@
 <div class="console-container">
   <nav class="tabs" data-group="primary">
     {{#each tabs}}
-      <a class="item {{#if active}}active{{/if}}" data-action="tab" data-tab="{{id}}" data-group="primary">
+      <a class="item {{#if active}}active{{/if}}" 
+         data-action="tab" 
+         data-tab="{{id}}" 
+         data-group="primary">
         {{name}}
       </a>
     {{/each}}
   </nav>
 
+    <div class="split-section">
+    <div class="left-column">
+
   <section class="console-content">
     {{#each tabs}}
-      <div class="tab {{#if active}}active{{/if}}" data-tab="{{id}}" data-group="primary">
-<div 
-  class="starship-header row" 
-  data-action="openActor" 
-  data-actor-id="{{actor.id}}" 
-  title="Open {{name}} sheet"
->
-  <img src="{{img}}" alt="{{name}}">
-  <div class="tracktitle">{{name}}</div>
-  {{totalCount}} crew assigned
-</div>
+      <div class="tab {{#if active}}active{{/if}}" 
+           data-tab="{{id}}" 
+           data-group="primary">
 
+        <div class="starship-header row" 
+             data-action="openActor" 
+             data-actor-id="{{actor.id}}" 
+             title="Open {{name}} sheet">
+          <img src="{{img}}" alt="{{name}}">
+          <div class="tracktitle">{{name}}</div>
+          crew assigned = {{totalCount}}
+        </div>
 
         {{#if groups.character.length}}
           <section class="crew-group">
-            <div class="title">
-            Characters {{characterCount}}
-            </div>
-
+            <div class="title">Characters {{characterCount}}</div>
             <div class="crew-list">
-
               {{#each groups.character}}
-                <div class="crew-member row" data-action="openActor" data-actor-id="{{id}}" title="Open {{name}}">
-                    <img src="{{img}}" alt="{{name}}">
-          <div class="tracktitle">{{name}}</div>
+                <div class="crew-selection-container">
+                  <div class="row">
+                    <input type="radio" 
+                           name="selectedCrewMember" 
+                           value="{{id}}" 
+                           title="Select {{name}} as primary crew member" {{#if_eq ../defaultSelectedId id}}checked{{/if_eq}}>
+
+                    <input type="checkbox" 
+                           name="optionalCrewMembers" 
+                           value="{{id}}" 
+                           data-actor-id="{{id}}">
+                    
+                    <div class="crew-member row" 
+                         data-action="openActor" 
+                         data-actor-id="{{id}}" 
+                         title="Open {{name}} sheet">
+                      <img src="{{img}}" alt="{{name}}" />
+                      <div class="tracktitle">{{name}}</div>
+                    </div>
+                  </div>
                 </div>
               {{/each}}
-
             </div>
           </section>
         {{/if}}
 
         {{#if groups.supporting.length}}
           <section class="crew-group">
-            <div class="title">
-            Supporting Characters {{supportingCount}}
-            </div>
-            
+            <div class="title">Supporting Characters {{supportingCount}}</div>
             <div class="crew-list">
-
               {{#each groups.supporting}}
-                <div class="crew-member row" data-action="openActor" data-actor-id="{{id}}" title="Open {{name}}">
-                  <img src="{{img}}" alt="{{name}}">
-          <div class="tracktitle">{{name}}</div>
+                <div class="crew-selection-container">
+                  <div class="row">
+                    <input type="radio" 
+                           name="selectedCrewMember" 
+                           value="{{id}}" 
+                           title="Select {{name}} as primary crew member" {{#if_eq ../defaultSelectedId id}}checked{{/if_eq}}>
+
+                    <input type="checkbox" 
+                           name="optionalCrewMembers" 
+                           value="{{id}}" 
+                           data-actor-id="{{id}}">
+                    
+                    <div class="crew-member row" 
+                         data-action="openActor" 
+                         data-actor-id="{{id}}" 
+                         title="Open {{name}} sheet">
+                      <img src="{{img}}" alt="{{name}}" />
+                      <div class="tracktitle">{{name}}</div>
+                    </div>
+                  </div>
                 </div>
               {{/each}}
-
             </div>
           </section>
         {{/if}}
 
         {{#if groups.npc.length}}
           <section class="crew-group">
-              <div class="title">
-              NPCs {{npcCount}}
-            </div>
-
+            <div class="title">NPCs {{npcCount}}</div>
             <div class="crew-list">
-
               {{#each groups.npc}}
+                <div class="crew-selection-container">
+                  <div class="row">
+                    <input type="radio" 
+                           name="selectedCrewMember" 
+                           value="{{id}}" 
+                           title="Select {{name}} as primary crew member" {{#if_eq ../defaultSelectedId id}}checked{{/if_eq}}>
 
-                <div class="crew-member row" data-action="openActor" data-actor-id="{{id}}" title="Open {{name}}">
-                    <img src="{{img}}" alt="{{name}}">
-          <div class="tracktitle">{{name}}</div>
+                    <input type="checkbox" 
+                           name="optionalCrewMembers" 
+                           value="{{id}}" 
+                           data-actor-id="{{id}}">
+                    
+                    <div class="crew-member row" 
+                         data-action="openActor" 
+                         data-actor-id="{{id}}" 
+                         title="Open {{name}} sheet">
+                      <img src="{{img}}" alt="{{name}}" />
+                      <div class="tracktitle">{{name}}</div>
+                    </div>
+                  </div>
                 </div>
               {{/each}}
-
             </div>
           </section>
         {{/if}}
 
-        {{#unless totalCount}}
-          <div class="no-crew">
-              Just in case section
-            </p>
-          </div>
-        {{/unless}}
+  {{#unless totalCount}}
+  <div class="no-crew">
+    <div class="title">{{localize 'sta.roll.npccrew'}}</div>
+      <label><input type="radio" name="skillLevel" value="basic">{{localize 'sta.roll.npccrewbasic'}}</label><br>
+      <label><input type="radio" name="skillLevel" value="proficient" checked>{{localize 'sta.roll.npccrewproficient'}}</label><br>
+      <label><input type="radio" name="skillLevel" value="talented">{{localize 'sta.roll.npccrewtalented'}}</label><br>
+      <label><input type="radio" name="skillLevel" value="exceptional">{{localize 'sta.roll.npccrewexceptional'}}</label>
+  </div>
+  {{/unless}}
+
       </div>
     {{/each}}
   </section>
 
-<div class="title">
-  Buttons and stuff
-  </div>
+</div>
+ <div class="right-column">
 
+<div class="row">
+  <div class="tracktitle">{{localize "sta.roll.task.name"}}</div>
+  <select id="rollList" name="rollList" class="form-select">
+    {{#each rollList as |item|}}
+      <option value="{{item}}">{{localize (concat "sta.roll." item)}}</option>
+    {{/each}}
+  </select>
+</div>
+
+<div class="title">Starship selection</div>
+
+<div class="starshipRollList">
+  <div class="row">
+    <div class="tracktitle">{{localize "sta.actor.starship.system.title"}}</div>
+    <select id="system" name="system" class="form-select">
+      {{#each systems as |sys|}}
+        <option value="{{sys}}">{{localize (concat "sta.actor.starship.system." sys)}}</option>
+      {{/each}}
+    </select>
+
+    <div class="tracktitle">{{localize "sta.actor.starship.department.title"}}</div>
+    <select id="department" name="department" class="form-select">
+      {{#each departments as |dept|}}
+        <option value="{{dept}}">{{localize (concat "sta.actor.starship.department." dept)}}</option>
+      {{/each}}
+    </select>
+  </div>
+</div>
+
+<div class="title">Crew selection</div>
+<div class="characterRollList">
+  <div class="row">
+    <div class="tracktitle">{{localize "sta.actor.character.attribute.title"}}</div>
+    <select id="attribute" name="attribute" class="form-select">
+      {{#each attributes as |attr|}}
+        <option value="{{attr}}">{{localize (concat "sta.actor.character.attribute." attr)}}</option>
+      {{/each}}
+    </select>
+
+    <div class="tracktitle">{{localize "sta.actor.character.discipline.title"}}</div>
+    <select id="discipline" name="discipline" class="form-select">
+      {{#each disciplines as |disc|}}
+        <option value="{{disc}}">{{localize (concat "sta.actor.character.discipline." disc)}}</option>
+      {{/each}}
+    </select>
+  </div>
+</div>
+
+
+<div class="title">Crew Stuff and things</div>
+    <div class="row">
+        <div class="tracktitle">{{localize 'sta.apps.focus'}}</div>
+        <input type="checkbox" name="usingFocus" id="usingFocus">
+    </div>
+    <div class="row">
+        <div class="tracktitle">{{localize 'sta.apps.dedicatedfocus'}}</div>
+        <input type="checkbox" name="usingDedicatedFocus" id="usingDedicatedFocus">
+    </div>
+    <div class="row">
+        <div class="tracktitle">{{localize 'sta.apps.determination'}}</div>
+        <input type="checkbox" name="usingDetermination" id="usingDetermination">
+    </div>
+    <div class="row">
+        <div class="tracktitle">{{localize 'sta.apps.complicationrange'}}</div>
+        <input class="numeric-entry" type="number" name="complicationRange" value="{{calculatedComplicationRange}}" id="complicationRange">
+    </div>
+    <div class="row">
+        <div class="tracktitle">{{localize 'sta.apps.pool'}}</div>
+        <input class="numeric-entry" type="number" name="dicePoolSlider" value="2" id="dicePoolSlider">
+</div>
+<div class="title">Number of assisting</div>
+    <div class="row">
+        <div class="tracktitle">{{localize 'sta.apps.pool'}}</div>
+        <input class="numeric-entry" type="number" name="dicePoolSliderAssist" value="1" id="dicePoolSliderAssist">
+    </div>
+</div>
+
+  <div class="buttons">
+    <div class="check-button btn attribute" data-action="onAttributeTest">{{localize 'sta.actor.attdis.task'}}</div>
+  </div>
+</div>
+</div>
 </div>
