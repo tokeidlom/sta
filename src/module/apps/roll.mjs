@@ -87,7 +87,7 @@ export class STARoll {
         selectedDepartmentValue: taskData.selectedDepartmentValue,
         rolltype: shipRolltype,
         complicationRange: taskData.complicationRange,
-        dicePool: 1,
+        dicePool: taskData.assistPool || 1,
         usingFocus: true,
         selectedAttributeValue: 0,
         selectedDisciplineValue: 0,

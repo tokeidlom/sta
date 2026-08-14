@@ -25,12 +25,14 @@
              title="Open {{name}} sheet">
           <img src="{{img}}" alt="{{name}}">
           <div class="tracktitle">{{name}}</div>
-          crew assigned = {{totalCount}}
+          {{characterCount}} {{localize 'sta.apps.characters'}}<br>
+          {{supportingCount}} {{localize 'sta.apps.supportingcharacters'}}<br>
+          {{npcCount}} {{localize 'sta.apps.npcs'}}
         </div>
 
         {{#if groups.character.length}}
           <section class="crew-group">
-            <div class="title">Characters {{characterCount}}</div>
+            <div class="title">{{localize 'sta.apps.characters'}}</div>
             <div class="crew-list">
               {{#each groups.character}}
                 <div class="crew-selection-container">
@@ -38,13 +40,8 @@
                     <input type="radio" 
                            name="selectedCrewMember" 
                            value="{{id}}" 
-                           title="Select {{name}} as primary crew member" {{#if_eq ../defaultSelectedId id}}checked{{/if_eq}}>
+                           title="Select {{name}} as primary crew member">
 
-                    <input type="checkbox" 
-                           name="optionalCrewMembers" 
-                           value="{{id}}" 
-                           data-actor-id="{{id}}">
-                    
                     <div class="crew-member row" 
                          data-action="openActor" 
                          data-actor-id="{{id}}" 
@@ -61,7 +58,7 @@
 
         {{#if groups.supporting.length}}
           <section class="crew-group">
-            <div class="title">Supporting Characters {{supportingCount}}</div>
+            <div class="title">{{localize 'sta.apps.supportingcharacters'}}</div>
             <div class="crew-list">
               {{#each groups.supporting}}
                 <div class="crew-selection-container">
@@ -69,12 +66,7 @@
                     <input type="radio" 
                            name="selectedCrewMember" 
                            value="{{id}}" 
-                           title="Select {{name}} as primary crew member" {{#if_eq ../defaultSelectedId id}}checked{{/if_eq}}>
-
-                    <input type="checkbox" 
-                           name="optionalCrewMembers" 
-                           value="{{id}}" 
-                           data-actor-id="{{id}}">
+                           title="Select {{name}} as primary crew member">
                     
                     <div class="crew-member row" 
                          data-action="openActor" 
@@ -92,7 +84,7 @@
 
         {{#if groups.npc.length}}
           <section class="crew-group">
-            <div class="title">NPCs {{npcCount}}</div>
+            <div class="title">{{localize 'sta.apps.npcs'}}</div>
             <div class="crew-list">
               {{#each groups.npc}}
                 <div class="crew-selection-container">
@@ -100,12 +92,7 @@
                     <input type="radio" 
                            name="selectedCrewMember" 
                            value="{{id}}" 
-                           title="Select {{name}} as primary crew member" {{#if_eq ../defaultSelectedId id}}checked{{/if_eq}}>
-
-                    <input type="checkbox" 
-                           name="optionalCrewMembers" 
-                           value="{{id}}" 
-                           data-actor-id="{{id}}">
+                           title="Select {{name}} as primary crew member">
                     
                     <div class="crew-member row" 
                          data-action="openActor" 
@@ -121,15 +108,13 @@
           </section>
         {{/if}}
 
-  {{#unless totalCount}}
   <div class="no-crew">
     <div class="title">{{localize 'sta.roll.npccrew'}}</div>
-      <label><input type="radio" name="skillLevel" value="basic">{{localize 'sta.roll.npccrewbasic'}}</label><br>
-      <label><input type="radio" name="skillLevel" value="proficient" checked>{{localize 'sta.roll.npccrewproficient'}}</label><br>
-      <label><input type="radio" name="skillLevel" value="talented">{{localize 'sta.roll.npccrewtalented'}}</label><br>
-      <label><input type="radio" name="skillLevel" value="exceptional">{{localize 'sta.roll.npccrewexceptional'}}</label>
+      <label><input type="radio" name="selectedCrewMember" value="basic">{{localize 'sta.roll.npccrewbasic'}}</label><br>
+      <label><input type="radio" name="selectedCrewMember" value="proficient" checked>{{localize 'sta.roll.npccrewproficient'}}</label><br>
+      <label><input type="radio" name="selectedCrewMember" value="talented">{{localize 'sta.roll.npccrewtalented'}}</label><br>
+      <label><input type="radio" name="selectedCrewMember" value="exceptional">{{localize 'sta.roll.npccrewexceptional'}}</label>
   </div>
-  {{/unless}}
 
       </div>
     {{/each}}
@@ -147,27 +132,7 @@
   </select>
 </div>
 
-<div class="title">Starship selection</div>
-
-<div class="starshipRollList">
-  <div class="row">
-    <div class="tracktitle">{{localize "sta.actor.starship.system.title"}}</div>
-    <select id="system" name="system" class="form-select">
-      {{#each systems as |sys|}}
-        <option value="{{sys}}">{{localize (concat "sta.actor.starship.system." sys)}}</option>
-      {{/each}}
-    </select>
-
-    <div class="tracktitle">{{localize "sta.actor.starship.department.title"}}</div>
-    <select id="department" name="department" class="form-select">
-      {{#each departments as |dept|}}
-        <option value="{{dept}}">{{localize (concat "sta.actor.starship.department." dept)}}</option>
-      {{/each}}
-    </select>
-  </div>
-</div>
-
-<div class="title">Crew selection</div>
+<div class="title">{{localize 'sta.apps.crewselection'}}</div>
 <div class="characterRollList">
   <div class="row">
     <div class="tracktitle">{{localize "sta.actor.character.attribute.title"}}</div>
@@ -176,7 +141,8 @@
         <option value="{{attr}}">{{localize (concat "sta.actor.character.attribute." attr)}}</option>
       {{/each}}
     </select>
-
+</div>
+  <div class="row">
     <div class="tracktitle">{{localize "sta.actor.character.discipline.title"}}</div>
     <select id="discipline" name="discipline" class="form-select">
       {{#each disciplines as |disc|}}
@@ -186,8 +152,6 @@
   </div>
 </div>
 
-
-<div class="title">Crew Stuff and things</div>
     <div class="row">
         <div class="tracktitle">{{localize 'sta.apps.focus'}}</div>
         <input type="checkbox" name="usingFocus" id="usingFocus">
@@ -204,20 +168,73 @@
         <div class="tracktitle">{{localize 'sta.apps.complicationrange'}}</div>
         <input class="numeric-entry" type="number" name="complicationRange" value="{{calculatedComplicationRange}}" id="complicationRange">
     </div>
-    <div class="row">
-        <div class="tracktitle">{{localize 'sta.apps.pool'}}</div>
-        <input class="numeric-entry" type="number" name="dicePoolSlider" value="2" id="dicePoolSlider">
-</div>
-<div class="title">Number of assisting</div>
-    <div class="row">
-        <div class="tracktitle">{{localize 'sta.apps.pool'}}</div>
-        <input class="numeric-entry" type="number" name="dicePoolSliderAssist" value="1" id="dicePoolSliderAssist">
+  <div class="row">
+    <div class="flex-1">
+      <div class="tracktitle">{{localize 'sta.apps.pool'}}</div>
     </div>
+    <div class="flex-column flex-1">
+      <div class="row">
+        <span class="label align-left flex-1">{{localize 'sta.counting.one'}}</span>
+        <span class="centered flex-1"></span>
+        <span class="label centered flex-1">{{localize 'sta.counting.two'}}</span>
+        <span class="centered flex-1"></span>
+        <span class="label centered flex-1">{{localize 'sta.counting.three'}}</span>
+        <span class="centered flex-1"></span>
+        <span class="label centered flex-1">{{localize 'sta.counting.four'}}</span>
+        <span class="centered flex-1"></span>
+        <span class="label centered flex-1">{{localize 'sta.counting.five'}}</span>
+      </div>
+      <input type="range" name="PoolSlider" min="1" max="5" value="2" class="slider" id="dicePoolSlider">
+    </div>
+  </div>
+<div class="title">{{localize 'sta.apps.shipselection'}}</div>
+
+<div class="starshipRollList">
+  <div class="row">
+    <div class="tracktitle">{{localize "sta.actor.starship.system.title"}}</div>
+    <select id="system" name="system" class="form-select">
+      {{#each systems as |sys|}}
+        <option value="{{sys}}">{{localize (concat "sta.actor.starship.system." sys)}}</option>
+      {{/each}}
+    </select>
 </div>
+  <div class="row">
+    <div class="tracktitle">{{localize "sta.actor.starship.department.title"}}</div>
+    <select id="department" name="department" class="form-select">
+      {{#each departments as |dept|}}
+        <option value="{{dept}}">{{localize (concat "sta.actor.starship.department." dept)}}</option>
+      {{/each}}
+    </select>
+  </div>
+</div>
+
+  <div class="row">
+    <div class="flex-1">
+      <div class="tracktitle">{{localize 'sta.apps.pool'}}</div>
+    </div>
+    <div class="flex-column flex-1">
+      <div class="row">
+        <span class="label align-left flex-1">{{localize 'sta.counting.one'}}</span>
+        <span class="centered flex-1"></span>
+        <span class="label centered flex-1">{{localize 'sta.counting.two'}}</span>
+        <span class="centered flex-1"></span>
+        <span class="label centered flex-1">{{localize 'sta.counting.three'}}</span>
+        <span class="centered flex-1"></span>
+        <span class="label centered flex-1">{{localize 'sta.counting.four'}}</span>
+        <span class="centered flex-1"></span>
+        <span class="label centered flex-1">{{localize 'sta.counting.five'}}</span>
+      </div>
+      <input type="range" name="assistPoolSlider" min="1" max="5" value="1" class="slider" id="assistPoolSlider">
+    </div>
+  </div>
 
   <div class="buttons">
     <div class="check-button btn attribute" data-action="onAttributeTest">{{localize 'sta.actor.attdis.task'}}</div>
   </div>
+
+  </div>
 </div>
+
+
 </div>
-</div>
+

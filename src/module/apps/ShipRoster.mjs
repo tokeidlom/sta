@@ -1,17 +1,15 @@
 const api = foundry.applications.api;
 
 export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2) {
-
   static instance = null;
 
   static async _onShipRoster(event) {
     event.preventDefault();
 
-Handlebars.registerHelper('if_eq', function(a, b, options) {
-  return a === b ? options.fn(this) : options.inverse(this);
-});
-
-    const staRoll = new STARoll();
+    // Register helper once (better to move outside or ensure idempotent registration)
+    Handlebars.registerHelper('if_eq', function (a, b, options) {
+      return a === b ? options.fn(this) : options.inverse(this);
+    });
 
     if (!ShipRoster.instance) {
       ShipRoster.instance = new ShipRoster();
@@ -21,96 +19,90 @@ Handlebars.registerHelper('if_eq', function(a, b, options) {
   }
 
   static DEFAULT_OPTIONS = {
-    classes: ["console-container"],
-
+    classes: ['console-container'],
     actions: {
       openActor: ShipRoster._onOpenActor,
       onAttributeTest: ShipRoster._onAttributeTest,
     },
-
     form: {
       submitOnChange: true,
-      closeOnSubmit: false
+      closeOnSubmit: false,
     },
-
     window: {
       frame: true,
       positioned: true,
-      title: 'A thing I want',
       width: 'auto',
-      height: 'auto'
-    }
+      height: 'auto',
+    },
   };
 
   static PARTS = {
     tracker: {
-      template: "systems/sta/templates/apps/ship-roster.hbs"
-    }
+      template: 'systems/sta/templates/apps/ship-roster.hbs',
+    },
   };
 
-async _prepareContext(options) {
-  const context = await super._prepareContext(options);
+  constructor(...args) {
+    super(...args);
+    this.options.window.title = game.i18n.localize('sta.apps.roster');
+  }
 
-  const starships = game.actors.filter(actor => actor.type === "starship");
-  const characters = game.actors.filter(actor =>
-    actor.type === "character" && actor.system.assignment
-  );
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
 
-  const tabs = starships.map(starship => {
-    const assigned = characters.filter(character => {
-      const assignment = String(character.system.assignment ?? "").trim().toLowerCase();
-      const shipName = String(starship.name ?? "").trim().toLowerCase();
-      return assignment === shipName;
+    const staRoll = new STARoll();
+    const calculatedComplicationRange = await staRoll._sceneComplications();
+
+    const starships = game.actors.filter((actor) => actor.type === 'starship');
+    const characters = game.actors.filter((actor) =>
+      actor.type === 'character' && actor.system.assignment
+    );
+
+    const tabs = starships.map((starship) => {
+      const shipName = String(starship.name ?? '').trim().toLowerCase();
+      const assigned = characters.filter((character) => {
+        const assignment = String(character.system.assignment ?? '').trim().toLowerCase();
+        return assignment === shipName;
+      });
+
+      const groups = { character: [], supporting: [], npc: [] };
+
+      for (const actor of assigned) {
+        const sheetClass = actor.sheet?.constructor;
+        if (sheetClass === game.sta.applications.STANPCSheet2e) {
+          groups.npc.push(actor);
+        } else if (sheetClass === game.sta.applications.STASupportingSheet2e) {
+          groups.supporting.push(actor);
+        } else {
+          groups.character.push(actor);
+        }
+      }
+
+      return {
+        id: starship.id,
+        name: starship.name,
+        actor: starship,
+        img: starship.img,
+        active: false,
+        groups,
+        characterCount: groups.character.length,
+        supportingCount: groups.supporting.length,
+        npcCount: groups.npc.length,
+        totalCount: assigned.length,
+      };
     });
 
-    const groups = { character: [], supporting: [], npc: [] };
-    for (const actor of assigned) {
-      const sheetClass = actor.sheet?.constructor;
-      if (sheetClass === game.sta.applications.STANPCSheet2e) {
-        groups.npc.push(actor);
-      } else if (sheetClass === game.sta.applications.STASupportingSheet2e) {
-        groups.supporting.push(actor);
-      } else {
-        groups.character.push(actor);
-      }
+    tabs.sort((a, b) => b.totalCount - a.totalCount);
+
+    if (!this.tabGroups.primary && tabs.length > 0) {
+      this.tabGroups.primary = tabs[0].id;
     }
 
-    const firstCharacter = groups.character[0];
-    const firstSupporting = groups.supporting[0];
-    const firstNpc = groups.npc[0];
+    for (const tab of tabs) {
+      tab.active = tab.id === this.tabGroups.primary;
+    }
 
-    const defaultSelectedId = firstCharacter?.id
-      ?? firstSupporting?.id
-      ?? firstNpc?.id
-      ?? null;
-
-    return {
-      id: starship.id,
-      name: starship.name,
-      actor: starship,
-      img: starship.img,
-      active: false,
-      groups,
-      characterCount: groups.character.length,
-      supportingCount: groups.supporting.length,
-      npcCount: groups.npc.length,
-      totalCount: assigned.length,
-      defaultSelectedId, // 👈 pass this to template
-    };
-  });
-
-  tabs.sort((a, b) => b.totalCount - a.totalCount);
-
-  if (!this.tabGroups.primary && tabs.length > 0) {
-    this.tabGroups.primary = tabs[0].id;
-  }
-
-  for (const tab of tabs) {
-    tab.active = tab.id === this.tabGroups.primary;
-  }
-
-  const activeTab = tabs.find(tab => tab.id === this.tabGroups.primary);
-
+    const activeTab = tabs.find((tab) => tab.id === this.tabGroups.primary);
 
     const attributes = [
       'control',
@@ -120,6 +112,7 @@ async _prepareContext(options) {
       'presence',
       'reason',
     ];
+
     const disciplines = [
       'command',
       'conn',
@@ -128,6 +121,7 @@ async _prepareContext(options) {
       'medicine',
       'science',
     ];
+
     const systems = [
       'communications',
       'computers',
@@ -136,6 +130,7 @@ async _prepareContext(options) {
       'structure',
       'weapons',
     ];
+
     const departments = [
       'command',
       'conn',
@@ -144,6 +139,7 @@ async _prepareContext(options) {
       'medicine',
       'science',
     ];
+
     const rollList = [
       'justrollboth',
       'justrollcrew',
@@ -171,6 +167,70 @@ async _prepareContext(options) {
       'tractorbeam',
     ];
 
+    return {
+      ...context,
+      tabs,
+      activeTab,
+      activeActor: activeTab?.actor ?? null,
+      attributes,
+      disciplines,
+      systems,
+      departments,
+      rollList,
+      calculatedComplicationRange,
+    };
+  }
+
+  static _onOpenActor(event, target) {
+    event.preventDefault();
+    const actorId = target.dataset.actorId;
+    if (!actorId) return;
+
+    const actor = game.actors.get(actorId);
+    if (!actor) {
+      console.warn(`STA Console | Could not find Actor ${actorId}`);
+      return;
+    }
+
+    actor.sheet?.render(true);
+  }
+
+static async _onAttributeTest(event, target) {
+  event.preventDefault();
+  const staRoll = new STARoll();
+  const form = target.closest('.console-container');
+
+  const data = {
+    actor: form.querySelector('input[name="selectedCrewMember"]:checked')?.value,
+    starship: form.querySelector('.tab.active[data-group="primary"] [data-actor-id]')?.dataset.actorId,
+    attribute: form.querySelector('select[name="attribute"]').value,
+    discipline: form.querySelector('select[name="discipline"]').value,
+    usingFocus: form.querySelector('#usingFocus').checked,
+    usingDedicatedFocus: form.querySelector('#usingDedicatedFocus').checked,
+    usingDetermination: form.querySelector('#usingDetermination').checked,
+    complicationRange: Number(form.querySelector('#complicationRange').value),
+    dicePool: Number(form.querySelector('#dicePoolSlider').value),
+    assistPool: Number(form.querySelector('#assistPoolSlider').value),
+    system: form.querySelector('select[name="system"]').value,
+    department: form.querySelector('select[name="department"]').value,
+    rollList: form.querySelector('select[name="rollList"]').value
+  };
+
+  const character = game.actors.get(data.actor);
+  const starship = game.actors.get(data.starship);
+  let selectedAttributeValue = null;
+  let selectedDisciplineValue = null;
+  let selectedSystemValue = null;
+  let selectedDepartmentValue = null;
+  let selectedAttribute = data.attribute;
+  let selectedDiscipline = data.discipline;
+  let selectedSystem = data.system;
+  let selectedDepartment = data.department;
+  let speakerName = null;
+ 
+    /* --------------------------------------------------------------------- */
+    /* Roll presets logic                                                   */
+    /* --------------------------------------------------------------------- */
 
     const rollPresets = {
       melee: ['daring', 'security', 'none', 'none'],
@@ -197,40 +257,71 @@ async _prepareContext(options) {
       tractorbeam: ['control', 'security', 'structure', 'security'],
     };
 
-  return {
-    ...context,
-    tabs,
-    activeTab,
-    activeActor: activeTab?.actor ?? null,
-    attributes,
-    disciplines,
-    systems,
-    departments,
-    rollList,
-  };
-}
-
-
-  static _onOpenActor(event, target) {
-    event.preventDefault();
-    const actorId = target.dataset.actorId;
-    if (!actorId) return;
-    const actor = game.actors.get(actorId);
-    if (!actor) {
-      console.warn(`STA Console | Could not find Actor ${actorId}`);
-      return;
+    if (rollPresets[data.rollList]) {
+      [
+        selectedAttribute,
+        selectedDiscipline,
+        selectedSystem,
+        selectedDepartment,
+      ] = rollPresets[data.rollList];
+    } else if (data.rollList === 'justrollcrew') {
+      selectedSystem = selectedDepartment = 'none';
     }
 
-    actor.sheet?.render(true);
-  }
+  selectedSystemValue = starship?.system.systems[selectedSystem]?.value ?? null;
+  selectedDepartmentValue = starship?.system.departments[selectedDepartment]?.value ?? null;
+  selectedAttributeValue = character?.system.attributes[selectedAttribute]?.value ?? null;
+  selectedDisciplineValue = character?.system.disciplines[selectedDiscipline]?.value ?? null;
 
+    /* --------------------------------------------------------------------- */
+    /* NPC values (if no character token)                                    */
+    /* --------------------------------------------------------------------- */
 
-static _onAttributeTest (event) {
-const selectedRadioId = document.querySelector('input[name="selectedCrewMember"]:checked')?.value;
+    let skillLevel = null;
 
-const optionalIds = Array.from(document.querySelectorAll('input[name="optionalCrewMembers"]:checked'))
-  .map(input => input.value);
+    if (!character){
+      skillLevel = data.actor
+      speakerName = 'NPC Crew';
+     const npcValues = {
+        basic: [8, 1],
+        proficient: [9, 2],
+        talented: [10, 3],
+        exceptional: [11, 4],
+      };
+      [
+        selectedAttributeValue,
+        selectedDisciplineValue,
+      ] = npcValues[skillLevel] ?? [9, 2];
+    } else {
+      speakerName = character.name;
+    }
 
+    const taskData = {
+      speakerName,
+      starshipName: starship.name,
+      rolltype: 'character2e',
+      selectedAttribute,
+      selectedAttributeValue,
+      selectedDiscipline,
+      selectedDisciplineValue,
+      selectedSystem,
+      selectedSystemValue,
+      selectedDepartment: data.department,
+      selectedDepartmentValue,
+      dicePool: data.dicePool,
+      assistPool: data.assistPool,
+      usingFocus: data.usingFocus,
+      usingDedicatedFocus: data.usingDedicatedFocus,
+      usingDetermination: data.usingDetermination,
+      complicationRange: data.complicationRange,
+      skillLevel,
+    };
+
+    /* --------------------------------------------------------------------- */
+    /* Send the NPC roll to STARoll                                          */
+    /* --------------------------------------------------------------------- */
+        await staRoll.rollNPCTask(taskData);
 }
+
 
 }
