@@ -38,7 +38,7 @@
                 <div class="crew-selection-container">
                   <div class="row">
                     <input type="radio" 
-                           name="selectedCrewMember" 
+                           name="selectedCrewMember-{{../../id}}" 
                            value="{{id}}" 
                            title="Select {{name}} as primary crew member">
 
@@ -64,7 +64,7 @@
                 <div class="crew-selection-container">
                   <div class="row">
                     <input type="radio" 
-                           name="selectedCrewMember" 
+                           name="selectedCrewMember-{{../../id}}" 
                            value="{{id}}" 
                            title="Select {{name}} as primary crew member">
                     
@@ -90,7 +90,7 @@
                 <div class="crew-selection-container">
                   <div class="row">
                     <input type="radio" 
-                           name="selectedCrewMember" 
+                           name="selectedCrewMember-{{../../id}}" 
                            value="{{id}}" 
                            title="Select {{name}} as primary crew member">
                     
@@ -110,10 +110,10 @@
 
   <div class="no-crew">
     <div class="title">{{localize 'sta.roll.npccrew'}}</div>
-      <label><input type="radio" name="selectedCrewMember" value="basic">{{localize 'sta.roll.npccrewbasic'}}</label><br>
-      <label><input type="radio" name="selectedCrewMember" value="proficient" checked>{{localize 'sta.roll.npccrewproficient'}}</label><br>
-      <label><input type="radio" name="selectedCrewMember" value="talented">{{localize 'sta.roll.npccrewtalented'}}</label><br>
-      <label><input type="radio" name="selectedCrewMember" value="exceptional">{{localize 'sta.roll.npccrewexceptional'}}</label>
+      <label><input type="radio" name="selectedCrewMember-{{../../id}}" value="basic">{{localize 'sta.roll.npccrewbasic'}}</label><br>
+      <label><input type="radio" name="selectedCrewMember-{{../../id}}" value="proficient">{{localize 'sta.roll.npccrewproficient'}}</label><br>
+      <label><input type="radio" name="selectedCrewMember-{{../../id}}" value="talented">{{localize 'sta.roll.npccrewtalented'}}</label><br>
+      <label><input type="radio" name="selectedCrewMember-{{../../id}}" value="exceptional">{{localize 'sta.roll.npccrewexceptional'}}</label>
   </div>
 
       </div>
@@ -154,7 +154,7 @@
 
     <div class="row">
         <div class="tracktitle">{{localize 'sta.apps.focus'}}</div>
-        <input type="checkbox" name="usingFocus" id="usingFocus">
+        <input type="checkbox" name="usingFocus" id="usingFocus" checked>
     </div>
     <div class="row">
         <div class="tracktitle">{{localize 'sta.apps.dedicatedfocus'}}</div>
@@ -234,7 +234,5 @@
 
   </div>
 </div>
-
-
 </div>
 

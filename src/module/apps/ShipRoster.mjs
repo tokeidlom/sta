@@ -6,10 +6,19 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
   static async _onShipRoster(event) {
     event.preventDefault();
 
-    // Register helper once (better to move outside or ensure idempotent registration)
     Handlebars.registerHelper('if_eq', function (a, b, options) {
       return a === b ? options.fn(this) : options.inverse(this);
     });
+
+    const starships = game.actors.filter(a => a.type === "starship");
+    const visibleShips = starships.filter(s =>
+      s.testUserPermission(game.user, "OBSERVER")
+    );
+
+    if (visibleShips.length === 0) {
+      ui.notifications.warn(game.i18n.localize('sta.apps.notanobserver'));
+      return;
+    }
 
     if (!ShipRoster.instance) {
       ShipRoster.instance = new ShipRoster();
@@ -58,11 +67,14 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
       actor.type === 'character' && actor.system.assignment
     );
 
-    const tabs = starships.map((starship) => {
+    let tabs = starships.map((starship) => {
       const shipName = String(starship.name ?? '').trim().toLowerCase();
-      const assigned = characters.filter((character) => {
+
+      const assigned = characters.filter(character => {
         const assignment = String(character.system.assignment ?? '').trim().toLowerCase();
-        return assignment === shipName;
+        const matchesShip = assignment === shipName;
+        const canSeeCrew = character.testUserPermission(game.user, "OBSERVER");
+        return matchesShip && canSeeCrew;
       });
 
       const groups = { character: [], supporting: [], npc: [] };
@@ -84,13 +96,17 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
         actor: starship,
         img: starship.img,
         active: false,
+        radioGroup: `selectedCrewMember-${starship.id}`,
         groups,
         characterCount: groups.character.length,
         supportingCount: groups.supporting.length,
         npcCount: groups.npc.length,
         totalCount: assigned.length,
+        canSeeShip: starship.testUserPermission(game.user, "OBSERVER")
       };
     });
+
+    tabs = tabs.filter(tab => tab.canSeeShip);
 
     tabs.sort((a, b) => b.totalCount - a.totalCount);
 
@@ -195,39 +211,41 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
     actor.sheet?.render(true);
   }
 
-static async _onAttributeTest(event, target) {
-  event.preventDefault();
-  const staRoll = new STARoll();
-  const form = target.closest('.console-container');
+  static async _onAttributeTest(event, target) {
+    event.preventDefault();
+    const staRoll = new STARoll();
+    const form = target.closest('.console-container');
 
-  const data = {
-    actor: form.querySelector('input[name="selectedCrewMember"]:checked')?.value,
-    starship: form.querySelector('.tab.active[data-group="primary"] [data-actor-id]')?.dataset.actorId,
-    attribute: form.querySelector('select[name="attribute"]').value,
-    discipline: form.querySelector('select[name="discipline"]').value,
-    usingFocus: form.querySelector('#usingFocus').checked,
-    usingDedicatedFocus: form.querySelector('#usingDedicatedFocus').checked,
-    usingDetermination: form.querySelector('#usingDetermination').checked,
-    complicationRange: Number(form.querySelector('#complicationRange').value),
-    dicePool: Number(form.querySelector('#dicePoolSlider').value),
-    assistPool: Number(form.querySelector('#assistPoolSlider').value),
-    system: form.querySelector('select[name="system"]').value,
-    department: form.querySelector('select[name="department"]').value,
-    rollList: form.querySelector('select[name="rollList"]').value
-  };
+    const activeTab = form.querySelector('.tab.active[data-group="primary"]');
 
-  const character = game.actors.get(data.actor);
-  const starship = game.actors.get(data.starship);
-  let selectedAttributeValue = null;
-  let selectedDisciplineValue = null;
-  let selectedSystemValue = null;
-  let selectedDepartmentValue = null;
-  let selectedAttribute = data.attribute;
-  let selectedDiscipline = data.discipline;
-  let selectedSystem = data.system;
-  let selectedDepartment = data.department;
-  let speakerName = null;
- 
+    const data = {
+      actor: activeTab?.querySelector('input[name^="selectedCrewMember-"]:checked')?.value,
+      starship: activeTab?.querySelector('[data-actor-id]')?.dataset.actorId,
+      attribute: form.querySelector('select[name="attribute"]').value,
+      discipline: form.querySelector('select[name="discipline"]').value,
+      usingFocus: form.querySelector('#usingFocus').checked,
+      usingDedicatedFocus: form.querySelector('#usingDedicatedFocus').checked,
+      usingDetermination: form.querySelector('#usingDetermination').checked,
+      complicationRange: Number(form.querySelector('#complicationRange').value),
+      dicePool: Number(form.querySelector('#dicePoolSlider').value),
+      assistPool: Number(form.querySelector('#assistPoolSlider').value),
+      system: form.querySelector('select[name="system"]').value,
+      department: form.querySelector('select[name="department"]').value,
+      rollList: form.querySelector('select[name="rollList"]').value
+    };
+
+    const character = game.actors.get(data.actor);
+    const starship = game.actors.get(data.starship);
+    let selectedAttributeValue = null;
+    let selectedDisciplineValue = null;
+    let selectedSystemValue = null;
+    let selectedDepartmentValue = null;
+    let selectedAttribute = data.attribute;
+    let selectedDiscipline = data.discipline;
+    let selectedSystem = data.system;
+    let selectedDepartment = data.department;
+    let speakerName = null;
+
     /* --------------------------------------------------------------------- */
     /* Roll presets logic                                                   */
     /* --------------------------------------------------------------------- */
@@ -268,10 +286,10 @@ static async _onAttributeTest(event, target) {
       selectedSystem = selectedDepartment = 'none';
     }
 
-  selectedSystemValue = starship?.system.systems[selectedSystem]?.value ?? null;
-  selectedDepartmentValue = starship?.system.departments[selectedDepartment]?.value ?? null;
-  selectedAttributeValue = character?.system.attributes[selectedAttribute]?.value ?? null;
-  selectedDisciplineValue = character?.system.disciplines[selectedDiscipline]?.value ?? null;
+    selectedSystemValue = starship?.system.systems[selectedSystem]?.value ?? null;
+    selectedDepartmentValue = starship?.system.departments[selectedDepartment]?.value ?? null;
+    selectedAttributeValue = character?.system.attributes[selectedAttribute]?.value ?? null;
+    selectedDisciplineValue = character?.system.disciplines[selectedDiscipline]?.value ?? null;
 
     /* --------------------------------------------------------------------- */
     /* NPC values (if no character token)                                    */
@@ -282,7 +300,7 @@ static async _onAttributeTest(event, target) {
     if (!character){
       skillLevel = data.actor
       speakerName = 'NPC Crew';
-     const npcValues = {
+      const npcValues = {
         basic: [8, 1],
         proficient: [9, 2],
         talented: [10, 3],
@@ -320,8 +338,6 @@ static async _onAttributeTest(event, target) {
     /* --------------------------------------------------------------------- */
     /* Send the NPC roll to STARoll                                          */
     /* --------------------------------------------------------------------- */
-        await staRoll.rollNPCTask(taskData);
-}
-
-
+    await staRoll.rollNPCTask(taskData);
+  }
 }
