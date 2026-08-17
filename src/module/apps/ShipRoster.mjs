@@ -10,9 +10,9 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
       return a === b ? options.fn(this) : options.inverse(this);
     });
 
-    const starships = game.actors.filter(a => a.type === "starship");
-    const visibleShips = starships.filter(s =>
-      s.testUserPermission(game.user, "OBSERVER")
+    const starships = game.actors.filter((a) => a.type === 'starship');
+    const visibleShips = starships.filter((s) =>
+      s.testUserPermission(game.user, 'OBSERVER')
     );
 
     if (visibleShips.length === 0) {
@@ -70,10 +70,10 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
     let tabs = starships.map((starship) => {
       const shipName = String(starship.name ?? '').trim().toLowerCase();
 
-      const assigned = characters.filter(character => {
+      const assigned = characters.filter((character) => {
         const assignment = String(character.system.assignment ?? '').trim().toLowerCase();
         const matchesShip = assignment === shipName;
-        const canSeeCrew = character.testUserPermission(game.user, "OBSERVER");
+        const canSeeCrew = character.testUserPermission(game.user, 'OBSERVER');
         return matchesShip && canSeeCrew;
       });
 
@@ -102,11 +102,11 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
         supportingCount: groups.supporting.length,
         npcCount: groups.npc.length,
         totalCount: assigned.length,
-        canSeeShip: starship.testUserPermission(game.user, "OBSERVER")
+        canSeeShip: starship.testUserPermission(game.user, 'OBSERVER'),
       };
     });
 
-    tabs = tabs.filter(tab => tab.canSeeShip);
+    tabs = tabs.filter((tab) => tab.canSeeShip);
 
     tabs.sort((a, b) => b.totalCount - a.totalCount);
 
@@ -231,7 +231,7 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
       assistPool: Number(form.querySelector('#assistPoolSlider').value),
       system: form.querySelector('select[name="system"]').value,
       department: form.querySelector('select[name="department"]').value,
-      rollList: form.querySelector('select[name="rollList"]').value
+      rollList: form.querySelector('select[name="rollList"]').value,
     };
 
     const character = game.actors.get(data.actor);
@@ -249,7 +249,6 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
     /* --------------------------------------------------------------------- */
     /* Roll presets logic                                                   */
     /* --------------------------------------------------------------------- */
-
     const rollPresets = {
       melee: ['daring', 'security', 'none', 'none'],
       ranged: ['control', 'security', 'none', 'none'],
@@ -294,11 +293,10 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
     /* --------------------------------------------------------------------- */
     /* NPC values (if no character token)                                    */
     /* --------------------------------------------------------------------- */
-
     let skillLevel = null;
 
-    if (!character){
-      skillLevel = data.actor
+    if (!character) {
+      skillLevel = data.actor;
       speakerName = 'NPC Crew';
       const npcValues = {
         basic: [8, 1],
