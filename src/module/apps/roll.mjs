@@ -111,6 +111,8 @@ export class STARoll {
         diceStringship: shipData.diceString,
         diceOutcome: crewData.diceOutcome,
         shipdiceOutcome: shipData.diceOutcome,
+        squadDiceString: crewData.squadDiceString,
+        squadDiceOutcome: crewData.squadDiceOutcome,
         success,
         checkTarget: crewData.checkTarget,
         checkTargetship: shipData.checkTarget,
@@ -143,13 +145,16 @@ export class STARoll {
     if (taskData.usingDetermination && taskData.rolltype !== 'character1e') {
       diceToRoll = diceToRoll - 1;
     }
+    let squadDiceToRoll = 0;
     if (taskData.squadDice && taskData.rolltype !== 'starship') {
-      diceToRoll = diceToRoll + taskData.squadDice - 1;
+      squadDiceToRoll = taskData.squadDice - 1;
     }
+
     // Do the roll
     const taskRolled = await new Roll(diceToRoll + 'd20').evaluate({});
+    const squadRolled = await new Roll(squadDiceToRoll + 'd20').evaluate({});
 
-    return {taskRolled};
+    return {taskRolled, squadRolled};
   }
 
   // Assemble the result strings for the chat card
@@ -171,8 +176,11 @@ export class STARoll {
 
     const doubleDiscipline = disDepTarget * 2;
     let diceString = '';
+    let squadDiceString = '';
     const diceOutcome = [];
+    const squadDiceOutcome = [];
     let success = 0;
+    let squadSuccess = 0;
     let complication = 0;
     const result = 0;
 
@@ -229,6 +237,39 @@ export class STARoll {
 
     const rollDetails = bonuses.join(', ');
 
+    // Calculate for the squad
+    const squadResultsArray =
+      taskData.customResults ??
+      taskData.squadRolled?.dice?.flatMap((d) => d.results.map((r) => r.result)) ??
+      [];
+
+    squadResultsArray.forEach((result) => {
+      if ((taskData.usingFocus &&
+          result <= disDepTarget) ||
+        result === 1) {
+        squadDiceString += `<li class="roll die d20 max">${result}</li>`;
+        squadDiceOutcome.push(result);
+        squadSuccess += 2;
+      } else if (
+        (taskData.usingDedicatedFocus &&
+          result <= doubleDiscipline)) {
+        squadDiceString += `<li class="roll die d20 max">${result}</li>`;
+        squadDiceOutcome.push(result);
+        squadSuccess += 2;
+      } else if (result <= checkTarget) {
+        squadDiceString += `<li class="roll die d20">${result}</li>`;
+        squadDiceOutcome.push(result);
+        squadSuccess += 1;
+      } else if (result >= complicationMinimumValue) {
+        squadDiceString += `<li class="roll die d20 min">${result}</li>`;
+        squadDiceOutcome.push(result);
+        complication += 1;
+      } else {
+        squadDiceString += `<li class="roll die d20">${result}</li>`;
+        squadDiceOutcome.push(result);
+      }
+    });
+
     // Add flavor for the roll card
     let flavor = '';
     switch (taskData.rolltype) {
@@ -268,9 +309,15 @@ export class STARoll {
       break;
     }
 
+    if (!taskData.isReroll && success > 0) {
+      success += squadSuccess;
+    }
+
     return {
       diceString,
       diceOutcome,
+      squadDiceString,
+      squadDiceOutcome,
       success,
       complication,
       flavor,
@@ -1019,6 +1066,7 @@ export class STARoll {
 
     const diceOutcome = rollData.diceOutcome;
     const shipdiceOutcome = rollData.shipdiceOutcome;
+    const squadDiceOutcome = rollData.squadDiceOutcome;
 
     let template = `
       <div class="dialogue">
@@ -1032,14 +1080,32 @@ export class STARoll {
     case 'task':
       diceOutcome.forEach((num, i) => {
         template += `
-            <div>
-              <div class="die-image">
-                <li class="roll die d20">${num}</li>
-              </div>
-              <div class="checkbox-container">
-                <input type="checkbox" name="num" value="${i}">
-              </div>  
+          <div>
+            <div class="die-image">
+              <li class="roll die d20">${num}</li>
+            </div>
+            <div class="checkbox-container">
+              <input type="checkbox" name="num" value="${i}">
             </div>  
+          </div>
+        `;
+      });
+
+      template += `
+        </div>
+        <div class="dice-rolls">
+      `;
+
+      squadDiceOutcome.forEach((squadnum, i) => {
+        template += `
+          <div>  
+            <div class="die-image">
+              <li class="roll die d20">${squadnum}</li>
+            </div>
+            <div class="checkbox-container">
+              <input type="checkbox" name="squadnum" value="${i}">
+            </div>  
+          </div>
           `;
       });
       break;
@@ -1091,18 +1157,39 @@ export class STARoll {
           `;
       });
 
-      shipdiceOutcome.forEach((shipnum, i) => {
+      template += `
+        </div>
+        <div class="dice-rolls">
+      `;
+
+      squadDiceOutcome.forEach((squadnum, i) => {
         template += `
-            </div>
-            <div class="dice-rolls">
               <div>
                 <div class="die-image">
-                  <li class="roll die d20">${shipnum}</li>
+                  <li class="roll die d20">${squadnum}</li>
                 </div>
                 <div class="checkbox-container">
-                  <input type="checkbox" name="shipnum" value="${i}">
+                  <input type="checkbox" name="squadnum" value="${i}">
                 </div>
               </div>  
+          `;
+      });
+
+      template += `
+        </div>
+        <div class="dice-rolls">
+      `;
+
+      shipdiceOutcome.forEach((shipnum, i) => {
+        template += `
+            <div>
+              <div class="die-image">
+                <li class="roll die d20">${shipnum}</li>
+              </div>
+              <div class="checkbox-container">
+                <input type="checkbox" name="shipnum" value="${i}">
+              </div>
+            </div>  
           `;
       });
       break;
@@ -1148,20 +1235,26 @@ export class STARoll {
     const crewkept = diceOutcome?.filter((_, i) => !crewrerolled.includes(i));
     const shiprerolled = formData.getAll('shipnum').map(Number);
     const shipkept = shipdiceOutcome?.filter((_, i) => !shiprerolled.includes(i));
+    const squadrerolled = formData.getAll('squadnum').map(Number);
+    const squadkept = squadDiceOutcome?.filter((_, i) => !squadrerolled.includes(i));
 
     let retainedResult = '';
     let rerolledResult = '';
     let resultText = '';
     let shipretainedResult = '';
     let shiprerolledResult = '';
+    let squadretainedResult = '';
+    let squadrerolledResult = '';
     let taskRolled = [];
     let shiptaskRolled = [];
+    let squadtaskRolled = [];
     let isTaskReroll = false;
     let isChallengeReroll = false;
     let isNPCReroll = false;
 
     switch (rollData.rollType) {
     case 'task':
+      //Normal dice
       const retainedTaskDice = {
         checkTarget: rollData.checkTarget,
         complicationMinimumValue: rollData.complicationMinimumValue,
@@ -1169,6 +1262,7 @@ export class STARoll {
         customResults: kept,
         usingFocus: rollData.usingFocus,
         usingDedicatedFocus: rollData.usingDedicatedFocus,
+        isReroll: true,
       };
       retainedResult = await this._taskResult(retainedTaskDice);
 
@@ -1180,13 +1274,48 @@ export class STARoll {
         disDepTarget: rollData.disDepTarget,
         usingFocus: rollData.usingFocus,
         usingDedicatedFocus: rollData.usingDedicatedFocus,
+        isReroll: true,
         ...taskRolled,
       };
       rerolledResult = await this._taskResult(rerolledTaskDice);
 
+      // Squad
+      const squadretainedTaskDice = {
+        checkTarget: rollData.checkTarget,
+        complicationMinimumValue: rollData.complicationMinimumValue,
+        disDepTarget: rollData.disDepTarget,
+        usingFocus: rollData.usingFocus,
+        customResults: squadkept,
+        isReroll: true,
+      };
+      squadretainedResult = await this._taskResult(squadretainedTaskDice);
+
+      squadtaskRolled = await this._performRollTask({dicePool: squadrerolled.length});
+
+      const squadrerolledTaskDice = {
+        checkTarget: rollData.checkTarget,
+        complicationMinimumValue: rollData.complicationMinimumValue,
+        disDepTarget: rollData.disDepTarget,
+        usingFocus: rollData.usingFocus,
+        isReroll: true,
+        ...squadtaskRolled,
+      };
+      squadrerolledResult = await this._taskResult(squadrerolledTaskDice);
+
+      let tasksuccess = squadretainedResult.success + 
+        squadrerolledResult.success + 
+        retainedResult.success + 
+        rerolledResult.success;
+      if ((retainedResult.success + rerolledResult.success) === 0 && !game.settings.get('sta', 'showAssistantSuccesses')) {
+        tasksuccess = 0;
+      };
+
       const taskData = {
-        success: retainedResult.success + rerolledResult.success,
-        complication: retainedResult.complication + rerolledResult.complication,
+        success: tasksuccess,
+        complication: squadretainedResult.complication + 
+          squadrerolledResult.complication + 
+          retainedResult.complication + 
+          rerolledResult.complication,
       };
 
       resultText = await this._taskResultText(taskData);
@@ -1224,6 +1353,7 @@ export class STARoll {
         customResults: crewkept,
         usingFocus: rollData.usingFocus,
         usingDedicatedFocus: rollData.usingDedicatedFocus,
+        isReroll: true,
       };
       retainedResult = await this._taskResult(crewretainedTaskDice);
 
@@ -1235,9 +1365,33 @@ export class STARoll {
         disDepTarget: rollData.disDepTarget,
         usingFocus: rollData.usingFocus,
         usingDedicatedFocus: rollData.usingDedicatedFocus,
+        isReroll: true,
         ...taskRolled,
       };
       rerolledResult = await this._taskResult(crewrerolledTaskDice);
+
+      // Squadron
+      const squadronretainedTaskDice = {
+        checkTarget: rollData.checkTarget,
+        complicationMinimumValue: rollData.complicationMinimumValue,
+        disDepTarget: rollData.disDepTarget,
+        usingFocus: rollData.usingFocus,
+        customResults: squadkept,
+        isReroll: true,
+      };
+      squadretainedResult = await this._taskResult(squadronretainedTaskDice);
+
+      squadtaskRolled = await this._performRollTask({dicePool: squadrerolled.length});
+
+      const squadronrerolledTaskDice = {
+        checkTarget: rollData.checkTarget,
+        complicationMinimumValue: rollData.complicationMinimumValue,
+        disDepTarget: rollData.disDepTarget,
+        usingFocus: rollData.usingFocus,
+        isReroll: true,
+        ...squadtaskRolled,
+      };
+      squadrerolledResult = await this._taskResult(squadronrerolledTaskDice);
 
       // SHIP
       const shipretainedTaskDice = {
@@ -1246,6 +1400,7 @@ export class STARoll {
         shipdisDepTarget: rollData.shipdisDepTarget,
         usingFocus: true,
         customResults: shipkept,
+        isReroll: true,
       };
       shipretainedResult = await this._taskResult(shipretainedTaskDice);
 
@@ -1256,21 +1411,26 @@ export class STARoll {
         complicationMinimumValue: rollData.complicationMinimumValue,
         shipdisDepTarget: rollData.shipdisDepTarget,
         usingFocus: rollData.usingFocus,
+        isReroll: true,
         ...shiptaskRolled,
       };
       shiprerolledResult = await this._taskResult(shiprerolledTaskDice);
 
-      let success = shipretainedResult.success + 
+      let npcsuccess = squadretainedResult.success + 
+        squadrerolledResult.success + 
+        shipretainedResult.success + 
         shiprerolledResult.success + 
         retainedResult.success + 
         rerolledResult.success;
       if ((retainedResult.success + rerolledResult.success) === 0 && !game.settings.get('sta', 'showAssistantSuccesses')) {
-        success = 0;
+        npcsuccess = 0;
       };
 
       const shipcrewData = {
-        success,
-        complication: shipretainedResult.complication + 
+        success: npcsuccess,
+        complication: squadretainedResult.complication + 
+          squadrerolledResult.complication + 
+          shipretainedResult.complication + 
           shiprerolledResult.complication + 
           retainedResult.complication + 
           rerolledResult.complication,
@@ -1294,6 +1454,8 @@ export class STARoll {
       rerolledRoll: rerolledResult.diceString,
       shipretainedRoll: shipretainedResult.diceString,
       shiprerolledRoll: shiprerolledResult.diceString,
+      squadretainedRoll: squadretainedResult.diceString,
+      squadrerolledRoll: squadrerolledResult.diceString,
       ...resultText,
       starshipName: rollData.starshipName,
       flavorship: rollData.flavorship + ' ' + game.i18n.localize('sta.roll.rerollresults'),
@@ -1390,6 +1552,7 @@ export class STARoll {
           diceOutcome: rollData.diceOutcome,
           crewdiceOutcome: rollData.crewdiceOutcome,
           shipdiceOutcome: rollData.shipdiceOutcome,
+          squadDiceOutcome: rollData.squadDiceOutcome,
           rollType: rollData.rollType,
           dicePool: rollData.dicePool,
           complicationMinimumValue: rollData.complicationMinimumValue,
