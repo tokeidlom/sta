@@ -1,12 +1,10 @@
 <div class="console-container">
   <nav class="tabs" data-group="primary">
     {{#each tabs}}
-      <a
-        class="item {{#if active}}active{{/if}}"
-        data-action="tab"
-        data-tab="{{id}}"
-        data-group="primary"
-      >
+      <a class="item {{#if active}}active{{/if}}"
+         data-action="tab"
+         data-tab="{{id}}"
+         data-group="primary">
         {{name}}
       </a>
     {{/each}}
@@ -15,18 +13,15 @@
   <div class="split-section">
     <div class="left-column">
       <section class="console-content">
+
         {{#each tabs}}
-          <div
-            class="tab {{#if active}}active{{/if}}"
-            data-tab="{{id}}"
-            data-group="primary"
-          >
-            <div
-              class="starship-header row"
-              data-action="openActor"
-              data-actor-id="{{actor.id}}"
-              title="Open {{name}} sheet"
-            >
+          <div class="tab {{#if active}}active{{/if}}"
+               data-tab="{{id}}"
+               data-group="primary">
+            <div class="starship-header row"
+                 data-action="openActor"
+                 data-actor-id="{{actor.id}}"
+                 title="Open {{name}} sheet">
               <img src="{{img}}" alt="{{name}}" />
               <div class="tracktitle">{{name}}</div>
               {{characterCount}} {{localize "sta.apps.characters"}}<br />
@@ -41,18 +36,15 @@
                   {{#each groups.character}}
                     <div class="crew-selection-container">
                       <div class="row">
-                        <input
-                          type="radio"
-                          name="selectedCrewMember-{{../../id}}"
-                          value="{{id}}"
-                          title="Select {{name}} as primary crew member"
-                        />
-                        <div
-                          class="crew-member row"
-                          data-action="openActor"
-                          data-actor-id="{{id}}"
-                          title="Open {{name}} sheet"
-                        >
+                        <input type="radio"
+                               name="selectedCrewMember-{{../id}}"
+                               value="{{id}}"
+                               title="Select {{name}} as primary crew member"
+                               {{#if (eq id ../defaultCrewMember)}}checked{{/if}} />
+                        <div class="crew-member row"
+                             data-action="openActor"
+                             data-actor-id="{{id}}"
+                             title="Open {{name}} sheet">
                           <img src="{{img}}" alt="{{name}}" />
                           <div class="tracktitle">{{name}}</div>
                         </div>
@@ -70,18 +62,15 @@
                   {{#each groups.supporting}}
                     <div class="crew-selection-container">
                       <div class="row">
-                        <input
-                          type="radio"
-                          name="selectedCrewMember-{{../../id}}"
-                          value="{{id}}"
-                          title="Select {{name}} as primary crew member"
-                        />
-                        <div
-                          class="crew-member row"
-                          data-action="openActor"
-                          data-actor-id="{{id}}"
-                          title="Open {{name}} sheet"
-                        >
+                        <input type="radio"
+                               name="selectedCrewMember-{{../id}}"
+                               value="{{id}}"
+                               title="Select {{name}} as primary crew member"
+                               {{#if (eq id ../defaultCrewMember)}}checked{{/if}} />
+                        <div class="crew-member row"
+                             data-action="openActor"
+                             data-actor-id="{{id}}"
+                             title="Open {{name}} sheet">
                           <img src="{{img}}" alt="{{name}}" />
                           <div class="tracktitle">{{name}}</div>
                         </div>
@@ -99,18 +88,15 @@
                   {{#each groups.npc}}
                     <div class="crew-selection-container">
                       <div class="row">
-                        <input
-                          type="radio"
-                          name="selectedCrewMember-{{../../id}}"
-                          value="{{id}}"
-                          title="Select {{name}} as primary crew member"
-                        />
-                        <div
-                          class="crew-member row"
-                          data-action="openActor"
-                          data-actor-id="{{id}}"
-                          title="Open {{name}} sheet"
-                        >
+                        <input type="radio"
+                               name="selectedCrewMember-{{../id}}"
+                               value="{{id}}"
+                               title="Select {{name}} as primary crew member"
+                               {{#if (eq id ../defaultCrewMember)}}checked{{/if}} />
+                        <div class="crew-member row"
+                             data-action="openActor"
+                             data-actor-id="{{id}}"
+                             title="Open {{name}} sheet">
                           <img src="{{img}}" alt="{{name}}" />
                           <div class="tracktitle">{{name}}</div>
                         </div>
@@ -124,38 +110,37 @@
             <div class="no-crew">
               <div class="title">{{localize "sta.roll.npccrew"}}</div>
               <label>
-                <input
-                  type="radio"
-                  name="selectedCrewMember-{{../../id}}"
-                  value="basic"
-                />
+                <input type="radio"
+                       name="selectedCrewMember-{{id}}"
+                       value="basic"
+                       {{#if (eq "basic" defaultCrewMember)}}checked{{/if}} />
                 {{localize "sta.roll.npccrewbasic"}}
               </label><br />
               <label>
-                <input
-                  type="radio"
-                  name="selectedCrewMember-{{../../id}}"
-                  value="proficient"
-                />
+                <input type="radio"
+                       name="selectedCrewMember-{{id}}"
+                       value="proficient"
+                       {{#if (eq "proficient" defaultCrewMember)}}checked{{/if}} />
                 {{localize "sta.roll.npccrewproficient"}}
               </label><br />
+
               <label>
-                <input
-                  type="radio"
-                  name="selectedCrewMember-{{../../id}}"
-                  value="talented"
-                />
+                <input type="radio"
+                       name="selectedCrewMember-{{id}}"
+                       value="talented"
+                       {{#if (eq "talented" defaultCrewMember)}}checked{{/if}} />
                 {{localize "sta.roll.npccrewtalented"}}
               </label><br />
+
               <label>
-                <input
-                  type="radio"
-                  name="selectedCrewMember-{{../../id}}"
-                  value="exceptional"
-                />
+                <input type="radio"
+                       name="selectedCrewMember-{{id}}"
+                       value="exceptional"
+                       {{#if (eq "exceptional" defaultCrewMember)}}checked{{/if}} />
                 {{localize "sta.roll.npccrewexceptional"}}
               </label>
             </div>
+
           </div>
         {{/each}}
       </section>
@@ -166,80 +151,48 @@
         <div class="tracktitle">{{localize "sta.roll.task.name"}}</div>
         <select id="rollList" name="rollList" class="form-select">
           {{#each rollList as |item|}}
-            <option value="{{item}}">
-              {{localize (concat "sta.roll." item)}}
-            </option>
+            <option value="{{item}}">{{localize (concat "sta.roll." item)}}</option>
           {{/each}}
         </select>
       </div>
-
       <div class="title">{{localize "sta.apps.crewselection"}}</div>
       <div class="characterRollList">
         <div class="row">
-          <div class="tracktitle">
-            {{localize "sta.actor.character.attribute.title"}}
-          </div>
+          <div class="tracktitle">{{localize "sta.actor.character.attribute.title"}}</div>
           <select id="attribute" name="attribute" class="form-select">
             {{#each attributes as |attr|}}
-              <option value="{{attr}}">
-                {{localize (concat "sta.actor.character.attribute." attr)}}
-              </option>
+              <option value="{{attr}}">{{localize (concat "sta.actor.character.attribute." attr)}}</option>
             {{/each}}
           </select>
         </div>
         <div class="row">
-          <div class="tracktitle">
-            {{localize "sta.actor.character.discipline.title"}}
-          </div>
+          <div class="tracktitle">{{localize "sta.actor.character.discipline.title"}}</div>
           <select id="discipline" name="discipline" class="form-select">
             {{#each disciplines as |disc|}}
-              <option value="{{disc}}">
-                {{localize (concat "sta.actor.character.discipline." disc)}}
-              </option>
+              <option value="{{disc}}">{{localize (concat "sta.actor.character.discipline." disc)}}</option>
             {{/each}}
           </select>
         </div>
       </div>
-
       <div class="row">
         <div class="tracktitle">{{localize "sta.apps.focus"}}</div>
-        <input
-          type="checkbox"
-          name="usingFocus"
-          id="usingFocus"
-          checked
-        />
+        <input type="checkbox" name="usingFocus" id="usingFocus" checked />
       </div>
       <div class="row">
         <div class="tracktitle">{{localize "sta.apps.dedicatedfocus"}}</div>
-        <input
-          type="checkbox"
-          name="usingDedicatedFocus"
-          id="usingDedicatedFocus"
-        />
+        <input type="checkbox" name="usingDedicatedFocus" id="usingDedicatedFocus" />
       </div>
       <div class="row">
         <div class="tracktitle">{{localize "sta.apps.determination"}}</div>
-        <input
-          type="checkbox"
-          name="usingDetermination"
-          id="usingDetermination"
-        />
+        <input type="checkbox" name="usingDetermination" id="usingDetermination" />
       </div>
       <div class="row">
         <div class="tracktitle">{{localize "sta.apps.complicationrange"}}</div>
-        <input
-          class="numeric-entry"
-          type="number"
-          name="complicationRange"
-          value="{{calculatedComplicationRange}}"
-          id="complicationRange"
-        />
+        <input class="numeric-entry" type="number" name="complicationRange"
+               value="{{calculatedComplicationRange}}" id="complicationRange" />
       </div>
       <div class="row">
-        <div class="flex-1">
-          <div class="tracktitle">{{localize "sta.apps.pool"}}</div>
-        </div>
+        <div class="flex-1"><div class="tracktitle">{{localize "sta.apps.pool"}}</div></div>
         <div class="flex-column flex-1">
           <div class="row">
             <span class="label align-left flex-1">{{localize "sta.counting.one"}}</span>
@@ -252,49 +205,31 @@
             <span class="centered flex-1"></span>
             <span class="label centered flex-1">{{localize "sta.counting.five"}}</span>
           </div>
-          <input
-            type="range"
-            name="PoolSlider"
-            min="1"
-            max="5"
-            value="2"
-            class="slider"
-            id="dicePoolSlider"
-          />
+          <input type="range" name="PoolSlider" min="1" max="5" value="2"
+                 class="slider" id="dicePoolSlider" />
         </div>
       </div>
-
       <div class="title">{{localize "sta.apps.shipselection"}}</div>
       <div class="starshipRollList">
         <div class="row">
-          <div class="tracktitle">
-            {{localize "sta.actor.starship.system.title"}}
-          </div>
+          <div class="tracktitle">{{localize "sta.actor.starship.system.title"}}</div>
           <select id="system" name="system" class="form-select">
             {{#each systems as |sys|}}
-              <option value="{{sys}}">
-                {{localize (concat "sta.actor.starship.system." sys)}}
-              </option>
+              <option value="{{sys}}">{{localize (concat "sta.actor.starship.system." sys)}}</option>
             {{/each}}
           </select>
         </div>
         <div class="row">
-          <div class="tracktitle">
-            {{localize "sta.actor.starship.department.title"}}
-          </div>
+          <div class="tracktitle">{{localize "sta.actor.starship.department.title"}}</div>
           <select id="department" name="department" class="form-select">
             {{#each departments as |dept|}}
-              <option value="{{dept}}">
-                {{localize (concat "sta.actor.starship.department." dept)}}
-              </option>
+              <option value="{{dept}}">{{localize (concat "sta.actor.starship.department." dept)}}</option>
             {{/each}}
           </select>
         </div>
       </div>
       <div class="row">
-        <div class="flex-1">
-          <div class="tracktitle">{{localize "sta.apps.pool"}}</div>
-        </div>
+        <div class="flex-1"><div class="tracktitle">{{localize "sta.apps.pool"}}</div></div>
         <div class="flex-column flex-1">
           <div class="row">
             <span class="label align-left flex-1">{{localize "sta.counting.one"}}</span>
@@ -307,23 +242,12 @@
             <span class="centered flex-1"></span>
             <span class="label centered flex-1">{{localize "sta.counting.five"}}</span>
           </div>
-          <input
-            type="range"
-            name="assistPoolSlider"
-            min="1"
-            max="5"
-            value="1"
-            class="slider"
-            id="assistPoolSlider"
-          />
+          <input type="range" name="assistPoolSlider" min="1" max="5" value="1"
+                 class="slider" id="assistPoolSlider" />
         </div>
       </div>
-
       <div class="buttons">
-        <div
-          class="check-button btn attribute"
-          data-action="onAttributeTest"
-        >
+        <div class="check-button btn attribute" data-action="onAttributeTest">
           {{localize "sta.actor.attdis.task"}}
         </div>
       </div>

@@ -171,6 +171,8 @@
   "sta.actor.character.npc.minor": "Minor",
   "sta.actor.character.npc.notable": "Notable",
   "sta.actor.character.npc.major": "Major",
+  "sta.actor.character.squad": "Squad",
+
 
   "sta.actor.starship.name": "Name",
   "sta.actor.starship.designation": "Designation",
@@ -216,6 +218,7 @@
   "sta.actor.starship.reservepower": "Reserve Power",
   "sta.actor.starship.shieldmod": "Shield Modifier",
   "sta.actor.starship.crewmod": "Crew Modifier",
+  "sta.actor.starship.squadron": "Squadron",
 
   "sta.actor.smallcraft.parent": "Parent Ship",
   "sta.actor.smallcraft.child": "Small Craft Type",

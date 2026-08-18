@@ -1,34 +1,27 @@
 const api = foundry.applications.api;
 
 export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2) {
-  static instance = null;
 
+  static instance = null;
   static async _onShipRoster(event) {
     event.preventDefault();
 
-    Handlebars.registerHelper('if_eq', function (a, b, options) {
-      return a === b ? options.fn(this) : options.inverse(this);
-    });
-
-    const starships = game.actors.filter((a) => a.type === 'starship');
-    const visibleShips = starships.filter((s) =>
-      s.testUserPermission(game.user, 'OBSERVER')
+    const starships = game.actors.filter(a => a.type === "starship");
+    const visibleShips = starships.filter(s =>
+      s.testUserPermission(game.user, "OBSERVER")
     );
 
     if (visibleShips.length === 0) {
-      ui.notifications.warn(game.i18n.localize('sta.apps.notanobserver'));
+      ui.notifications.warn(game.i18n.localize("sta.apps.notanobserver"));
       return;
     }
 
-    if (!ShipRoster.instance) {
-      ShipRoster.instance = new ShipRoster();
-    }
-
+    if (!ShipRoster.instance) ShipRoster.instance = new ShipRoster();
     ShipRoster.instance.render(true);
   }
 
   static DEFAULT_OPTIONS = {
-    classes: ['console-container'],
+    classes: ["console-container"],
     actions: {
       openActor: ShipRoster._onOpenActor,
       onAttributeTest: ShipRoster._onAttributeTest,
@@ -40,20 +33,20 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
     window: {
       frame: true,
       positioned: true,
-      width: 'auto',
-      height: 'auto',
+      width: "auto",
+      height: "auto",
     },
   };
 
   static PARTS = {
     tracker: {
-      template: 'systems/sta/templates/apps/ship-roster.hbs',
+      template: "systems/sta/templates/apps/ship-roster.hbs",
     },
   };
 
   constructor(...args) {
     super(...args);
-    this.options.window.title = game.i18n.localize('sta.apps.roster');
+    this.options.window.title = game.i18n.localize("sta.apps.roster");
   }
 
   async _prepareContext(options) {
@@ -61,24 +54,21 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
 
     const staRoll = new STARoll();
     const calculatedComplicationRange = await staRoll._sceneComplications();
-
-    const starships = game.actors.filter((actor) => actor.type === 'starship');
-    const characters = game.actors.filter((actor) =>
-      actor.type === 'character' && actor.system.assignment
+    const starships = game.actors.filter(a => a.type === "starship");
+    const characters = game.actors.filter(
+      a => a.type === "character" && a.system.assignment
     );
 
-    let tabs = starships.map((starship) => {
-      const shipName = String(starship.name ?? '').trim().toLowerCase();
-
-      const assigned = characters.filter((character) => {
-        const assignment = String(character.system.assignment ?? '').trim().toLowerCase();
+    let tabs = starships.map(starship => {
+      const shipName = String(starship.name ?? "").trim().toLowerCase();
+      const assigned = characters.filter(char => {
+        const assignment = String(char.system.assignment ?? "").trim().toLowerCase();
         const matchesShip = assignment === shipName;
-        const canSeeCrew = character.testUserPermission(game.user, 'OBSERVER');
+        const canSeeCrew = char.testUserPermission(game.user, "OBSERVER");
         return matchesShip && canSeeCrew;
       });
 
       const groups = { character: [], supporting: [], npc: [] };
-
       for (const actor of assigned) {
         const sheetClass = actor.sheet?.constructor;
         if (sheetClass === game.sta.applications.STANPCSheet2e) {
@@ -88,6 +78,17 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
         } else {
           groups.character.push(actor);
         }
+      }
+
+      let defaultCrewMember = null;
+      if (groups.character.length) {
+        defaultCrewMember = groups.character[0].id;
+      } else if (groups.supporting.length) {
+        defaultCrewMember = groups.supporting[0].id;
+      } else if (groups.npc.length) {
+        defaultCrewMember = groups.npc[0].id;
+      } else {
+        defaultCrewMember = "proficient";
       }
 
       return {
@@ -101,86 +102,30 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
         characterCount: groups.character.length,
         supportingCount: groups.supporting.length,
         npcCount: groups.npc.length,
-        totalCount: assigned.length,
-        canSeeShip: starship.testUserPermission(game.user, 'OBSERVER'),
+        totalCount: groups.character.length + groups.supporting.length + groups.npc.length,
+        canSeeShip: starship.testUserPermission(game.user, "OBSERVER"),
+        defaultCrewMember,
       };
     });
 
-    tabs = tabs.filter((tab) => tab.canSeeShip);
-
+    tabs = tabs.filter(t => t.canSeeShip);
     tabs.sort((a, b) => b.totalCount - a.totalCount);
 
-    if (!this.tabGroups.primary && tabs.length > 0) {
+    if (!this.tabGroups.primary && tabs.length) {
       this.tabGroups.primary = tabs[0].id;
     }
 
-    for (const tab of tabs) {
-      tab.active = tab.id === this.tabGroups.primary;
-    }
+    for (const tab of tabs) tab.active = tab.id === this.tabGroups.primary;
 
-    const activeTab = tabs.find((tab) => tab.id === this.tabGroups.primary);
-
-    const attributes = [
-      'control',
-      'daring',
-      'fitness',
-      'insight',
-      'presence',
-      'reason',
-    ];
-
-    const disciplines = [
-      'command',
-      'conn',
-      'engineering',
-      'security',
-      'medicine',
-      'science',
-    ];
-
-    const systems = [
-      'communications',
-      'computers',
-      'engines',
-      'sensors',
-      'structure',
-      'weapons',
-    ];
-
-    const departments = [
-      'command',
-      'conn',
-      'engineering',
-      'security',
-      'medicine',
-      'science',
-    ];
-
+    const activeTab = tabs.find(t => t.id === this.tabGroups.primary);
+    const attributes = ["control", "daring", "fitness", "insight", "presence", "reason"];
+    const disciplines = ["command", "conn", "engineering", "security", "medicine", "science"];
+    const systems = ["communications", "computers", "engines", "sensors", "structure", "weapons"];
+    const departments = ["command", "conn", "engineering", "security", "medicine", "science"];
     const rollList = [
-      'justrollboth',
-      'justrollcrew',
-      'melee',
-      'ranged',
-      'attack',
-      'firstaid',
-      'direct',
-      'guard',
-      'sprint',
-      'rally',
-      'damagecontrol',
-      'transport',
-      'attackpattern',
-      'evasiveaction',
-      'maneuver',
-      'ram',
-      'warp',
-      'regainpower',
-      'regenerateshields',
-      'reveal',
-      'scanforweakness',
-      'sensorsweep',
-      'defensivefire',
-      'tractorbeam',
+      "justrollboth","justrollcrew","melee","ranged","attack","firstaid","direct","guard","sprint",
+      "rally","damagecontrol","transport","attackpattern","evasiveaction","maneuver","ram","warp",
+      "regainpower","regenerateshields","reveal","scanforweakness","sensorsweep","defensivefire","tractorbeam"
     ];
 
     return {
@@ -207,28 +152,25 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
       console.warn(`STA Console | Could not find Actor ${actorId}`);
       return;
     }
-
     actor.sheet?.render(true);
   }
 
   static async _onAttributeTest(event, target) {
     event.preventDefault();
-    const staRoll = new STARoll();
-    const form = target.closest('.console-container');
-
-    const activeTab = form.querySelector('.tab.active[data-group="primary"]');
+    const form = target.closest(".console-container");
+    const activeTab = form.querySelector(".tab.active[data-group='primary']");
 
     const data = {
       actor: activeTab?.querySelector('input[name^="selectedCrewMember-"]:checked')?.value,
-      starship: activeTab?.querySelector('[data-actor-id]')?.dataset.actorId,
+      starship: activeTab?.querySelector("[data-actor-id]")?.dataset.actorId,
       attribute: form.querySelector('select[name="attribute"]').value,
       discipline: form.querySelector('select[name="discipline"]').value,
-      usingFocus: form.querySelector('#usingFocus').checked,
-      usingDedicatedFocus: form.querySelector('#usingDedicatedFocus').checked,
-      usingDetermination: form.querySelector('#usingDetermination').checked,
-      complicationRange: Number(form.querySelector('#complicationRange').value),
-      dicePool: Number(form.querySelector('#dicePoolSlider').value),
-      assistPool: Number(form.querySelector('#assistPoolSlider').value),
+      usingFocus: form.querySelector("#usingFocus").checked,
+      usingDedicatedFocus: form.querySelector("#usingDedicatedFocus").checked,
+      usingDetermination: form.querySelector("#usingDetermination").checked,
+      complicationRange: Number(form.querySelector("#complicationRange").value),
+      dicePool: Number(form.querySelector("#dicePoolSlider").value),
+      assistPool: Number(form.querySelector("#assistPoolSlider").value),
       system: form.querySelector('select[name="system"]').value,
       department: form.querySelector('select[name="department"]').value,
       rollList: form.querySelector('select[name="rollList"]').value,
@@ -246,9 +188,6 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
     let selectedDepartment = data.department;
     let speakerName = null;
 
-    /* --------------------------------------------------------------------- */
-    /* Roll presets logic                                                   */
-    /* --------------------------------------------------------------------- */
     const rollPresets = {
       melee: ['daring', 'security', 'none', 'none'],
       ranged: ['control', 'security', 'none', 'none'],
@@ -290,9 +229,6 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
     selectedAttributeValue = character?.system.attributes[selectedAttribute]?.value ?? null;
     selectedDisciplineValue = character?.system.disciplines[selectedDiscipline]?.value ?? null;
 
-    /* --------------------------------------------------------------------- */
-    /* NPC values (if no character token)                                    */
-    /* --------------------------------------------------------------------- */
     let skillLevel = null;
 
     if (!character) {
@@ -333,9 +269,7 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
       skillLevel,
     };
 
-    /* --------------------------------------------------------------------- */
-    /* Send the NPC roll to STARoll                                          */
-    /* --------------------------------------------------------------------- */
+    const staRoll = new STARoll();
     await staRoll.rollNPCTask(taskData);
   }
 }

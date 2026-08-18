@@ -396,7 +396,10 @@ export class STAActors extends api.HandlebarsApplicationMixin(sheets.ActorSheetV
     let complicationRange = 1;
     const calculatedComplicationRange = await staRoll._sceneComplications();
     const template = this.taskRollData.template;
+    const squadDice = this.taskRollData.squadDice;
     let skillLevel = '';
+
+console.log(squadDice);
 
     const visibleStarships = game.actors.filter((a) =>
       (a.type === 'starship' || a.type === 'smallcraft') &&
