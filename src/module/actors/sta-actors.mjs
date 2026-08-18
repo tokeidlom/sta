@@ -1106,14 +1106,14 @@ export class STAActors extends api.HandlebarsApplicationMixin(sheets.ActorSheetV
     const storedValue = this.actor?.system?.shields?.value ?? 0;
     const inputEl = this.element.querySelector('#total-shields');
     const inputValue = inputEl ? parseInt(inputEl.value, 10) : null;
-    const totalShieldsValue = isNaN(storedValue) 
-      ? (isNaN(inputValue) ? 0 : inputValue)
-      : storedValue;
+    const totalShieldsValue = isNaN(storedValue) ? 
+      (isNaN(inputValue) ? 0 : inputValue) :
+      storedValue;
     const barRenderer = this.element.querySelector('#bar-shields-renderer');
     if (!barRenderer) return;
     barRenderer.innerHTML = '';
     const quarterIndex = Math.ceil(shieldsTrackMax / 4);
-    const halfIndex    = Math.ceil(shieldsTrackMax / 2);
+    const halfIndex = Math.ceil(shieldsTrackMax / 2);
     const gapAfterIndices = new Set([quarterIndex, halfIndex]);
     for (let i = 1; i <= shieldsTrackMax; i++) {
       const div = document.createElement('div');

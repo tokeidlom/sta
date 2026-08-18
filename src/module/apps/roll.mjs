@@ -1254,7 +1254,7 @@ export class STARoll {
 
     switch (rollData.rollType) {
     case 'task':
-      //Normal dice
+      // Normal dice
       const retainedTaskDice = {
         checkTarget: rollData.checkTarget,
         complicationMinimumValue: rollData.complicationMinimumValue,

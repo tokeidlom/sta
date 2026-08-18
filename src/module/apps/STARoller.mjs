@@ -1,99 +1,103 @@
 const api = foundry.applications.api;
 
 export class STARoller {
-  /* Roll a task or a challenge. */
-static async _onTaskRoll(event) {
-  event.preventDefault();
-
-  const staRoll = new STARoll();
-  const defaultValue = '2';
-  const calculatedComplicationRange = await staRoll._sceneComplications();
-
-  const template = 'systems/sta/templates/apps/dicepool-attribroller.hbs';
-  const html = await foundry.applications.handlebars.renderTemplate(template, {
-    defaultValue,
-    calculatedComplicationRange,
-  });
-
-  const formData = await api.DialogV2.wait({
-    window: {
-      title: game.i18n.localize('sta.apps.dicepoolwindow'),
-    },
-    position: {
-      height: 'auto',
-      width: 350,
-    },
-    content: html,
-    classes: ['dialogue'],
-    buttons: [
-      {
-        action: 'task',
-        default: true,
-        label: game.i18n.localize('sta.actor.attdis.task'),
-        callback: (event, button, dialog) => {
-          const form = dialog.element.querySelector('form');
-          return { action: 'task', data: form ? new FormData(form) : null };
-        },
-      },
-      {
-        action: 'challenge',
-        label: game.i18n.localize('sta.actor.challenge.roll'),
-        callback: (event, button, dialog) => {
-          const form = dialog.element.querySelector('form');
-          return { action: 'challenge', data: form ? new FormData(form) : null };
-        },
-      }
-    ],
-    close: () => null,
-  });
-
-  if (!formData) return;
-
-  const { action, data } = formData;
-
-  // Shared dice pool
-  const dicePool = parseInt(data.get('dicePoolSlider'), 10) || 2;
-
-  if (action === 'challenge') {
-    // Challenge roll
-    const challengeData = {
-      speakerName: 'STARoller',
-      dicePool,
-      challengeName: ''
-    };
+  /* --------------------------------------------------------------------- */
+  /* Roll a task or a challenge.                                      */
+  /* --------------------------------------------------------------------- */
+  static async _onTaskRoll(event) {
+    event.preventDefault();
 
     const staRoll = new STARoll();
-    return staRoll.performChallengeRoll(challengeData);
-  }
+    const defaultValue = '2';
+    const calculatedComplicationRange = await staRoll._sceneComplications();
 
-  // Task roll
-  const usingFocus = data.get('usingFocus') === 'on';
-  const usingDedicatedFocus = data.get('usingDedicatedFocus') === 'on';
-  const usingDetermination = data.get('usingDetermination') === 'on';
-  const complicationRange = parseInt(data.get('complicationRange'), 10);
+    const template = 'systems/sta/templates/apps/dicepool-attribroller.hbs';
+    const html = await foundry.applications.handlebars.renderTemplate(template, {
+      defaultValue,
+      calculatedComplicationRange,
+    });
 
-  const selectedAttributeValue =
+    const formData = await api.DialogV2.wait({
+      window: {
+        title: game.i18n.localize('sta.apps.dicepoolwindow'),
+      },
+      position: {
+        height: 'auto',
+        width: 350,
+      },
+      content: html,
+      classes: ['dialogue'],
+      buttons: [
+        {
+          action: 'task',
+          default: true,
+          label: game.i18n.localize('sta.actor.attdis.task'),
+          callback: (event, button, dialog) => {
+            const form = dialog.element.querySelector('form');
+            return {action: 'task', data: form ? new FormData(form) : null};
+          },
+        },
+        {
+          action: 'challenge',
+          label: game.i18n.localize('sta.actor.challenge.roll'),
+          callback: (event, button, dialog) => {
+            const form = dialog.element.querySelector('form');
+            return {action: 'challenge', data: form ? new FormData(form) : null};
+          },
+        }
+      ],
+      close: () => null,
+    });
+
+    if (!formData) return;
+
+    const {action, data} = formData;
+
+    // Shared dice pool
+    const dicePool = parseInt(data.get('dicePoolSlider'), 10) || 2;
+
+    if (action === 'challenge') {
+    // Challenge roll
+      const challengeData = {
+        speakerName: 'STARoller',
+        dicePool,
+        challengeName: ''
+      };
+
+      const staRoll = new STARoll();
+      return staRoll.performChallengeRoll(challengeData);
+    }
+
+    // Task roll
+    const usingFocus = data.get('usingFocus') === 'on';
+    const usingDedicatedFocus = data.get('usingDedicatedFocus') === 'on';
+    const usingDetermination = data.get('usingDetermination') === 'on';
+    const complicationRange = parseInt(data.get('complicationRange'), 10);
+
+    const selectedAttributeValue =
     parseInt(document.getElementById('selectedAttributeValue').value, 10) || 0;
 
-  const selectedDisciplineValue =
+    const selectedDisciplineValue =
     parseInt(document.getElementById('selectedDisciplineValue').value, 10) || 0;
 
-  const taskData = {
-    speakerName: 'STARoller',
-    selectedAttributeValue,
-    selectedDisciplineValue,
-    rolltype: 'sidebar',
-    dicePool,
-    usingFocus,
-    usingDedicatedFocus,
-    usingDetermination,
-    complicationRange,
-  };
+    const taskData = {
+      speakerName: 'STARoller',
+      selectedAttributeValue,
+      selectedDisciplineValue,
+      rolltype: 'sidebar',
+      dicePool,
+      usingFocus,
+      usingDedicatedFocus,
+      usingDetermination,
+      complicationRange,
+    };
 
-  await staRoll.rollTask(taskData);
-}
+    await staRoll.rollTask(taskData);
+  }
 
-  /* Roll a task for NPC or starship. */
+  /* --------------------------------------------------------------------- */
+  /* Roll a task for NPC or starship.                                      */
+  /* --------------------------------------------------------------------- */
   static async _onNPCRoll(event) {
     event.preventDefault();
 
@@ -110,6 +114,11 @@ static async _onTaskRoll(event) {
     const starshipToken = selectedTokens.find((t) =>
       ['starship', 'smallcraft'].includes(t.actor?.type)
     );
+
+    if (starshipToken.length === 1) {
+      console.log('do a thing');
+    }
+
 
     const character = characterToken?.actor ?? {type: 'npccharacter'};
     const starship = starshipToken?.actor ?? {type: 'npcship'};
