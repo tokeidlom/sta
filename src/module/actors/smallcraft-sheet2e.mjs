@@ -36,33 +36,27 @@ export class STASmallCraftSheet2e extends STAActors {
     ]);
   }
 
-get taskRollData() {
-  const localizedValues = {
-    Squad: game.i18n.localize('sta.actor.character.squad'),
-    Squadron: game.i18n.localize('sta.actor.starship.squadron'),
-  };
+  get taskRollData() {
+    const localizedValues = {
+      squad: game.i18n.localize('sta.actor.character.squad'),
+      squadron: game.i18n.localize('sta.actor.starship.squadron'),
+    };
 
-  const traits = this.actor.system.traits ?? {};
-  let squadDice; // stays undefined unless a matching trait is found
+    const squadNameEl =
+      this.element.querySelector(`[data-talent-name="${localizedValues.squad}"]`) ||
+      this.element.querySelector(`[data-talent-name="${localizedValues.squadron}"]`);
 
-  // Find a trait whose name matches Squad or Squadron
-  const trait = Object.values(traits).find(t =>
-    t.name === localizedValues.Squad ||
-    t.name === localizedValues.Squadron
-  );
+    const squadRow = squadNameEl?.closest('li.row.entry');
+    const quantityValue = squadRow?.querySelector('.item-quantity')?.value;
+    const squadDice = quantityValue !== undefined ? parseInt(quantityValue, 10) : undefined;
 
-  if (trait) {
-    squadDice = trait.quantity; // now defined
+    return {
+      template: 'systems/sta/templates/apps/dicepool-attributess.hbs',
+      rolltype: 'starship',
+      defaultValue: '1',
+      squadDice,
+    };
   }
-
-  return {
-    template: 'systems/sta/templates/apps/dicepool-attributess.hbs',
-    rolltype: 'starship',
-    defaultValue: '1',
-    squadDice, // undefined or a number
-  };
-}
-
 
   async _shieldsTrackMax() {
     const localizedValues = {

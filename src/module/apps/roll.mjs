@@ -60,6 +60,7 @@ export class STARoll {
       selectedDepartmentValue: 0,
       reputationValue: taskData.reputationValue,
       useReputationInstead: taskData.useReputationInstead,
+      squadDice: taskData.squadDice,
     };
 
     const crewtaskRollData = await this._performRollTask(crewData);
@@ -140,9 +141,11 @@ export class STARoll {
     // Calculate how many dice to roll
     let diceToRoll = taskData.dicePool;
     if (taskData.usingDetermination && taskData.rolltype !== 'character1e') {
-      diceToRoll = taskData.dicePool - 1;
+      diceToRoll = diceToRoll - 1;
     }
-
+    if (taskData.squadDice && taskData.rolltype !== 'starship') {
+      diceToRoll = diceToRoll + taskData.squadDice - 1;
+    }
     // Do the roll
     const taskRolled = await new Roll(diceToRoll + 'd20').evaluate({});
 

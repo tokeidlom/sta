@@ -399,8 +399,6 @@ export class STAActors extends api.HandlebarsApplicationMixin(sheets.ActorSheetV
     const squadDice = this.taskRollData.squadDice;
     let skillLevel = '';
 
-console.log(squadDice);
-
     const visibleStarships = game.actors.filter((a) =>
       (a.type === 'starship' || a.type === 'smallcraft') &&
       a.testUserPermission(game.user, CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER)
@@ -582,6 +580,7 @@ console.log(squadDice);
       usingDetermination,
       complicationRange,
       skillLevel,
+      squadDice,
     };
 
     if (formData.get('starshipAssisting') === 'on') {
