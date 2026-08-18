@@ -1239,7 +1239,12 @@ export class STAActors extends api.HandlebarsApplicationMixin(sheets.ActorSheetV
       if (element.dataset.itemIncludescale === 'energy' && scaleInput) {
         scaleDamage = parseInt(scaleInput.value, 10) || 0;
       }
-      const attackDamageValue = weaponDamage + weaponValue + scaleDamage;
+      const squadDice = this.taskRollData.squadDice;
+      let squadMod = 0;
+      if (squadDice && this.actor.type === 'smallcraft') {
+        squadMod = squadDice - 1;
+      }
+      const attackDamageValue = weaponDamage + weaponValue + scaleDamage + squadMod;
       const damageElement = element.querySelector('.damage');
       if (damageElement) {
         damageElement.innerText = attackDamageValue;
