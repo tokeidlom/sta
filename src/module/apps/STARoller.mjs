@@ -528,7 +528,6 @@ export class STARoller {
       'maneuver',
       'ram',
       'warp',
-      'regainpower',
       'regenerateshields',
       'reveal',
       'scanforweakness',
@@ -608,26 +607,23 @@ const deptOptions = departments
     /* Roll presets logic                                                    */
     /* --------------------------------------------------------------------- */
     const rollPresets = {
-      attack: ['control', 'security', 'weapons', 'security'],
-      transport: ['control', 'engineering', 'sensors', 'science'],
-      attackpattern: ['control', 'conn', 'engines', 'conn'],
-      evasiveaction: ['daring', 'conn', 'structure', 'conn'],
-      maneuver: ['control', 'conn', 'engines', 'conn'],
-      ram: ['daring', 'conn', 'engines', 'conn'],
-      warp: ['control', 'conn', 'engines', 'conn'],
-      regainpower: ['control', 'engineering', 'none', 'none'],
-      regenerateshields: ['control', 'engineering', 'structure', 'engineering'],
-      reveal: ['reason', 'science', 'sensors', 'science'],
-      scanforweakness: ['control', 'science', 'sensors', 'security'],
-      sensorsweep: ['reason', 'science', 'sensors', 'science'],
-      defensivefire: ['daring', 'security', 'weapons', 'security'],
-      tractorbeam: ['control', 'security', 'structure', 'security'],
+      attack: ['weapons', 'security'],
+      transport: ['sensors', 'science'],
+      attackpattern: ['engines', 'conn'],
+      evasiveaction: ['structure', 'conn'],
+      maneuver: ['engines', 'conn'],
+      ram: ['engines', 'conn'],
+      warp: ['engines', 'conn'],
+      regenerateshields: ['structure', 'engineering'],
+      reveal: ['sensors', 'science'],
+      scanforweakness: ['sensors', 'security'],
+      sensorsweep: ['sensors', 'science'],
+      defensivefire: ['weapons', 'security'],
+      tractorbeam: ['structure', 'security'],
     };
 
     if (rollPresets[selectedRoll]) {
       [
-        selectedAttribute,
-        selectedDiscipline,
         selectedSystem,
         selectedDepartment,
       ] = rollPresets[selectedRoll];
