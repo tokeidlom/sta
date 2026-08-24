@@ -262,13 +262,12 @@ export class STARoller {
 
     const characterNPCSheet = `
   <div class="title">${game.i18n.localize(`sta.roll.npccrew`)}</div>
-  <div class="row">
-    <div class="tracktitle">${game.i18n.localize(`sta.roll.npccrew`)}</div>
-    <label><input type="radio" name="skillLevel" value="poor">${game.i18n.localize(`sta.roll.npccrewpoor`)}</label><br>
-    <label><input type="radio" name="skillLevel" value="basic">${game.i18n.localize(`sta.roll.npccrewbasic`)}</label><br>
-    <label><input type="radio" name="skillLevel" value="proficient" checked>${game.i18n.localize(`sta.roll.npccrewproficient`)}</label><br>
-    <label><input type="radio" name="skillLevel" value="talented">${game.i18n.localize(`sta.roll.npccrewtalented`)}</label><br>
-    <label><input type="radio" name="skillLevel" value="exceptional">${game.i18n.localize(`sta.roll.npccrewexceptional`)}</label>
+  <div class="row NPC">
+      <label>${game.i18n.localize(`sta.roll.npccrewpoor`)}<input type="radio" name="skillLevel" value="poor"></label>
+      <label>${game.i18n.localize(`sta.roll.npccrewbasic`)}<input type="radio" name="skillLevel" value="basic"></label>
+      <label>${game.i18n.localize(`sta.roll.npccrewproficient`)}<input type="radio" name="skillLevel" value="proficient" checked></label>
+      <label>${game.i18n.localize(`sta.roll.npccrewtalented`)}<input type="radio" name="skillLevel" value="talented"></label>
+      <label>${game.i18n.localize(`sta.roll.npccrewexceptional`)}<input type="radio" name="skillLevel" value="exceptional"></label>
   </div>
   <div class="row">
     <div class="tracktitle">${game.i18n.localize(`sta.apps.focus`)}</div>
