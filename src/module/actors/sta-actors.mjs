@@ -1245,10 +1245,22 @@ export class STAActors extends api.HandlebarsApplicationMixin(sheets.ActorSheetV
       if (squadDice && this.actor.type === 'smallcraft') {
         squadMod = squadDice - 1;
       }
-      const attackDamageValue = weaponDamage + weaponValue + scaleDamage + squadMod;
+      const isMine = element.dataset.itemIncludescale === 'mine';
+      const calculatedDamage = isMine
+        ? weaponDamage
+        : weaponDamage + weaponValue + scaleDamage + squadMod;
       const damageElement = element.querySelector('.damage');
       if (damageElement) {
-        damageElement.innerText = attackDamageValue;
+        damageElement.innerText = calculatedDamage;
+      }
+      const itemId = element.dataset.itemId;
+      if (itemId) {
+        const item = this.actor.items.get(itemId);
+        if (item) {
+          item.update({
+            "system.calculatedDamage": calculatedDamage
+          });
+        }
       }
     });
   }

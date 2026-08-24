@@ -759,14 +759,7 @@ export class STARoll {
   }
 
   async performStarshipWeaponRoll2e(item, speaker) {
-    let actorWeapons = 0;
-    if (speaker.system.systems.weapons.value > 6) actorWeapons = 1;
-    if (speaker.system.systems.weapons.value > 8) actorWeapons = 2;
-    if (speaker.system.systems.weapons.value > 10) actorWeapons = 3;
-    if (speaker.system.systems.weapons.value > 12) actorWeapons = 4;
-    let scaleDamage = 0;
-    if (item.system.includescale == 'energy') scaleDamage = parseInt(speaker.system.scale);
-    const calculatedDamage = item.system.damage + actorWeapons + scaleDamage;
+    const calculatedDamage = item.system.calculatedDamage;
     const variablePrompt = game.i18n.format('sta.roll.weapon.damage2e');
     const variable = `<div class='dice-formula'> ` + variablePrompt.replace('|#|', calculatedDamage) + `</div>`;
 
