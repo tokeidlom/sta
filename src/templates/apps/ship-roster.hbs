@@ -110,6 +110,13 @@
             <div class="no-crew">
               <div class="title">{{localize "sta.roll.npccrew"}}</div>
               <label>
+                <input type="radio" 
+                      name="selectedCrewMember-{{id}}" 
+                      value="poor"
+                      {{#if (eq "basic" defaultCrewMember)}}checked{{/if}} />
+                {{localize 'sta.roll.npccrewpoor'}}
+                </label><br />
+              <label>
                 <input type="radio"
                        name="selectedCrewMember-{{id}}"
                        value="basic"

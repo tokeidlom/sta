@@ -234,6 +234,7 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
       skillLevel = data.actor;
       speakerName = 'NPC Crew';
       const npcValues = {
+        poor: [7, 0],
         basic: [8, 1],
         proficient: [9, 2],
         talented: [10, 3],

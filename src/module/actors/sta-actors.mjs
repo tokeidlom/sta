@@ -542,6 +542,7 @@ export class STAActors extends api.HandlebarsApplicationMixin(sheets.ActorSheetV
     if (formData.get('starshipAssisting') === 'on') {
       if (skillLevel) {
         const npcValues = {
+          poor: [7, 0],
           basic: [8, 1],
           proficient: [9, 2],
           talented: [10, 3],

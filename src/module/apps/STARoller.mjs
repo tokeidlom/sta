@@ -264,6 +264,7 @@ export class STARoller {
   <div class="title">${game.i18n.localize(`sta.roll.npccrew`)}</div>
   <div class="row">
     <div class="tracktitle">${game.i18n.localize(`sta.roll.npccrew`)}</div>
+    <label><input type="radio" name="skillLevel" value="poor">${game.i18n.localize(`sta.roll.npccrewpoor`)}</label><br>
     <label><input type="radio" name="skillLevel" value="basic">${game.i18n.localize(`sta.roll.npccrewbasic`)}</label><br>
     <label><input type="radio" name="skillLevel" value="proficient" checked>${game.i18n.localize(`sta.roll.npccrewproficient`)}</label><br>
     <label><input type="radio" name="skillLevel" value="talented">${game.i18n.localize(`sta.roll.npccrewtalented`)}</label><br>
@@ -439,6 +440,7 @@ export class STARoller {
     /* --------------------------------------------------------------------- */
     if (!characterToken) {
       const npcValues = {
+        poor: [7, 0],
         basic: [8, 1],
         proficient: [9, 2],
         talented: [10, 3],
