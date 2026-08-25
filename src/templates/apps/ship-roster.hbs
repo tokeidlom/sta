@@ -13,7 +13,6 @@
   <div class="split-section">
     <div class="left-column">
       <section class="console-content">
-
         {{#each tabs}}
           <div class="tab {{#if active}}active{{/if}}"
                data-tab="{{id}}"
@@ -21,12 +20,15 @@
             <div class="starship-header row"
                  data-action="openActor"
                  data-actor-id="{{actor.id}}"
-                 title="Open {{name}} sheet">
+                 title="{{name}}">
               <img src="{{img}}" alt="{{name}}" />
-              <div class="tracktitle">{{name}}</div>
+              <div class="tracktitle shipname">{{name}}</div>
               {{characterCount}} {{localize "sta.apps.characters"}}<br />
               {{supportingCount}} {{localize "sta.apps.supportingcharacters"}}<br />
               {{npcCount}} {{localize "sta.apps.npcs"}}
+              <div class="check-button btn3 acclaim rollerbutton" data-action="onChangeView">
+                {{localize 'sta.apps.viewroller'}}
+              </div>
             </div>
 
             {{#if groups.character.length}}
@@ -35,21 +37,64 @@
                 <div class="crew-list">
                   {{#each groups.character}}
                     <div class="crew-selection-container">
-                      <div class="row">
+                      <div class="crew-row">
                         <input type="radio"
+                               class="crew-radio"
                                name="selectedCrewMember-{{../id}}"
                                value="{{id}}"
-                               title="Select {{name}} as primary crew member"
+                               title="{{name}}"
                                {{#if (eq id ../defaultCrewMember)}}checked{{/if}} />
-                        <div class="crew-member row"
-                             data-action="openActor"
-                             data-actor-id="{{id}}"
-                             title="Open {{name}} sheet">
+
+                        <div class="crew-member row" data-action="openActor" data-actor-id="{{id}}">
                           <img src="{{img}}" alt="{{name}}" />
-                          <div class="tracktitle">{{name}}</div>
+                          <div class="crew-name">{{name}}</div>
+
+                          <div class="stat-columns">
+                            <div class="stat-col-left">
+                              <div class="attributes">
+                                {{localize "sta.actor.character.attribute.control"}}: {{system.attributes.control.value}},
+                                {{localize "sta.actor.character.attribute.daring"}}: {{system.attributes.daring.value}},
+                                {{localize "sta.actor.character.attribute.fitness"}}: {{system.attributes.fitness.value}},
+                                {{localize "sta.actor.character.attribute.insight"}}: {{system.attributes.insight.value}},
+                                {{localize "sta.actor.character.attribute.presence"}}: {{system.attributes.presence.value}},
+                                {{localize "sta.actor.character.attribute.reason"}}: {{system.attributes.reason.value}}
+                              </div>
+
+                              <div class="disciplines">
+                                {{localize "sta.actor.character.discipline.command"}}: {{system.disciplines.command.value}},
+                                {{localize "sta.actor.character.discipline.conn"}}: {{system.disciplines.conn.value}},
+                                {{localize "sta.actor.character.discipline.engineering"}}: {{system.disciplines.engineering.value}},
+                                {{localize "sta.actor.character.discipline.medicine"}}: {{system.disciplines.medicine.value}},
+                                {{localize "sta.actor.character.discipline.science"}}: {{system.disciplines.science.value}},
+                                {{localize "sta.actor.character.discipline.security"}}: {{system.disciplines.security.value}}
+                              </div>
+
+                              <div class="value-line">
+                                <b>{{localize "sta.actor.value.title"}}:</b>
+                                {{#each valueItems}}
+                                  {{name}}{{#unless @last}}, {{/unless}}
+                                {{/each}}
+                              </div>
+
+                              <div class="focus-line">
+                                <b>{{localize "sta.actor.focus.title"}}:</b>
+                                {{#each focusItems}}
+                                  {{name}}{{#unless @last}}, {{/unless}}
+                                {{/each}}
+                              </div>
+                            </div>
+
+                            <div class="stat-col-right">
+                              <div class="stress">
+                                {{localize "sta.apps.stress"}}: {{system.stress.value}} / {{system.stress.max}}
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
+
+                    <div class="separator"></div>
                   {{/each}}
                 </div>
               </section>
@@ -61,21 +106,64 @@
                 <div class="crew-list">
                   {{#each groups.supporting}}
                     <div class="crew-selection-container">
-                      <div class="row">
+                      <div class="crew-row">
                         <input type="radio"
+                               class="crew-radio"
                                name="selectedCrewMember-{{../id}}"
                                value="{{id}}"
-                               title="Select {{name}} as primary crew member"
+                               title="{{name}}"
                                {{#if (eq id ../defaultCrewMember)}}checked{{/if}} />
-                        <div class="crew-member row"
-                             data-action="openActor"
-                             data-actor-id="{{id}}"
-                             title="Open {{name}} sheet">
+
+                        <div class="crew-member row" data-action="openActor" data-actor-id="{{id}}">
                           <img src="{{img}}" alt="{{name}}" />
-                          <div class="tracktitle">{{name}}</div>
+                          <div class="crew-name">{{name}}</div>
+
+                          <div class="stat-columns">
+                            <div class="stat-col-left">
+                              <div class="attributes">
+                                {{localize "sta.actor.character.attribute.control"}}: {{system.attributes.control.value}},
+                                {{localize "sta.actor.character.attribute.daring"}}: {{system.attributes.daring.value}},
+                                {{localize "sta.actor.character.attribute.fitness"}}: {{system.attributes.fitness.value}},
+                                {{localize "sta.actor.character.attribute.insight"}}: {{system.attributes.insight.value}},
+                                {{localize "sta.actor.character.attribute.presence"}}: {{system.attributes.presence.value}},
+                                {{localize "sta.actor.character.attribute.reason"}}: {{system.attributes.reason.value}}
+                              </div>
+
+                              <div class="disciplines">
+                                {{localize "sta.actor.character.discipline.command"}}: {{system.disciplines.command.value}},
+                                {{localize "sta.actor.character.discipline.conn"}}: {{system.disciplines.conn.value}},
+                                {{localize "sta.actor.character.discipline.engineering"}}: {{system.disciplines.engineering.value}},
+                                {{localize "sta.actor.character.discipline.medicine"}}: {{system.disciplines.medicine.value}},
+                                {{localize "sta.actor.character.discipline.science"}}: {{system.disciplines.science.value}},
+                                {{localize "sta.actor.character.discipline.security"}}: {{system.disciplines.security.value}}
+                              </div>
+
+                              <div class="value-line">
+                                <b>{{localize "sta.actor.value.title"}}:</b>
+                                {{#each valueItems}}
+                                  {{name}}{{#unless @last}}, {{/unless}}
+                                {{/each}}
+                              </div>
+
+                              <div class="focus-line">
+                                <b>{{localize "sta.actor.focus.title"}}:</b>
+                                {{#each focusItems}}
+                                  {{name}}{{#unless @last}}, {{/unless}}
+                                {{/each}}
+                              </div>
+                            </div>
+
+                            <div class="stat-col-right">
+                              <div class="stress">
+                                {{localize "sta.apps.stress"}}: {{system.stress.value}} / {{system.stress.max}}
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
+
+                    <div class="separator"></div>
                   {{/each}}
                 </div>
               </section>
@@ -87,21 +175,64 @@
                 <div class="crew-list">
                   {{#each groups.npc}}
                     <div class="crew-selection-container">
-                      <div class="row">
+                      <div class="crew-row">
                         <input type="radio"
+                               class="crew-radio"
                                name="selectedCrewMember-{{../id}}"
                                value="{{id}}"
-                               title="Select {{name}} as primary crew member"
+                               title="{{name}}"
                                {{#if (eq id ../defaultCrewMember)}}checked{{/if}} />
-                        <div class="crew-member row"
-                             data-action="openActor"
-                             data-actor-id="{{id}}"
-                             title="Open {{name}} sheet">
+
+                        <div class="crew-member row" data-action="openActor" data-actor-id="{{id}}">
                           <img src="{{img}}" alt="{{name}}" />
-                          <div class="tracktitle">{{name}}</div>
+                          <div class="crew-name">{{name}}</div>
+
+                          <div class="stat-columns">
+                            <div class="stat-col-left">
+                              <div class="attributes">
+                                {{localize "sta.actor.character.attribute.control"}}: {{system.attributes.control.value}},
+                                {{localize "sta.actor.character.attribute.daring"}}: {{system.attributes.daring.value}},
+                                {{localize "sta.actor.character.attribute.fitness"}}: {{system.attributes.fitness.value}},
+                                {{localize "sta.actor.character.attribute.insight"}}: {{system.attributes.insight.value}},
+                                {{localize "sta.actor.character.attribute.presence"}}: {{system.attributes.presence.value}},
+                                {{localize "sta.actor.character.attribute.reason"}}: {{system.attributes.reason.value}}
+                              </div>
+
+                              <div class="disciplines">
+                                {{localize "sta.actor.character.discipline.command"}}: {{system.disciplines.command.value}},
+                                {{localize "sta.actor.character.discipline.conn"}}: {{system.disciplines.conn.value}},
+                                {{localize "sta.actor.character.discipline.engineering"}}: {{system.disciplines.engineering.value}},
+                                {{localize "sta.actor.character.discipline.medicine"}}: {{system.disciplines.medicine.value}},
+                                {{localize "sta.actor.character.discipline.science"}}: {{system.disciplines.science.value}},
+                                {{localize "sta.actor.character.discipline.security"}}: {{system.disciplines.security.value}}
+                              </div>
+
+                              <div class="value-line">
+                                <b>{{localize "sta.actor.value.title"}}:</b>
+                                {{#each valueItems}}
+                                  {{name}}{{#unless @last}}, {{/unless}}
+                                {{/each}}
+                              </div>
+
+                              <div class="focus-line">
+                                <b>{{localize "sta.actor.focus.title"}}:</b>
+                                {{#each focusItems}}
+                                  {{name}}{{#unless @last}}, {{/unless}}
+                                {{/each}}
+                              </div>
+                            </div>
+
+                            <div class="stat-col-right">
+                              <div class="stress">
+                                {{localize "sta.apps.stress"}}: {{system.stress.value}} / {{system.stress.max}}
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
+
+                    <div class="separator"></div>
                   {{/each}}
                 </div>
               </section>
@@ -110,12 +241,12 @@
             <div class="no-crew">
               <div class="title">{{localize "sta.roll.npccrew"}}</div>
               <label>
-                <input type="radio" 
-                      name="selectedCrewMember-{{id}}" 
-                      value="poor"
-                      {{#if (eq "basic" defaultCrewMember)}}checked{{/if}} />
+                <input type="radio"
+                       name="selectedCrewMember-{{id}}"
+                       value="poor"
+                       {{#if (eq "basic" defaultCrewMember)}}checked{{/if}} />
                 {{localize 'sta.roll.npccrewpoor'}}
-                </label><br />
+              </label><br />
               <label>
                 <input type="radio"
                        name="selectedCrewMember-{{id}}"
@@ -130,7 +261,6 @@
                        {{#if (eq "proficient" defaultCrewMember)}}checked{{/if}} />
                 {{localize "sta.roll.npccrewproficient"}}
               </label><br />
-
               <label>
                 <input type="radio"
                        name="selectedCrewMember-{{id}}"
@@ -138,7 +268,6 @@
                        {{#if (eq "talented" defaultCrewMember)}}checked{{/if}} />
                 {{localize "sta.roll.npccrewtalented"}}
               </label><br />
-
               <label>
                 <input type="radio"
                        name="selectedCrewMember-{{id}}"
@@ -147,7 +276,6 @@
                 {{localize "sta.roll.npccrewexceptional"}}
               </label>
             </div>
-
           </div>
         {{/each}}
       </section>
@@ -256,6 +384,9 @@
       <div class="buttons">
         <div class="check-button btn attribute" data-action="onAttributeTest">
           {{localize "sta.actor.attdis.task"}}
+        </div>
+        <div class="check-button btn3 acclaim" data-action="onChangeView">
+          {{localize 'sta.apps.viewroster'}}
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ const api = foundry.applications.api;
 
 export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2) {
   static instance = null;
+
   static async _onShipRoster(event) {
     event.preventDefault();
 
@@ -24,6 +25,7 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
     actions: {
       openActor: ShipRoster._onOpenActor,
       onAttributeTest: ShipRoster._onAttributeTest,
+      onChangeView: ShipRoster._onChangeView,
     },
     form: {
       submitOnChange: true,
@@ -53,6 +55,7 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
 
     const staRoll = new STARoll();
     const calculatedComplicationRange = await staRoll._sceneComplications();
+
     const starships = game.actors.filter((a) => a.type === 'starship');
     const characters = game.actors.filter(
       (a) => a.type === 'character' && a.system.assignment
@@ -67,8 +70,17 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
         return matchesShip && canSeeCrew;
       });
 
-      const groups = {character: [], supporting: [], npc: []};
+      const groups = { character: [], supporting: [], npc: [] };
+
       for (const actor of assigned) {
+        actor.focusItems = actor.items
+          .filter((item) => item.type === 'focus')
+          .map((item) => ({ name: item.name }));
+
+        actor.valueItems = actor.items
+          .filter((item) => item.type === 'value')
+          .map((item) => ({ name: item.name }));
+
         const sheetClass = actor.sheet?.constructor;
         if (sheetClass === game.sta.applications.STANPCSheet2e) {
           groups.npc.push(actor);
@@ -101,7 +113,8 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
         characterCount: groups.character.length,
         supportingCount: groups.supporting.length,
         npcCount: groups.npc.length,
-        totalCount: groups.character.length + groups.supporting.length + groups.npc.length,
+        totalCount:
+          groups.character.length + groups.supporting.length + groups.npc.length,
         canSeeShip: starship.testUserPermission(game.user, 'OBSERVER'),
         defaultCrewMember,
       };
@@ -122,9 +135,11 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
     const systems = ['communications', 'computers', 'engines', 'sensors', 'structure', 'weapons'];
     const departments = ['command', 'conn', 'engineering', 'security', 'medicine', 'science'];
     const rollList = [
-      'justrollboth', 'justrollcrew', 'melee', 'ranged', 'attack', 'firstaid', 'direct', 'guard', 'sprint',
-      'rally', 'damagecontrol', 'transport', 'attackpattern', 'evasiveaction', 'maneuver', 'ram', 'warp',
-      'regainpower', 'regenerateshields', 'reveal', 'scanforweakness', 'sensorsweep', 'defensivefire', 'tractorbeam'
+      'justrollboth', 'justrollcrew', 'melee', 'ranged', 'attack', 'firstaid',
+      'direct', 'guard', 'sprint', 'rally', 'damagecontrol', 'transport',
+      'attackpattern', 'evasiveaction', 'maneuver', 'ram', 'warp',
+      'regainpower', 'regenerateshields', 'reveal', 'scanforweakness',
+      'sensorsweep', 'defensivefire', 'tractorbeam'
     ];
 
     return {
@@ -157,10 +172,12 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
   static async _onAttributeTest(event, target) {
     event.preventDefault();
     const form = target.closest('.console-container');
-    const activeTab = form.querySelector('.tab.active[data-group=\'primary\']');
+    const activeTab = form.querySelector('.tab.active[data-group="primary"]');
 
     const data = {
-      actor: activeTab?.querySelector('input[name^="selectedCrewMember-"]:checked')?.value,
+      actor:
+        activeTab?.querySelector('input[name^="selectedCrewMember-"]:checked')
+          ?.value,
       starship: activeTab?.querySelector('[data-actor-id]')?.dataset.actorId,
       attribute: form.querySelector('select[name="attribute"]').value,
       discipline: form.querySelector('select[name="discipline"]').value,
@@ -223,10 +240,14 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
       selectedSystem = selectedDepartment = 'none';
     }
 
-    selectedSystemValue = starship?.system.systems[selectedSystem]?.value ?? null;
-    selectedDepartmentValue = starship?.system.departments[selectedDepartment]?.value ?? null;
-    selectedAttributeValue = character?.system.attributes[selectedAttribute]?.value ?? null;
-    selectedDisciplineValue = character?.system.disciplines[selectedDiscipline]?.value ?? null;
+    selectedSystemValue =
+      starship?.system.systems[selectedSystem]?.value ?? null;
+    selectedDepartmentValue =
+      starship?.system.departments[selectedDepartment]?.value ?? null;
+    selectedAttributeValue =
+      character?.system.attributes[selectedAttribute]?.value ?? null;
+    selectedDisciplineValue =
+      character?.system.disciplines[selectedDiscipline]?.value ?? null;
 
     let skillLevel = null;
 
@@ -271,5 +292,10 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
 
     const staRoll = new STARoll();
     await staRoll.rollNPCTask(taskData);
+  }
+
+  static async _onChangeView(event) {
+    const el = this.element;
+    el.classList.toggle('roster');
   }
 }

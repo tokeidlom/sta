@@ -2242,6 +2242,11 @@ $trackerchatborder: #FF9900;
     nav.tabs a.item:hover {
       text-shadow: 0 0 10px $palestblue, 0 0 10px $palestblue;
     }
+    &.roster {
+      .separator {
+        border-bottom: 2px solid $palestblue;
+      }
+    }
   }
 }
 
@@ -2295,12 +2300,19 @@ $trackerchatborder: #FF9900;
   .tracktitle {
     font-weight: bold;
     margin-right: 5px;
+    &.shipname {
+      max-width: 140px;
+    }
   }
 
   .starship-header img {
     width: 50px;
     margin-left: 5px;
     margin-right: 5px;
+  }
+
+  .check-button.btn3.acclaim.rollerbutton {
+    display: none;
   }
 
   .crew-list img {
@@ -2348,6 +2360,61 @@ $trackerchatborder: #FF9900;
     flex: 0 0 75%;
   }
 
+  .crew-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+  }
+
+  .crew-name {
+    font-weight: bold;
+    margin-right: 5px;
+    width: 280px;
+  }
+
+  .crew-member {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .stat-columns {
+    display: none;
+    flex-direction: row;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-color: $darkestblue transparent;
+  }
+
+  .stat-col-left {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    font-size: 0.75rem;
+    width: 390px;
+  }
+
+  .stat-col-right {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    font-size: 0.75rem;
+    width: 80px;
+  }
+
+  .stress {
+    align-self: flex-end;
+  }
+
+  .attributes,
+  .disciplines,
+  .value-line,
+  .focus-line,
+  .stress {
+    white-space: nowrap;
+    margin-bottom: 2px;
+  }
+
   nav.tabs {
     background-color: $borderbluedark;
     border-bottom: none;
@@ -2386,6 +2453,39 @@ $trackerchatborder: #FF9900;
 
   nav.tabs a.item:hover {
     text-shadow: 0 0 10px $borderblue, 0 0 10px $borderblue;
+  }
+
+  &.roster {
+    .right-column {
+      display: none;
+    }
+
+    .left-column {
+      width: 710px;
+    }
+
+    .check-button.btn3.acclaim.rollerbutton {
+      display: block;
+    }
+
+    .stat-columns {
+      display: flex;
+    }
+
+    .crew-list img {
+      width: 60px;
+      height: 60px;
+    }
+
+    .crew-name {
+      width: 120px;
+    }
+
+    .separator {
+      border-bottom: 2px solid $darkestblue;
+      padding-bottom: 3px;
+      margin-bottom: 3px;
+    }
   }
 }
 
