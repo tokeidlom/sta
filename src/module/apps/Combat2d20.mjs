@@ -13,7 +13,7 @@ function getActorScale(actor) {
     game.i18n.localize('sta.actor.starship.squadron')
   ];
 
-  const squadItem = actor.items.find(i => squadNames.includes(i.name));
+  const squadItem = actor.items.find((i) => squadNames.includes(i.name));
 
   if (squadItem) {
     const qty = Number(squadItem.system?.quantity);

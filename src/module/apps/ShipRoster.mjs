@@ -70,16 +70,16 @@ export class ShipRoster extends api.HandlebarsApplicationMixin(api.ApplicationV2
         return matchesShip && canSeeCrew;
       });
 
-      const groups = { character: [], supporting: [], npc: [] };
+      const groups = {character: [], supporting: [], npc: []};
 
       for (const actor of assigned) {
         actor.focusItems = actor.items
           .filter((item) => item.type === 'focus')
-          .map((item) => ({ name: item.name }));
+          .map((item) => ({name: item.name}));
 
         actor.valueItems = actor.items
           .filter((item) => item.type === 'value')
-          .map((item) => ({ name: item.name }));
+          .map((item) => ({name: item.name}));
 
         const sheetClass = actor.sheet?.constructor;
         if (sheetClass === game.sta.applications.STANPCSheet2e) {

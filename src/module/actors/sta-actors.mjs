@@ -1246,9 +1246,9 @@ export class STAActors extends api.HandlebarsApplicationMixin(sheets.ActorSheetV
         squadMod = squadDice - 1;
       }
       const isMine = element.dataset.itemIncludescale === 'mine';
-      const calculatedDamage = isMine
-        ? weaponDamage
-        : weaponDamage + weaponValue + scaleDamage + squadMod;
+      const calculatedDamage = isMine ?
+        weaponDamage :
+        weaponDamage + weaponValue + scaleDamage + squadMod;
       const damageElement = element.querySelector('.damage');
       if (damageElement) {
         damageElement.innerText = calculatedDamage;
@@ -1258,7 +1258,7 @@ export class STAActors extends api.HandlebarsApplicationMixin(sheets.ActorSheetV
         const item = this.actor.items.get(itemId);
         if (item) {
           item.update({
-            "system.calculatedDamage": calculatedDamage
+            'system.calculatedDamage': calculatedDamage
           });
         }
       }

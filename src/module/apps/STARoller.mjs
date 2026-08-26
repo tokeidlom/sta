@@ -110,9 +110,9 @@ export class STARoller {
     );
 
     if (starshipTokens.length > 1) {
-      STARoller._rollAllTokens(characterToken, starshipTokens)
+      STARoller._rollAllTokens(characterToken, starshipTokens);
     } else {
-      STARoller._rollOneToken(characterToken, starshipTokens)
+      STARoller._rollOneToken(characterToken, starshipTokens);
     }
   }
 
@@ -536,17 +536,17 @@ export class STARoller {
       'tractorbeam',
     ];
 
-const rollOptions = rollList
-  .map(item => `<option value="${item}">${game.i18n.localize(`sta.roll.${item}`)}</option>`)
-  .join('');
+    const rollOptions = rollList
+      .map((item) => `<option value="${item}">${game.i18n.localize(`sta.roll.${item}`)}</option>`)
+      .join('');
 
-const systemOptions = systems
-  .map(system => `<option value="${system}">${game.i18n.localize(`sta.actor.starship.system.${system}`)}</option>`)
-  .join('');
+    const systemOptions = systems
+      .map((system) => `<option value="${system}">${game.i18n.localize(`sta.actor.starship.system.${system}`)}</option>`)
+      .join('');
 
-const deptOptions = departments
-  .map(dept => `<option value="${dept}">${game.i18n.localize(`sta.actor.starship.department.${dept}`)}</option>`)
-  .join('');
+    const deptOptions = departments
+      .map((dept) => `<option value="${dept}">${game.i18n.localize(`sta.actor.starship.department.${dept}`)}</option>`)
+      .join('');
 
     const template = 'systems/sta/templates/apps/roll-multiple-tokens.hbs';
     const html = await foundry.applications.handlebars.renderTemplate(template, {
@@ -594,8 +594,8 @@ const deptOptions = departments
     /* --------------------------------------------------------------------- */
     /* Pull data from form                                                   */
     /* --------------------------------------------------------------------- */
-    let selectedSystemValue = parseInt(formData.get('systemValue')) || 7;
-    let selectedDepartmentValue = parseInt(formData.get('departmentValue')) || 2;
+    const selectedSystemValue = parseInt(formData.get('systemValue')) || 7;
+    const selectedDepartmentValue = parseInt(formData.get('departmentValue')) || 2;
     let selectedSystem = formData.get('system') || '';
     let selectedDepartment = formData.get('department') || '';
     const dicePool = parseInt(formData.get('charDicePool')) || 2;
@@ -629,54 +629,55 @@ const deptOptions = departments
       ] = rollPresets[selectedRoll];
     }
 
-let selectedAttributeValue = 0;
-let selectedDisciplineValue = 0;
-      const npcValues = {
-        basic: [8, 1],
-        proficient: [9, 2],
-        talented: [10, 3],
-        exceptional: [11, 4],
-      };
-      [
-        selectedAttributeValue,
-        selectedDisciplineValue,
-      ] = npcValues[skillLevel] ?? [8, 1];
+    let selectedAttributeValue = 0;
+    let selectedDisciplineValue = 0;
+    const npcValues = {
+      poor: [7, 0],
+      basic: [8, 1],
+      proficient: [9, 2],
+      talented: [10, 3],
+      exceptional: [11, 4],
+    };
+    [
+      selectedAttributeValue,
+      selectedDisciplineValue,
+    ] = npcValues[skillLevel] ?? [8, 1];
 
     /* --------------------------------------------------------------------- */
     /* Starship values                                                       */
     /* --------------------------------------------------------------------- */
-for (const starshipToken of starshipTokens) {
-  const starship = starshipToken.actor;
-  const selectedSystemValue = starship.system.systems[selectedSystem]?.value ?? 0;
-  const selectedDepartmentValue = starship.system.departments[selectedDepartment]?.value ?? 0;
+    for (const starshipToken of starshipTokens) {
+      const starship = starshipToken.actor;
+      const selectedSystemValue = starship.system.systems[selectedSystem]?.value ?? 0;
+      const selectedDepartmentValue = starship.system.departments[selectedDepartment]?.value ?? 0;
 
-    /* --------------------------------------------------------------------- */
-    /* Assemble final task data                                              */
-    /* --------------------------------------------------------------------- */
-    const taskData = {
-      speakerName: "NPC Crew",
-      starshipName: starship.name,
-      rolltype: "character2e",
-      selectedAttribute: "",
-      selectedAttributeValue,
-      selectedDiscipline: "",
-      selectedDisciplineValue,
-      selectedSystem,
-      selectedSystemValue,
-      selectedDepartment,
-      selectedDepartmentValue,
-      dicePool: 2,
-      usingFocus: true,
-      usingDedicatedFocus: false,
-      usingDetermination: false,
-      complicationRange,
-      skillLevel,
-    };
+      /* --------------------------------------------------------------------- */
+      /* Assemble final task data                                              */
+      /* --------------------------------------------------------------------- */
+      const taskData = {
+        speakerName: 'NPC Crew',
+        starshipName: starship.name,
+        rolltype: 'character2e',
+        selectedAttribute: '',
+        selectedAttributeValue,
+        selectedDiscipline: '',
+        selectedDisciplineValue,
+        selectedSystem,
+        selectedSystemValue,
+        selectedDepartment,
+        selectedDepartmentValue,
+        dicePool: 2,
+        usingFocus: true,
+        usingDedicatedFocus: false,
+        usingDetermination: false,
+        complicationRange,
+        skillLevel,
+      };
 
-    /* --------------------------------------------------------------------- */
-    /* Send the NPC roll to STARoll                                          */
-    /* --------------------------------------------------------------------- */
-    await staRoll.rollNPCTask(taskData);
-  }
+      /* --------------------------------------------------------------------- */
+      /* Send the NPC roll to STARoll                                          */
+      /* --------------------------------------------------------------------- */
+      await staRoll.rollNPCTask(taskData);
+    }
   }
 }
