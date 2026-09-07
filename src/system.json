@@ -66,6 +66,12 @@
 			"name": "Português (Brasil)",
 			"path": "lang/pt.json",
 			"flags": {}
+		},
+		{
+			"lang": "pl",
+			"name": "Polish",
+			"path": "lang/pl.json",
+			"flags": {}
 		}
 	],
 	"documentTypes": {
