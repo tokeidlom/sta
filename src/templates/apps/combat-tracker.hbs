@@ -51,21 +51,21 @@
                 </div>
 
                 <button type="button"
-                        class="inline-control combatant-control icon fa-solid fa-chevron-down department-toggle{{#if departmentsExpanded}} expanded{{/if}}"
-                        data-action="toggleDepartments"
+                        class="inline-control combatant-control icon fa-solid fa-chevron-down system-toggle{{#if systemsExpanded}} expanded{{/if}}"
+                        data-action="toggleSystems"
                         data-tooltip
-                        aria-label="{{ localize 'sta.actor.starship.department.title' }}"
-                        aria-expanded="{{departmentsExpanded}}"></button>
+                        aria-label="{{ localize 'sta.actor.starship.system.title' }}"
+                        aria-expanded="{{systemsExpanded}}"></button>
 
-                {{!-- Department checklist (toggled via the chevron above; open/closed state persists across re-renders) --}}
-                <ul class="department-list{{#unless departmentsExpanded}} collapsed{{/unless}}">
-                    {{#each departments}}
-                    <li class="department-item">
+                {{!-- System checklist (toggled via the chevron above; open/closed state persists across re-renders) --}}
+                <ul class="system-list{{#unless systemsExpanded}} collapsed{{/unless}}">
+                    {{#each systems}}
+                    <li class="system-item">
                         <label>
                             <input type="checkbox"
-                                   class="department-checkbox"
-                                   data-action="toggleDepartmentUsed"
-                                   data-department="{{ key }}"
+                                   class="system-checkbox"
+                                   data-action="toggleSystemUsed"
+                                   data-system="{{ key }}"
                                    {{#if used}}checked{{/if}}
                                    {{#unless @root.user.isGM}}disabled{{/unless}}>
                             <span>{{ label }}</span>

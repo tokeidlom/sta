@@ -1,4 +1,4 @@
-const DEPARTMENT_KEYS = ['command', 'conn', 'security', 'engineering', 'science', 'medicine'];
+const SYSTEM_KEYS = ['communications', 'computers', 'engines', 'sensors', 'structure', 'weapons'];
 
 function clamp(value, min, max) {
   let v = Number(value);
@@ -95,9 +95,9 @@ export default class Combat2d20 extends Combat {
         console.error('STA 2d20: failed to reset turnDone flag', err);
       }));
 
-      const resetDepartments = Object.fromEntries(DEPARTMENT_KEYS.map((k) => [k, false]));
-      clears.push(c.setFlag('sta', 'departmentsUsed', resetDepartments).catch((err) => {
-        console.error('STA 2d20: failed to reset departmentsUsed flag', err);
+      const resetSystems = Object.fromEntries(SYSTEM_KEYS.map((k) => [k, false]));
+      clears.push(c.setFlag('sta', 'systemsUsed', resetSystems).catch((err) => {
+        console.error('STA 2d20: failed to reset systemsUsed flag', err);
       }));
     }
 

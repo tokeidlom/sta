@@ -2583,7 +2583,7 @@ $trackerchatborder: #FF9900;
     }
   }
 
-  .department-toggle {
+  .system-toggle {
     transition: transform 0.15s ease;
 
     &.expanded {
@@ -2602,10 +2602,10 @@ $trackerchatborder: #FF9900;
     position: relative;
   }
 
-  .combatant .combatant-controls .department-list {
+  .combatant .combatant-controls .system-list {
     position: absolute;
     top: 100%; 
-    left: 50%;
+    left: 70%;
     transform: translateX(-50%);
     z-index: 10;
     width: max-content;
@@ -2629,7 +2629,7 @@ $trackerchatborder: #FF9900;
     }
   }
 
-  .department-item label {
+  .system-item label {
     display: flex;
     align-items: center;
     gap: 4px;
