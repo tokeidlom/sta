@@ -729,7 +729,7 @@ export class STAActors extends api.HandlebarsApplicationMixin(sheets.ActorSheetV
       window: {title: game.i18n.localize('sta.apps.cheatsheet') + this.cheatsheet.version},
       content,
       classes: ['dialogue'],
-      position: {width: 450, height: 'auto'},
+      position: {width: 470, height: 'auto'},
       buttons: [
         {
           action: 'close',
