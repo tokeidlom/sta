@@ -434,7 +434,8 @@ $trackerchatborder: #FF9900;
 }
 
 .character-sheet {
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
   padding-left: 7px;
   scrollbar-color: $darkestblue transparent;
 
@@ -468,7 +469,7 @@ $trackerchatborder: #FF9900;
   }
 
   .top-right-column {
-    flex: 0 0 625px;
+    flex: 1 0 625px;
     align-self: flex-start;
     padding-left: 5px;
   }
@@ -480,7 +481,7 @@ $trackerchatborder: #FF9900;
   }
 
   .bottom-right-column {
-    flex: 0 0 680px;
+    flex: 1 0 680px;
     align-self: flex-start;
     border-left: 16px solid $borderbluedark;
     border-top-left-radius: 16px;
@@ -825,7 +826,8 @@ $trackerchatborder: #FF9900;
 }
 
 .starship-sheet {
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
   padding-left: 7px;
   scrollbar-color: $darkestblue transparent;
 
@@ -859,7 +861,7 @@ $trackerchatborder: #FF9900;
   }
 
   .right-column {
-    flex: 0 0 625px;
+    flex: 1 0 625px;
     align-self: flex-start;
     position: relative;
     padding-left: 9px;
